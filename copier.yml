@@ -1,0 +1,19 @@
+project_name:
+  type: str
+  help: "Enter the human-friendly name for your project."
+  default: "My Awesome Project"
+
+project_slug:
+  type: str
+  help: "Enter a project slug (lowercase, dash-separated)."
+  default: "{{ project_name | lower | replace(' ', '-') }}"
+
+project_slug_underscore:
+  type: str
+  help: "Enter a project slug (lowercase, underscore-separated)."
+  default: "{{ project_name | lower | replace(' ', '_') }}"
+
+author_name:
+  type: str
+  help: "Enter the author's name."
+  default: "Your Name"

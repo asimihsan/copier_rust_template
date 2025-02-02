@@ -1,0 +1,32 @@
+{
+  "$schema": "https://raw.githubusercontent.com/jetify-com/devbox/0.13.7/.schema/devbox.schema.json",
+  "packages": [
+    "addlicense@latest",
+    "bash@latest",
+    "cargo-audit@latest",
+    "cargo-binstall@latest",
+    "cargo-deny@latest",
+    "cargo-watch@latest",
+    "fd@latest",
+    "just@latest",
+    "mise@latest",
+    "wasm-bindgen-cli@latest",
+    "wasm-pack@latest"
+  ],
+  "env": {
+    "COREPACK_ENABLE_DOWNLOAD_PROMPT": "0",
+    "LIBRARY_PATH": "$LIBRARY_PATH:/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/lib:/opt/homebrew/opt/libiconv/lib",
+    "MACOSX_DEPLOYMENT_TARGET": "10.15",
+    "RUSTFLAGS": "-D warnings",
+    "SDKROOT": "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk"
+  },
+  "shell": {
+    "init_hook": [
+      "mise trust",
+      "mise install",
+      "if [ -x $(command -v brew) ]; then",
+      "  export PATH=$(brew --prefix llvm)/bin:$PATH",
+      "fi"
+    ]
+  }
+}

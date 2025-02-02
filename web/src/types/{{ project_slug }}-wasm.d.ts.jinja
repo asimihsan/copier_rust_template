@@ -1,0 +1,5 @@
+declare module '{{ project_slug }}-wasm' {
+    export default function init(module?: WebAssembly.Module): Promise<void>;
+
+    export function parse(input: string): string;
+}

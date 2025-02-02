@@ -1,0 +1,14 @@
+use wasm_bindgen::prelude::*; // our core library
+
+/// Expose the parser function to JavaScript.
+/// This function takes an input string and returns a Result wrapped in a JsValue.
+/// On success, it returns the parsed result as a string. On error, it throws an exception
+/// with the error message.
+#[wasm_bindgen]
+pub fn parse(input: &str) -> Result<JsValue, JsValue> {
+    // Call our core parser.
+    match {{ project_slug_underscore }}_core::parse(input) {
+        Ok(result) => Ok(JsValue::from_str(&result)),
+        Err(err) => Err(JsValue::from_str(&err.to_string())),
+    }
+}

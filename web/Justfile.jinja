@@ -1,0 +1,26 @@
+setup:
+    # Have to use `--dev` to avoid this error:
+    #
+    # [vite]: Rollup failed to resolve import "__wbindgen_externref_xform__" from "/Users/user/workplace/{{ project_slug }}/web/pkg/wasm.js".
+    #
+    #
+    # See: https://github.com/rustwasm/wasm-bindgen/issues/2160
+    # See: https://github.com/rustwasm/wasm-bindgen/discussions/3500#discussioncomment-6334669
+    cd ../wasm && wasm-pack build --target web --out-dir ../web/pkg --dev
+    pnpm install
+
+dev: setup
+    pnpm run dev
+
+build: setup
+    pnpm run build
+
+test: setup
+    pnpm run test
+
+lint:
+    pnpm run lint
+    pnpm run format
+
+clean:
+    rm -rf pkg dist

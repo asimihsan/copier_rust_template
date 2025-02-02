@@ -1,0 +1,2 @@
+Copyright {{ "%Y" | strftime }} {{ project_name }}
+Licensed under the MIT License.

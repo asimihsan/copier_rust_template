@@ -1,0 +1,10 @@
+[target.aarch64-apple-darwin]
+rustflags = [
+    "-C",
+    "link-arg=-L/opt/homebrew/opt/libiconv/lib",
+    "-C",
+    "link-arg=-liconv",
+]
+
+[target.wasm32-unknown-unknown]
+rustflags = ["-C", "link-arg=--max-memory=4294967296"] # 4GB memory limit

@@ -1,0 +1,51 @@
+use chumsky::prelude::*;
+use thiserror::Error;
+
+/// Our custom error type for parsing failures.
+#[derive(Error, Debug)]
+pub enum ParseError {
+    #[error("Parse error: {0}")]
+    Generic(String),
+}
+
+/// A simple arithmetic expression parser that accepts expressions like "1+2+3"
+/// and computes their sum. (You can of course implement a more sophisticated grammar.)
+pub fn parse(input: &str) -> Result<String, ParseError> {
+    // The parser for an integer.
+    let number = text::int::<char, Simple<char>>(10)
+        .map(|s: String| s.parse::<i64>().unwrap())
+        .padded();
+
+    // The expression parser: a number, optionally followed by one or more (“+ number”)
+    let expr = number
+        .then(just('+').ignore_then(number).repeated())
+        .map(|(first, rest)| {
+            // Fold the sequence of numbers with addition.
+            rest.into_iter().fold(first, |acc, n| acc + n)
+        })
+        .map(|result| result.to_string())
+        .padded();
+
+    // Parse the input string.
+    expr.parse(input).map_err(|errs| {
+        // In production you might render these errors with ariadne, but here we simply join them.
+        let msg = errs
+            .into_iter()
+            .map(|e| e.to_string())
+            .collect::<Vec<_>>()
+            .join("\n");
+        ParseError::Generic(msg)
+    })
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_parse() {
+        assert_eq!(parse("1+2+3").unwrap(), "6");
+        assert_eq!(parse("10+20+30").unwrap(), "60");
+        assert_eq!(parse("100+200+300").unwrap(), "600");
+    }
+}

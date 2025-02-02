@@ -1,0 +1,27 @@
+[package]
+name = "{{ project_slug }}-wasm"
+version = "0.1.0"
+edition = "2021"
+license = "MPL-2.0"
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+{{ project_slug }}-core = { path = "../core" }
+wasm-bindgen = { version = "0.2", features = ["serde-serialize"] }
+
+# The `console_error_panic_hook` crate provides better debugging of panics by
+# logging them with `console.error`. This is great for development, but requires
+# all the `std::fmt` and `std::panicking` infrastructure, so isn't great for
+# code size when deploying.
+console_error_panic_hook = { version = "0.1.7", optional = true }
+
+[dev-dependencies]
+wasm-bindgen-test = "0.3"
+
+[features]
+default = ["console_error_panic_hook"]
+
+[package.metadata.wasm-pack.profile.release]
+wasm-opt = false # Disable conflicting optimizations

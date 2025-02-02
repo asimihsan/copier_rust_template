@@ -1,0 +1,31 @@
+import { beforeAll } from 'vitest';
+import { readFileSync } from 'fs';
+import { fileURLToPath } from 'url';
+import { dirname, resolve } from 'path';
+import init, { parse } from '../pkg/{{ project_slug_underscore }}_wasm.js';
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const wasmPath = resolve(__dirname, '../pkg/{{ project_slug_underscore }}_wasm_bg.wasm');
+
+let initialized = false;
+
+export async function ensureInitialized(): Promise<void> {
+    if (!initialized) {
+        try {
+            const wasmModule = await WebAssembly.compile(
+                readFileSync(wasmPath)
+            );
+            await init(wasmModule);
+            initialized = true;
+        } catch (error) {
+            console.error('Failed to initialize WASM:', error);
+            throw error;
+        }
+    }
+}
+
+export { parse };
+
+beforeAll(async () => {
+    await ensureInitialized();
+});

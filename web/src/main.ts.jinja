@@ -1,0 +1,30 @@
+import './style.css';
+import init, { parse } from '../pkg/{{ project_slug_underscore }}_wasm.js';
+
+document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
+  <div>
+    <h1>Logscope Parser Test</h1>
+    <div class="card">
+      <textarea id="input" rows="4" cols="50">Enter text here...</textarea>
+      <br>
+      <button id="parse">Parse</button>
+      <pre id="output"></pre>
+    </div>
+  </div>
+`;
+
+// Initialize WASM
+init().then(() => {
+    const parseButton = document.querySelector<HTMLButtonElement>('#parse')!;
+    const input = document.querySelector<HTMLTextAreaElement>('#input')!;
+    const output = document.querySelector<HTMLPreElement>('#output')!;
+
+    parseButton.addEventListener('click', () => {
+        try {
+            const result = parse(input.value);
+            output.textContent = result;
+        } catch (e) {
+            output.textContent = `Error: ${e}`;
+        }
+    });
+});

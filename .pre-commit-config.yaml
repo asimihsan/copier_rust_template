@@ -1,0 +1,58 @@
+# See https://pre-commit.com for more information
+# See https://pre-commit.com/hooks.html for more hooks
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+      - id: check-toml
+      - id: check-added-large-files
+        args: ["--maxkb=500"]
+      - id: mixed-line-ending
+        args: ["--fix=lf"]
+      - id: check-merge-conflict
+      - id: check-case-conflict
+      - id: check-executables-have-shebangs
+      - id: detect-private-key
+
+  # Local hooks using our just commands
+  - repo: local
+    hooks:
+      - id: rust-fmt
+        name: Rust formatter
+        entry: devbox run -- just rust-fmt
+        types: [rust]
+        language: system
+        pass_filenames: false
+
+      - id: rust-check
+        name: Rust checker
+        entry: devbox run -- just rust-check
+        types: [rust]
+        language: system
+        pass_filenames: false
+        stages: [pre-commit]
+
+      - id: rust-clippy
+        name: Rust clippy
+        entry: devbox run -- just rust-clippy
+        types: [rust]
+        language: system
+        pass_filenames: false
+        stages: [pre-commit]
+
+      - id: web-lint
+        name: Web lint and format
+        entry: devbox run -- just web-lint
+        types: [javascript, ts, jsx, tsx]
+        language: system
+        pass_filenames: false
+
+      - id: copyright-check
+        name: Copyright check
+        entry: devbox run -- just copyright-check
+        types: [rust, javascript, ts, jsx, tsx]
+        language: system
+        pass_filenames: false
