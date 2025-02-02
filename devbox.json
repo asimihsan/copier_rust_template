@@ -7,6 +7,7 @@
     "cargo-binstall@latest",
     "cargo-deny@latest",
     "cargo-watch@latest",
+    "direnv@latest",
     "fd@latest",
     "just@latest",
     "mise@latest",
@@ -15,10 +16,10 @@
   ],
   "env": {
     "COREPACK_ENABLE_DOWNLOAD_PROMPT": "0",
-    "LIBRARY_PATH": "$LIBRARY_PATH:/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/lib:/opt/homebrew/opt/libiconv/lib",
-    "MACOSX_DEPLOYMENT_TARGET": "10.15",
-    "RUSTFLAGS": "-D warnings",
-    "SDKROOT": "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk"
+    "LIBRARY_PATH":                    "$LIBRARY_PATH:/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/lib:/opt/homebrew/opt/libiconv/lib",
+    "MACOSX_DEPLOYMENT_TARGET":        "10.15",
+    "RUSTFLAGS":                       "-D warnings",
+    "SDKROOT":                         "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk"
   },
   "shell": {
     "init_hook": [
