@@ -17,3 +17,6 @@ author_name:
   type: str
   help: "Enter the author's name."
   default: "Your Name"
+
+_exclude:
+  - "README.md"
