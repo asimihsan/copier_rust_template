@@ -21,3 +21,4 @@ author_name:
 _exclude:
   - ".git"
   - "README.md"
+  - "copier.yml"
