@@ -17,13 +17,14 @@ setup:
     devbox install
     devbox run mise trust
     devbox run mise install
+    rustup toolchain install nightly
+    cargo +stable install cargo-llvm-cov --locked
+    rustup component add llvm-tools-preview --toolchain nightly-aarch64-apple-darwin
     rustup component add rustfmt
     rustup component add clippy
-    rustup target add wasm32-unknown-unknown
     cargo binstall cargo-nextest --secure --no-confirm
     pre-commit install
     pre-commit install-hooks
-    corepack install --global pnpm@latest
 
 mac-setup:
     brew install libiconv llvm
@@ -80,7 +81,10 @@ test: rust-test
     @just web test
 
 cov:
-    cargo llvm-cov
+    cargo llvm-cov nextest
+
+cov-local:
+    cargo +nightly llvm-cov nextest --no-fail-fast --text --show-missing-lines --mcdc
 
 build: rust-build
     @just web build
