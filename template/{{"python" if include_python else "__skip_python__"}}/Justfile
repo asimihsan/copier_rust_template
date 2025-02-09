@@ -1,0 +1,20 @@
+build: _ensure-setup
+    devbox run uv venv
+    devbox run uv sync
+    devbox run maturin develop --uv
+
+test: build
+    devbox run pytest tests
+
+lint:
+    devbox run ruff check .
+    devbox run ruff format --check .
+    devbox run pyright
+
+_ensure-setup:
+    #!/usr/bin/env bash
+    cd ../ && cargo build
+
+clean:
+    rm -rf .venv target dist *.egg-info
+    find . -type d -name "__pycache__" -exec rm -rf {} +

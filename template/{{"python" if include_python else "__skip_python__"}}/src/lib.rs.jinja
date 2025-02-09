@@ -1,0 +1,37 @@
+use pyo3::exceptions::PyValueError;
+use pyo3::prelude::*;
+use my_awesome_project_core as core;
+
+/// Parse and evaluate a simple arithmetic expression.
+///
+/// Args:
+///     expression (str): The arithmetic expression to evaluate (e.g., "1+2+3")
+///
+/// Returns:
+///     str: The result of evaluating the expression
+///
+/// Raises:
+///     ValueError: If the expression cannot be parsed
+///
+/// Example:
+///     >>> import my_awesome_project
+///     >>> my_awesome_project.parse("1+2+3")
+///     '6'
+#[pyfunction]
+fn parse(expression: &str) -> PyResult<String> {
+    core::parse(expression).map_err(|e| PyValueError::new_err(e.to_string()))
+}
+
+/// Python module for My Awesome Project
+#[pymodule]
+fn my_awesome_project(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
+    m.setattr("__version__", env!("CARGO_PKG_VERSION"))?;
+    m.setattr(
+        "__doc__",
+        "Python bindings for My Awesome Project, a simple arithmetic expression parser.",
+    )?;
+    
+    m.add_function(wrap_pyfunction!(parse, m)?)?;
+    
+    Ok(())
+}

@@ -1,0 +1,21 @@
+"""Type hints for {{ project_name }} Python bindings."""
+
+__version__: str
+
+def parse(expression: str) -> str:
+    """Parse and evaluate a simple arithmetic expression.
+
+    Args:
+        expression: The arithmetic expression to evaluate (e.g., "1+2+3")
+
+    Returns:
+        The result of evaluating the expression
+
+    Raises:
+        ValueError: If the expression cannot be parsed
+
+    Example:
+        >>> parse("1+2+3")
+        '6'
+    """
+    ...

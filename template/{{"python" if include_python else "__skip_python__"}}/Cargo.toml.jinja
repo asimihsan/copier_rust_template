@@ -1,0 +1,12 @@
+[package]
+name = "{{ project_slug }}-py"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "{{ project_slug_underscore }}_py"
+crate-type = ["cdylib"]
+
+[dependencies]
+{{ project_slug }}-core = { path = "../core" }
+pyo3 = { version = "0.23", features = ["extension-module", "abi3-py311"] }

@@ -1,9 +1,13 @@
 set shell := ["bash", "-c"]
 set dotenv-load := true
 
-{% if include_wasm %}
+{%- if include_wasm %}
 mod web
-{% endif %}
+{%- endif %}
+
+{%- if include_python %}
+mod python
+{%- endif %}
 
 # Default action is to list all available tasks
 @default:
@@ -18,6 +22,10 @@ setup:
     fi
 
     devbox install
+    {%- if include_python %}
+    cd python && devbox run uv venv
+    cd python && devbox run uv sync
+    {%- endif %}
     devbox run mise trust
     devbox run mise install
     rustup toolchain install nightly
@@ -38,8 +46,8 @@ mac-setup:
     rustup component add llvm-tools-preview
     if ! xcode-select -p >/dev/null 2>&1; then
         xcode-select --install
+        sudo xcode-select --switch /Library/Developer/CommandLineTools
     fi
-    sudo xcode-select --switch /Library/Developer/CommandLineTools
 
 update-deps:
     cargo update
@@ -83,10 +91,20 @@ copyright-check:
 
 # Combined tasks
 check: rust-check rust-fmt rust-clippy rust-audit copyright-check
-    {% if include_wasm %}@just web lint{% endif %}
+    {%- if include_wasm %}
+    just web lint
+    {%- endif %}
+    {%- if include_python %}
+    just python lint
+    {%- endif %}
 
 test: rust-test
-    {% if include_wasm %}@just web test{% endif %}
+    {%- if include_wasm %}
+    just web test
+    {%- endif %}
+    {%- if include_python %}
+    just python test
+    {%- endif %}
 
 cov:
     cargo llvm-cov nextest
@@ -95,15 +113,25 @@ cov-local:
     cargo +nightly llvm-cov nextest --no-fail-fast --text --show-missing-lines --mcdc
 
 build: rust-build
-    {% if include_wasm %}@just web build{% endif %}
+    {%- if include_wasm %}
+    just web build
+    {%- endif %}
+    {%- if include_python %}
+    just python build
+    {%- endif %}
 
 clean: rust-clean
-    {% if include_wasm %}@just web clean{% endif %}
+    {%- if include_wasm %}
+    just web clean
+    {%- endif %}
+    {%- if include_python %}
+    just python clean
+    {%- endif %}
 
-{% if include_wasm %}
+{%- if include_wasm %}
 web-dev: build
-    @just web dev
-{% endif %}
+    just web dev
+{%- endif %}
 
 # CI tasks
 ci: build check test cov

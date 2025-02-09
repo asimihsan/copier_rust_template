@@ -10,16 +10,24 @@
     "direnv@latest",
     "fd@latest",
     "just@latest",
+    "maturin@latest",
     "mise@latest",
+    "uv@latest",
     "wasm-bindgen-cli@latest",
     "wasm-pack@latest"
   ],
   "env": {
-    "COREPACK_ENABLE_DOWNLOAD_PROMPT": "0",
-    "LIBRARY_PATH":                    "$LIBRARY_PATH:/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/lib:/opt/homebrew/opt/libiconv/lib",
-    "MACOSX_DEPLOYMENT_TARGET":        "10.15",
-    "RUSTFLAGS":                       "-D warnings",
-    "SDKROOT":                         "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk"
+    "CARGO_PROFILE_DEV_BUILD_OVERRIDE_DEBUG":      "true",
+    "CARGO_TARGET_AARCH64_APPLE_DARWIN_LINKER":    "clang",
+    "CARGO_TARGET_AARCH64_APPLE_DARWIN_RUSTFLAGS": "-C link-arg=-L/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/lib -C link-arg=-liconv",
+    "CARGO_TARGET_X86_64_APPLE_DARWIN_LINKER":     "clang",
+    "CARGO_TARGET_X86_64_APPLE_DARWIN_RUSTFLAGS":  "-C link-arg=-L/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/lib -C link-arg=-liconv",
+    "COREPACK_ENABLE_DOWNLOAD_PROMPT":             "0",
+    "LIBRARY_PATH":                                "$LIBRARY_PATH:/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/lib:/opt/homebrew/opt/libiconv/lib",
+    "MACOSX_DEPLOYMENT_TARGET":                    "11.0",
+    "RUST_BACKTRACE":                              "1",
+    "RUSTFLAGS":                                   "-D warnings",
+    "SDKROOT":                                     "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk"
   },
   "shell": {
     "init_hook": [
