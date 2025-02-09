@@ -1,19 +1,19 @@
-build: _ensure-setup
-    devbox run uv venv
-    devbox run uv sync
-    devbox run maturin develop --uv
+build:
+    uv venv
+    uv sync
+    uv run maturin develop --uv
 
 test: build
-    devbox run pytest tests
+    uv run pytest tests
 
 lint:
-    devbox run ruff check .
-    devbox run ruff format --check .
-    devbox run pyright
+    uv run ruff check .
+    uv run ruff format --check .
+    uv run pyright
 
-_ensure-setup:
-    #!/usr/bin/env bash
-    cd ../ && cargo build
+lint-fix:
+    uv run ruff check . --fix
+    uv run ruff format .
 
 clean:
     rm -rf .venv target dist *.egg-info

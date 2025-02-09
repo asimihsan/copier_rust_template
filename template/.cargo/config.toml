@@ -1,0 +1,20 @@
+[target.x86_64-apple-darwin]
+rustflags = [
+  "-C", "link-arg=-undefined",
+  "-C", "link-arg=dynamic_lookup",
+  "-C", "link-args=-Wl,-rpath,/Library/Developer/CommandLineTools/Library/Frameworks",
+]
+
+[target.aarch64-apple-darwin]
+rustflags = [
+    "-C",
+    "link-arg=-L/opt/homebrew/opt/libiconv/lib",
+    "-C",
+    "link-arg=-liconv",
+    "-C", "link-arg=-undefined",
+    "-C", "link-arg=dynamic_lookup",
+    "-C", "link-args=-Wl,-rpath,/Library/Developer/CommandLineTools/Library/Frameworks",
+]
+
+[target.wasm32-unknown-unknown]
+rustflags = ["-C", "link-arg=--max-memory=4294967296"] # 4GB memory limit

@@ -2,13 +2,17 @@
 members = [
     "cli",
     "core",
-    {% if include_wasm %}
+    {%- if include_wasm %}
     "wasm",
-    {% endif %}
-    {% if include_python %}
-    "python",
-    {% endif %}
+    {%- endif %}
 ]
+
+{%- if include_python %}
+exclude = [
+    "python",
+]
+{%- endif %}
+
 resolver = "2"
 
 [profile.release]

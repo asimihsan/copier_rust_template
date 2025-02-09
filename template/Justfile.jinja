@@ -23,11 +23,11 @@ setup:
 
     devbox install
     {%- if include_python %}
-    cd python && devbox run uv venv
-    cd python && devbox run uv sync
+    (cd python && uv venv)
+    (cd python && uv sync)
     {%- endif %}
-    devbox run mise trust
-    devbox run mise install
+    mise trust
+    mise install
     rustup toolchain install nightly
     cargo +stable install cargo-llvm-cov --locked
     rustup component add llvm-tools-preview --toolchain nightly-aarch64-apple-darwin
