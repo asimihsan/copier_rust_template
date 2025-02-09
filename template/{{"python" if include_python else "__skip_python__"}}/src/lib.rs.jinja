@@ -1,6 +1,6 @@
 use pyo3::exceptions::PyValueError;
 use pyo3::prelude::*;
-use my_awesome_project_core as core;
+use {{ project_slug_underscore }}_core as core;
 
 /// Parse and evaluate a simple arithmetic expression.
 ///
@@ -14,8 +14,8 @@ use my_awesome_project_core as core;
 ///     ValueError: If the expression cannot be parsed
 ///
 /// Example:
-///     >>> import my_awesome_project
-///     >>> my_awesome_project.parse("1+2+3")
+///     >>> import {{ project_slug_underscore }}
+///     >>> {{ project_slug_underscore }}.parse("1+2+3")
 ///     '6'
 #[pyfunction]
 fn parse(expression: &str) -> PyResult<String> {
@@ -24,7 +24,7 @@ fn parse(expression: &str) -> PyResult<String> {
 
 /// Python module for My Awesome Project
 #[pymodule]
-fn my_awesome_project(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
+fn {{ project_slug_underscore }}(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.setattr("__version__", env!("CARGO_PKG_VERSION"))?;
     m.setattr(
         "__doc__",
