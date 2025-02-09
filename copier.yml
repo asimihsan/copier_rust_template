@@ -1,7 +1,15 @@
+# Template configuration
+_subdirectory: template
+
 project_name:
   type: str
   help: "Enter the human-friendly name for your project."
   default: "My Awesome Project"
+
+include_wasm:
+  type: bool
+  default: true
+  help: "Include WebAssembly and web frontend components?"
 
 project_slug:
   type: str
@@ -20,5 +28,5 @@ author_name:
 
 _exclude:
   - ".git"
-  - "README.md"
-  - "copier.yml"
+  - "__skip_wasm__"
+  - "__skip_web__"

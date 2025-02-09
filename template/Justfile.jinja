@@ -1,7 +1,9 @@
 set shell := ["bash", "-c"]
 set dotenv-load := true
 
+{% if include_wasm %}
 mod web
+{% endif %}
 
 # Default action is to list all available tasks
 @default:
@@ -75,10 +77,10 @@ copyright-check:
 
 # Combined tasks
 check: rust-check rust-fmt rust-clippy rust-audit copyright-check
-    @just web lint
+    {% if include_wasm %}@just web lint{% endif %}
 
 test: rust-test
-    @just web test
+    {% if include_wasm %}@just web test{% endif %}
 
 cov:
     cargo llvm-cov nextest
@@ -87,13 +89,15 @@ cov-local:
     cargo +nightly llvm-cov nextest --no-fail-fast --text --show-missing-lines --mcdc
 
 build: rust-build
-    @just web build
+    {% if include_wasm %}@just web build{% endif %}
 
 clean: rust-clean
-    @just web clean
+    {% if include_wasm %}@just web clean{% endif %}
 
+{% if include_wasm %}
 web-dev: build
     @just web dev
+{% endif %}
 
 # CI tasks
 ci: build check test cov

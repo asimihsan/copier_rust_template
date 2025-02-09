@@ -2,7 +2,9 @@
 members = [
     "cli",
     "core",
+    {% if include_wasm %}
     "wasm",
+    {% endif %}
 ]
 resolver = "2"
 

@@ -1,0 +1,29 @@
+name: Test Template
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test-template:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Devbox
+        uses: jetify-com/devbox-install-action@v0.11.0
+        with:
+          enable-cache: true
+
+      - name: Generate Test Project
+        run: |
+          copier copy . ../test-project --vcs-ref HEAD
+
+      - name: Test Generated Project
+        working-directory: ../test-project
+        run: |
+          git init
+          devbox install
+          devbox run just setup copyright ci
