@@ -11,6 +11,7 @@ mod web
 
 setup:
     #!/usr/bin/env bash
+    set -e
 
     if [[ "$OSTYPE" == "darwin"* ]]; then
         just mac-setup
@@ -29,10 +30,15 @@ setup:
     pre-commit install-hooks
 
 mac-setup:
+    #!/usr/bin/env bash
+    set -e
+
     brew install libiconv llvm
     cargo install cargo-llvm-cov
     rustup component add llvm-tools-preview
-    xcode-select --install
+    if ! xcode-select -p >/dev/null 2>&1; then
+        xcode-select --install
+    fi
     sudo xcode-select --switch /Library/Developer/CommandLineTools
 
 update-deps:
