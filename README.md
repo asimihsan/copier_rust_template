@@ -1,8 +1,44 @@
-# Copier Rust Template
+<h1 align="center">🦀 Rust Multi-Platform Starter</h1>
+<p align="center">
+  <em>Build Once, Run Everywhere: CLI • WASM • Python</em>
+</p>
 
-This template creates a Rust project with a command-line tool and a core library. 
-Optionally, it can include WebAssembly with a TypeScript web app, and Python language 
-bindings. It uses Copier to fill in the templates based on your input.
+<p align="center">
+  <a href="https://github.com/asimihsan/copier_rust_template/actions/workflows/ci.yml">
+    <img src="https://img.shields.io/github/actions/workflow/status/asimihsan/copier_rust_template/ci.yml?style=flat-square" alt="CI Status">
+  </a>
+  <a href="https://app.devbox.cloud/asimihsan/copier_rust_template">
+    <img src="https://img.shields.io/badge/Devbox-Cloud%20Shell-blue?style=flat-square" alt="Devbox Cloud">
+  </a>
+  <a href="LICENSE">
+    <img src="https://img.shields.io/badge/License-MPL%202.0-brightgreen.svg?style=flat-square" alt="License">
+  </a>
+</p>
+
+Transform your Rust projects into cross-platform powerhouses! This template
+provides everything you need to build native CLIs, WebAssembly modules, and
+Python extensions from a single unified codebase.
+
+### 🎯 Key Features
+
+**🦀 Rust at the Core** Write your logic once in Rust, then deploy everywhere.
+The template includes a high-performance core library and a CLI application
+scaffold with robust error handling and logging built in.
+
+**🌐 WebAssembly Integration** _(Optional)_ Seamlessly compile to WebAssembly
+and integrate with modern web frameworks. Includes a TypeScript starter with
+Vite for rapid development and hot module replacement.
+
+**🐍 Python Ecosystem** _(Optional)_ Leverage PyO3 to create Python bindings for
+your Rust code. Perfect for data science applications or extending existing
+Python projects with Rust's performance.
+
+**🛠️ Development Experience**
+
+- Zero-config setup with Devbox and Mise
+- Comprehensive test coverage across all platforms
+- Modern CI pipeline with GitHub Actions
+- Automated code formatting and linting
 
 ## Requirements
 
@@ -54,112 +90,68 @@ Build and test your project:
 just ci
 ```
 
-## Overview
+## Development Tools & Workflow
 
-This template is designed to help you quickly start a project that includes these core 
-components:
+The template provides a comprehensive development environment powered by Devbox
+and Mise. No manual tool installation required—everything from Rust nightly to
+WebAssembly toolchains is automatically configured.
 
-- **CLI:** A simple Rust command-line tool
-- **Core Library:** A Rust library for your main logic
+**Testing & Quality** Comprehensive test suites run across all platforms, with
+coverage tracking and fuzz testing for core components. Automated CI pipelines
+ensure consistent quality on every commit.
 
-And these optional components:
+**Development Loop** Fast iteration with hot reloading for web development,
+watch mode for Rust, and automated rebuilds of Python extensions. The
+development environment includes:
 
-- **WebAssembly Support:** A Rust module that compiles to WebAssembly with a TypeScript 
-  web application (enabled by default)
-- **Python Bindings:** Python language bindings for your core library (enabled by default)
+🔧 Cargo, pnpm, and uv for dependency management  
+🔍 Clippy and ESLint for static analysis  
+✨ rustfmt and Prettier keep code clean  
+📊 Code coverage and performance profiling
 
-The project is set up to use Devbox and Mise for a consistent environment and task 
-management. With Devbox, you don't need to install any tools separately—everything is 
-managed for you.
+## Project Configuration
 
-## Configuration Options
+Choose your project components when generating from the template:
 
-When generating your project, you can customize it with these options:
+```bash
+# Full-featured project (default)
+copier copy gh:asimihsan/copier_rust_template my-project
 
-- **WebAssembly and Web Frontend:** Enable/disable WebAssembly module and TypeScript web app
-  ```bash
-  # Disable WebAssembly/web components
-  copier copy gh:asimihsan/copier_rust_template my-project --data include_wasm=false
-  ```
+# Core + WebAssembly only
+copier copy gh:asimihsan/copier_rust_template my-project --data include_python=false
 
-- **Python Language Bindings:** Enable/disable Python bindings for your core library
-  ```bash
-  # Disable Python bindings
-  copier copy gh:asimihsan/copier_rust_template my-project --data include_python=false
-  ```
+# Core + Python bindings only
+copier copy gh:asimihsan/copier_rust_template my-project --data include_wasm=false
 
-- **Combined Options:** You can combine multiple options
-  ```bash
-  # Core-only project (no WASM or Python)
-  copier copy gh:asimihsan/copier_rust_template my-project \
-    --data include_wasm=false \
-    --data include_python=false
-  ```
+# Core functionality only
+copier copy gh:asimihsan/copier_rust_template my-project \
+  --data include_wasm=false \
+  --data include_python=false
+```
 
-## Template Structure
+## Project Structure
 
-- **Root Files:**  
-  Files like `Cargo.toml`, `LICENSE`, `rustfmt.toml`, and `deny.toml` set up
-  project-wide configurations.
+Your generated project will include:
 
-- **Jinja Templates:**  
-  Files ending in `.jinja` (such as `Cargo.toml.jinja` and `README.md.jinja`)
-  are processed by Copier. They get filled in with your project details (name,
-  slug, author, etc.) when you run Copier.
+**Core Components**
 
-- **cli:**  
-  Contains the Rust code for a command-line tool.
+- `core/`: Your main Rust library codebase
+- `cli/`: Command-line interface implementation
+- `Cargo.toml` & `deny.toml`: Rust project configuration
+- `.rustfmt.toml`: Code formatting rules
 
-- **core:**  
-  Contains a Rust library for your core logic.
+**Optional Components**
 
-- **wasm:**  
-  Contains Rust code that is compiled to WebAssembly using tools like
-  `wasm-pack`.
+- `wasm/`: WebAssembly module (when `include_wasm=true`)
+- `web/`: TypeScript frontend (when `include_wasm=true`)
+- `python/`: Python language bindings (when `include_python=true`)
 
-- **web:**  
-  Contains a TypeScript web app that uses Vite, ESLint, and Vitest for
-  development and testing.
+**Development Environment**
 
-- **Devbox and Mise Files:**
-  - `devbox.json`: Defines the development environment.
-  - `mise.toml.jinja`: A configuration file for Mise, a simple task runner used
-    to run builds, tests, and other commands.
-
-## How to Use This Template
-
-1. **Install the Requirements:**  
-   Install Devbox and Copier. Devbox will set up your environment by installing
-   all required tools.
-
-2. **Create a New Project:**  
-   Run Copier to generate your project:
-   ```bash
-    copier copy gh:asimihsan/copier_rust_template my-awesome-project
-   ```
-   Copier will ask for your project’s name, slug, and author. It then fills in
-   the template files accordingly.
-3. **Enter Your Project’s Environment**: Change to your new project directory
-   and set up Devbox:
-   ```bash
-   cd my-awesome-project
-   devbox install
-   devbox run direnv allow
-   ```
-4. **Set Up Tools**: Run the setup command to install dependencies and set up
-   your project:
-   ```bash
-   just setup
-   ```
-5. **Add Copyright Header**: Run the copyright command to add a copyright header
-   to your files:
-   ```bash
-   just copyright
-   ```
-6. **Build, Test, and Run Commands**:
-   ```bash
-   just ci
-   ```
+- `devbox.json`: Zero-config development environment
+- `mise.toml`: Task runner for common operations
+- `.envrc`: Automatic environment activation
+- `.pre-commit-config.yaml`: Git hooks for quality checks
 
 ## Contributing
 
