@@ -52,6 +52,22 @@ jobs:
           restore-keys: |
             node-${{ matrix.cache_suffix }}-
 
+      - name: Cache mise
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/mise
+            ~/.local/share/mise
+          key: mise-${{ runner.os }}-${{ matrix.cache_suffix }}-${{ hashFiles('mise.toml', 'template/mise.toml.jinja', 'devbox.json', 'devbox.lock') }}
+          restore-keys: |
+            mise-${{ runner.os }}-${{ matrix.cache_suffix }}-
+            mise-${{ runner.os }}-
+
+      - name: Setup mise directories
+        run: |
+          mkdir -p ~/.local/state/mise
+          sudo chown -R $USER:$USER ~/.local/state/mise
+
       - name: Setup Devbox
         uses: jetify-com/devbox-install-action@v0.11.0
         with:

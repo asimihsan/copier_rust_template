@@ -30,7 +30,7 @@ setup:
     mise install
     rustup toolchain install nightly
     cargo +stable install cargo-llvm-cov --locked
-    rustup component add llvm-tools-preview --toolchain nightly-aarch64-apple-darwin
+    rustup component add llvm-tools-preview
     rustup component add rustfmt
     rustup component add clippy
     cargo binstall cargo-nextest --secure --no-confirm
@@ -44,6 +44,7 @@ mac-setup:
     brew install libiconv llvm
     cargo install cargo-llvm-cov
     rustup component add llvm-tools-preview
+    rustup component add llvm-tools-preview --toolchain nightly-aarch64-apple-darwin
     if ! xcode-select -p >/dev/null 2>&1; then
         xcode-select --install
         sudo xcode-select --switch /Library/Developer/CommandLineTools
@@ -107,10 +108,24 @@ test: rust-test
     {%- endif %}
 
 cov:
-    cargo llvm-cov nextest
+    #!/usr/bin/env bash
+    set -e
+    
+    if [[ "$OSTYPE" == "darwin"* ]]; then
+        cargo +nightly llvm-cov nextest
+    else
+        cargo llvm-cov nextest
+    fi
 
 cov-local:
-    cargo +nightly llvm-cov nextest --no-fail-fast --text --show-missing-lines --mcdc
+    #!/usr/bin/env bash
+    set -e
+    
+    if [[ "$OSTYPE" == "darwin"* ]]; then
+        cargo +nightly llvm-cov nextest --no-fail-fast --text --show-missing-lines --mcdc
+    else
+        cargo llvm-cov nextest --no-fail-fast --text --show-missing-lines --mcdc
+    fi
 
 build: rust-build
     {%- if include_wasm %}
