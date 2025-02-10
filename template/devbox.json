@@ -11,6 +11,7 @@
     "fd@latest",
     "just@latest",
     "mise@latest",
+    "pre-commit@latest",
     "uv@latest",
     "wasm-bindgen-cli@latest",
     "wasm-pack@latest"
