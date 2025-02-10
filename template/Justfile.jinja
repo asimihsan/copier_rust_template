@@ -21,19 +21,26 @@ setup:
     #!/usr/bin/env bash
     set -e
 
+    devbox install
+    mise trust
+    mise install
+
+    if [[ "$OSTYPE" == "darwin"* ]]; then
+        env CC=/usr/bin/clang RUSTFLAGS="-C linker=/usr/bin/clang" cargo install cargo-binstall
+    else
+        cargo binstall cargo-binstall
+    fi
+
     if [[ "$OSTYPE" == "darwin"* ]]; then
         just mac-setup
     fi
 
-    devbox install
     {%- if include_python %}
     (cd python && uv venv)
     (cd python && uv sync)
     {%- endif %}
-    mise trust
-    mise install
+
     rustup toolchain install nightly
-    cargo install cargo-binstall
     cargo binstall cargo-llvm-cov --secure --no-confirm
     rustup component add llvm-tools-preview
     rustup component add rustfmt
@@ -90,10 +97,10 @@ rust-clean:
     cargo clean
 
 copyright:
-    fd -e rs -e ts -e js -e jsx -e tsx | xargs addlicense -f copyright.tmpl -c "{{ author_name }}" -v -s
+    fd -e rs -e ts -e js -e jsx -e tsx -e go -e py | xargs addlicense -f copyright.tmpl -c "{{ author_name }}" -v -s
 
 copyright-check:
-    fd -e rs -e ts -e js -e jsx -e tsx | xargs addlicense -f copyright.tmpl -c "{{ author_name }}" -v -s -check
+    fd -e rs -e ts -e js -e jsx -e tsx -e go -e py | xargs addlicense -f copyright.tmpl -c "{{ author_name }}" -v -s -check
 
 # Combined tasks
 check: rust-check rust-fmt rust-clippy rust-audit copyright-check
@@ -103,6 +110,9 @@ check: rust-check rust-fmt rust-clippy rust-audit copyright-check
     {%- if include_python %}
     just python lint
     {%- endif %}
+    {%- if include_go %}
+    just go lint
+    {%- endif %}
 
 test: rust-test
     {%- if include_wasm %}
@@ -110,6 +120,9 @@ test: rust-test
     {%- endif %}
     {%- if include_python %}
     just python test
+    {%- endif %}
+    {%- if include_go %}
+    just go test
     {%- endif %}
 
 cov:
@@ -139,6 +152,9 @@ build: rust-build
     {%- if include_python %}
     just python build
     {%- endif %}
+    {%- if include_go %}
+    just go build
+    {%- endif %}
 
 clean: rust-clean
     {%- if include_wasm %}
@@ -158,18 +174,3 @@ web-dev: build
 
 # CI tasks
 ci: build check test cov
-
-{%- if include_go %}
-# Go tasks
-go-build:
-    cd go && go build ./...
-
-go-test:
-    cd go && go test ./...
-
-go-lint:
-    cd go && go vet ./...
-
-go-clean:
-    cd go && go clean
-{%- endif %}
