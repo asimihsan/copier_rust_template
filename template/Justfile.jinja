@@ -29,7 +29,8 @@ setup:
     mise trust
     mise install
     rustup toolchain install nightly
-    cargo +stable install cargo-llvm-cov --locked
+    cargo install cargo-binstall
+    cargo binstall cargo-llvm-cov --secure --no-confirm
     rustup component add llvm-tools-preview
     rustup component add rustfmt
     rustup component add clippy
@@ -42,7 +43,7 @@ mac-setup:
     set -e
 
     brew install libiconv llvm
-    cargo install cargo-llvm-cov
+    cargo binstall cargo-llvm-cov --secure --no-confirm
     rustup component add llvm-tools-preview
     rustup component add llvm-tools-preview --toolchain nightly-aarch64-apple-darwin
     if ! xcode-select -p >/dev/null 2>&1; then
