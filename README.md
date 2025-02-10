@@ -1,6 +1,6 @@
 <h1 align="center">🦀 Rust Multi-Platform Starter</h1>
 <p align="center">
-  <em>Build Once, Run Everywhere: CLI • WASM • Python</em>
+  <em>Build Once, Run Everywhere: CLI • WASM • Python • Go</em>
 </p>
 
 <p align="center">
@@ -13,8 +13,8 @@
 </p>
 
 Transform your Rust projects into cross-platform powerhouses! This template
-provides everything you need to build native CLIs, WebAssembly modules, and
-Python extensions from a single unified codebase.
+provides everything you need to build native CLIs, WebAssembly modules,
+Python extensions, and Go bindings from a single unified codebase.
 
 ### 🎯 Key Features
 
@@ -29,6 +29,10 @@ Vite for rapid development and hot module replacement.
 **🐍 Python Ecosystem** _(Optional)_ Leverage PyO3 to create Python bindings for
 your Rust code. Perfect for data science applications or extending existing
 Python projects with Rust's performance.
+
+**🦫 Go Integration** _(Optional)_ Create Go bindings for your Rust code using
+cgo. Ideal for integrating high-performance Rust components into Go applications
+or extending Go projects with Rust functionality.
 
 **🛠️ Development Experience**
 
@@ -115,15 +119,25 @@ Choose your project components when generating from the template:
 copier copy gh:asimihsan/copier_rust_template my-project
 
 # Core + WebAssembly only
-copier copy gh:asimihsan/copier_rust_template my-project --data include_python=false
+copier copy gh:asimihsan/copier_rust_template my-project \
+  --data include_python=false \
+  --data include_go=false
 
 # Core + Python bindings only
-copier copy gh:asimihsan/copier_rust_template my-project --data include_wasm=false
+copier copy gh:asimihsan/copier_rust_template my-project \
+  --data include_wasm=false \
+  --data include_go=false
+
+# Core + Go bindings only
+copier copy gh:asimihsan/copier_rust_template my-project \
+  --data include_wasm=false \
+  --data include_python=false
 
 # Core functionality only
 copier copy gh:asimihsan/copier_rust_template my-project \
   --data include_wasm=false \
-  --data include_python=false
+  --data include_python=false \
+  --data include_go=false
 ```
 
 ## Project Structure
@@ -142,6 +156,7 @@ Your generated project will include:
 - `wasm/`: WebAssembly module (when `include_wasm=true`)
 - `web/`: TypeScript frontend (when `include_wasm=true`)
 - `python/`: Python language bindings (when `include_python=true`)
+- `go/`: Go language bindings (when `include_go=true`)
 
 **Development Environment**
 

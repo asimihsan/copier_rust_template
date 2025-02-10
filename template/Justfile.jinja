@@ -9,6 +9,10 @@ mod web
 mod python
 {%- endif %}
 
+{%- if include_go %}
+mod go
+{%- endif %}
+
 # Default action is to list all available tasks
 @default:
     @just --list
@@ -143,6 +147,9 @@ clean: rust-clean
     {%- if include_python %}
     just python clean
     {%- endif %}
+    {%- if include_go %}
+    just go clean
+    {%- endif %}
 
 {%- if include_wasm %}
 web-dev: build
@@ -151,3 +158,18 @@ web-dev: build
 
 # CI tasks
 ci: build check test cov
+
+{%- if include_go %}
+# Go tasks
+go-build:
+    cd go && go build ./...
+
+go-test:
+    cd go && go test ./...
+
+go-lint:
+    cd go && go vet ./...
+
+go-clean:
+    cd go && go clean
+{%- endif %}

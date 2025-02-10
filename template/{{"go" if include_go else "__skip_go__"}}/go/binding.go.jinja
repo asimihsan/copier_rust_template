@@ -1,0 +1,34 @@
+package binding
+
+/*
+#cgo LDFLAGS: -L${SRCDIR}/../../target/release -l{{ project_slug }}_go
+#include <stdlib.h>
+extern char* parse_expression(const char* input);
+extern void free_rust_string(char* s);
+*/
+import "C"
+import (
+	"unsafe"
+)
+
+func Parse(input string) (string, error) {
+	cInput := C.CString(input)
+	defer C.free(unsafe.Pointer(cInput))
+	
+	cResult := C.parse_expression(cInput)
+	defer C.free_rust_string(cResult)
+	
+	result := C.GoString(cResult)
+	if result[:6] == "Error:" {
+		return "", &ParseError{msg: result[7:]}
+	}
+	return result, nil
+}
+
+type ParseError struct {
+	msg string
+}
+
+func (e *ParseError) Error() string {
+	return e.msg
+}

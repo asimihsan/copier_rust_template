@@ -12,10 +12,11 @@ jobs:
     strategy:
       matrix:
         include:
-          - {wasm: true,  python: true,  cache_suffix: full}
-          - {wasm: true,  python: false, cache_suffix: no-py}
-          - {wasm: false, python: true,  cache_suffix: no-wasm}
-          - {wasm: false, python: false, cache_suffix: minimal}
+          - {wasm: true,  python: true,  go: false, cache_suffix: full}     # Existing full
+          - {wasm: true,  python: false, go: false, cache_suffix: no-py}    # Existing WASM
+          - {wasm: false, python: true,  go: false, cache_suffix: no-wasm}  # Existing Python
+          - {wasm: false, python: false, go: false, cache_suffix: minimal}  # Existing minimal
+          - {wasm: false, python: false, go: true,  cache_suffix: go-only}  # New: Go only
     name: Test (${{ matrix.cache_suffix }})
     steps:
       - uses: actions/checkout@v4
@@ -52,6 +53,17 @@ jobs:
           restore-keys: |
             node-${{ matrix.cache_suffix }}-
 
+      - name: Cache Go
+        if: matrix.go
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/go-build
+            ~/go/pkg/mod
+          key: go-${{ matrix.cache_suffix }}-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            go-${{ matrix.cache_suffix }}-
+
       - name: Cache mise
         uses: actions/cache@v4
         with:
@@ -82,6 +94,7 @@ jobs:
             --data author_name="CI Bot" \
             --data include_wasm=${{ matrix.wasm }} \
             --data include_python=${{ matrix.python }} \
+            --data include_go=${{ matrix.go }} \
             --defaults --overwrite
 
       - name: Test Generated Project

@@ -11,6 +11,11 @@ include_wasm:
   default: true
   help: "Include WebAssembly and web frontend components?"
 
+include_go:
+  type: bool
+  default: true
+  help: "Include Go language bindings?"
+
 include_python:
   type: bool
   default: true
@@ -36,3 +41,4 @@ _exclude:
   - "__skip_wasm__"
   - "__skip_web__"
   - "__skip_python__"
+  - "__skip_go__"
