@@ -7,9 +7,6 @@
   <a href="https://github.com/asimihsan/copier_rust_template/actions/workflows/ci.yml">
     <img src="https://img.shields.io/github/actions/workflow/status/asimihsan/copier_rust_template/ci.yml?style=flat-square" alt="CI Status">
   </a>
-  <a href="https://app.devbox.cloud/asimihsan/copier_rust_template">
-    <img src="https://img.shields.io/badge/Devbox-Cloud%20Shell-blue?style=flat-square" alt="Devbox Cloud">
-  </a>
   <a href="LICENSE">
     <img src="https://img.shields.io/badge/License-MPL%202.0-brightgreen.svg?style=flat-square" alt="License">
   </a>
