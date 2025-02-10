@@ -11,17 +11,18 @@
     "fd@latest",
     "just@latest",
     "mise@latest",
+    "pnpm@latest",
     "pre-commit@latest",
     "uv@latest",
     "wasm-bindgen-cli@latest",
     "wasm-pack@latest"
   ],
   "env": {
-    "COREPACK_ENABLE_DOWNLOAD_PROMPT":             "0",
-    "LIBRARY_PATH":                                "$LIBRARY_PATH:/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/lib:/opt/homebrew/opt/libiconv/lib",
-    "MACOSX_DEPLOYMENT_TARGET":                    "11.0",
-    "RUST_BACKTRACE":                              "1",
-    "RUSTFLAGS":                                   "-D warnings"
+    "COREPACK_ENABLE_DOWNLOAD_PROMPT": "0",
+    "LIBRARY_PATH":                    "$LIBRARY_PATH:/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/lib:/opt/homebrew/opt/libiconv/lib",
+    "MACOSX_DEPLOYMENT_TARGET":        "11.0",
+    "RUST_BACKTRACE":                  "1",
+    "RUSTFLAGS":                       "-D warnings"
   },
   "shell": {
     "init_hook": [
