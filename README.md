@@ -1,8 +1,8 @@
 # Copier Rust Template
 
-This template creates a Rust project with a command-line tool, a core library, a
-WebAssembly module, and a TypeScript web app. It uses Copier to fill in the
-templates based on your input.
+This template creates a Rust project with a command-line tool and a core library. 
+Optionally, it can include WebAssembly with a TypeScript web app, and Python language 
+bindings. It uses Copier to fill in the templates based on your input.
 
 ## Requirements
 
@@ -56,17 +56,45 @@ just ci
 
 ## Overview
 
-This template is designed to help you quickly start a project that includes
-several components:
+This template is designed to help you quickly start a project that includes these core 
+components:
 
-- **CLI:** A simple Rust command-line tool.
-- **Core Library:** A Rust library for your main logic.
-- **Wasm Module:** A Rust module that compiles to WebAssembly.
-- **Web App:** A TypeScript web application that uses the WebAssembly module.
+- **CLI:** A simple Rust command-line tool
+- **Core Library:** A Rust library for your main logic
 
-The project is set up to use Devbox and Mise for a consistent environment and
-task management. With Devbox, you don’t need to install Rust, wasm‑pack, Node,
-or PNPM separately—everything is managed for you.
+And these optional components:
+
+- **WebAssembly Support:** A Rust module that compiles to WebAssembly with a TypeScript 
+  web application (enabled by default)
+- **Python Bindings:** Python language bindings for your core library (enabled by default)
+
+The project is set up to use Devbox and Mise for a consistent environment and task 
+management. With Devbox, you don't need to install any tools separately—everything is 
+managed for you.
+
+## Configuration Options
+
+When generating your project, you can customize it with these options:
+
+- **WebAssembly and Web Frontend:** Enable/disable WebAssembly module and TypeScript web app
+  ```bash
+  # Disable WebAssembly/web components
+  copier copy gh:asimihsan/copier_rust_template my-project --data include_wasm=false
+  ```
+
+- **Python Language Bindings:** Enable/disable Python bindings for your core library
+  ```bash
+  # Disable Python bindings
+  copier copy gh:asimihsan/copier_rust_template my-project --data include_python=false
+  ```
+
+- **Combined Options:** You can combine multiple options
+  ```bash
+  # Core-only project (no WASM or Python)
+  copier copy gh:asimihsan/copier_rust_template my-project \
+    --data include_wasm=false \
+    --data include_python=false
+  ```
 
 ## Template Structure
 

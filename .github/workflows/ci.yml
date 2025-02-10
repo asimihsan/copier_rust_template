@@ -9,8 +9,48 @@ on:
 jobs:
   test-template:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - {wasm: true,  python: true,  cache_suffix: full}
+          - {wasm: true,  python: false, cache_suffix: no-py}
+          - {wasm: false, python: true,  cache_suffix: no-wasm}
+          - {wasm: false, python: false, cache_suffix: minimal}
+    name: Test (${{ matrix.cache_suffix }})
     steps:
       - uses: actions/checkout@v4
+
+      - name: Cache Rust
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo
+            target
+          key: rust-${{ matrix.cache_suffix }}-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: |
+            rust-${{ matrix.cache_suffix }}-
+
+      - name: Cache Python (uv)
+        if: matrix.python
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/uv
+            python/.venv
+          key: python-${{ matrix.cache_suffix }}-${{ hashFiles('**/requirements*.txt') }}
+          restore-keys: |
+            python-${{ matrix.cache_suffix }}-
+
+      - name: Cache Node Modules
+        if: matrix.wasm
+        uses: actions/cache@v4
+        with:
+          path: |
+            web/node_modules
+            ~/.npm
+          key: node-${{ matrix.cache_suffix }}-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            node-${{ matrix.cache_suffix }}-
 
       - name: Setup Devbox
         uses: jetify-com/devbox-install-action@v0.11.0
@@ -19,7 +59,14 @@ jobs:
 
       - name: Generate Test Project
         run: |
-          devbox run copier copy . ../test-project --vcs-ref HEAD
+          devbox run copier copy . ../test-project --vcs-ref HEAD \
+            --data project_name="Test Project" \
+            --data project_slug=test-project \
+            --data project_slug_underscore=test_project \
+            --data author_name="CI Bot" \
+            --data include_wasm=${{ matrix.wasm }} \
+            --data include_python=${{ matrix.python }} \
+            --defaults --overwrite
 
       - name: Test Generated Project
         working-directory: ../test-project
