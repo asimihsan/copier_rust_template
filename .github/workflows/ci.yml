@@ -1,4 +1,4 @@
-name: Test Template
+name: CI
 
 on:
   push:
@@ -19,7 +19,7 @@ jobs:
 
       - name: Generate Test Project
         run: |
-          copier copy . ../test-project --vcs-ref HEAD
+          devbox run copier copy . ../test-project --vcs-ref HEAD
 
       - name: Test Generated Project
         working-directory: ../test-project
