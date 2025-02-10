@@ -46,7 +46,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: |
-            web/node_modules
+            ../test-project/web/node_modules
             ~/.npm
           key: node-${{ matrix.cache_suffix }}-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
