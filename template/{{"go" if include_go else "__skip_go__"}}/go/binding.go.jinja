@@ -3,6 +3,7 @@ package binding
 
 /*
 #cgo CFLAGS: -I${SRCDIR}/..
+#cgo LDFLAGS: -L${SRCDIR}/../../target/debug -l{{ project_slug_underscore }}_go
 
 #include "binding.h"
 #include <stdlib.h>
