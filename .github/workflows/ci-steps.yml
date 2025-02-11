@@ -1,0 +1,110 @@
+name: CI Steps
+
+on:
+  workflow_call:
+    inputs:
+      wasm:
+        description: "Enable WASM"
+        required: true
+        type: boolean
+      python:
+        description: "Enable Python"
+        required: true
+        type: boolean
+      go:
+        description: "Enable Go"
+        required: true
+        type: boolean
+      cache_suffix:
+        description: "Cache suffix for keys"
+        required: true
+        type: string
+
+jobs:
+  test-template:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Cache Rust
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo
+            target
+          key: rust-${{ inputs.cache_suffix }}-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: |
+            rust-${{ inputs.cache_suffix }}-
+
+      - name: Cache Python (uv)
+        if: ${{ inputs.python }}
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/uv
+            python/.venv
+          key: python-${{ inputs.cache_suffix }}-${{ hashFiles('**/requirements*.txt') }}
+          restore-keys: |
+            python-${{ inputs.cache_suffix }}-
+
+      - name: Cache Node Modules
+        if: ${{ inputs.wasm }}
+        uses: actions/cache@v4
+        with:
+          path: |
+            ../test-project/web/node_modules
+            ~/.npm
+          key: node-${{ inputs.cache_suffix }}-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            node-${{ inputs.cache_suffix }}-
+
+      - name: Cache Go
+        if: ${{ inputs.go }}
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/go-build
+            ~/go/pkg/mod
+          key: go-${{ inputs.cache_suffix }}-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            go-${{ inputs.cache_suffix }}-
+
+      - name: Cache mise
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/mise
+            ~/.local/share/mise
+          key: mise-${{ runner.os }}-${{ inputs.cache_suffix }}-${{ hashFiles('mise.toml', 'template/mise.toml.jinja', 'devbox.json', 'devbox.lock') }}
+          restore-keys: |
+            mise-${{ runner.os }}-${{ inputs.cache_suffix }}-
+            mise-${{ runner.os }}-
+
+      - name: Setup mise directories
+        run: |
+          mkdir -p ~/.local/state/mise
+          sudo chown -R $USER:$USER ~/.local/state/mise
+
+      - name: Setup Devbox
+        uses: jetify-com/devbox-install-action@v0.11.0
+        with:
+          enable-cache: true
+
+      - name: Generate Test Project
+        run: |
+          devbox run copier copy . ../test-project --vcs-ref HEAD \
+            --data project_name="Test Project" \
+            --data project_slug=test-project \
+            --data project_slug_underscore=test_project \
+            --data author_name="CI Bot" \
+            --data include_wasm=${{ inputs.wasm }} \
+            --data include_python=${{ inputs.python }} \
+            --data include_go=${{ inputs.go }} \
+            --defaults --overwrite
+
+      - name: Test Generated Project
+        working-directory: ../test-project
+        run: |
+          git init
+          devbox install
+          devbox run just setup copyright ci
