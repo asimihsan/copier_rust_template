@@ -3,12 +3,17 @@ _setup-env:
     #!/usr/bin/env bash
     set -e
     
-    if [[ "$OSTYPE" == "darwin"* ]]; then
-        TARGET_DIR=$(cargo metadata --format-version=1 --no-deps | jq -r '.target_directory')
-        DEBUG_DIR="$TARGET_DIR/debug"
+    # Set up common variables
+    TARGET_DIR=$(cargo metadata --format-version=1 --no-deps | jq -r '.target_directory')
+    DEBUG_DIR="$TARGET_DIR/debug"
 
+    # Set up common CGO flags
+    echo "export CGO_LDFLAGS=\"-L${DEBUG_DIR} -l{{ project_slug_underscore }}_go\""
+
+    if [[ "$OSTYPE" == "darwin"* ]]; then
+        # macOS-specific flags
         echo "export CGO_CFLAGS=\"-I$(xcrun --show-sdk-path)/usr/include\""
-        echo "export CGO_LDFLAGS=\"-F$(xcrun --show-sdk-path)/System/Library/Frameworks -L${DEBUG_DIR} -l{{ project_slug_underscore }}_go\""
+        echo "export CGO_LDFLAGS=\"$CGO_LDFLAGS -F$(xcrun --show-sdk-path)/System/Library/Frameworks\""
         echo "export CGO_CPPFLAGS=\"-Wno-error -Wno-nullability-completeness -Wno-expansion-to-defined\""
         echo "export CC=\"$(xcrun -f clang)\""
     fi
