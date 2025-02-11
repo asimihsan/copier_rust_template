@@ -12,34 +12,18 @@
   </a>
 </p>
 
-Transform your Rust projects into cross-platform powerhouses! This template
-provides everything you need to build native CLIs, WebAssembly modules,
-Python extensions, and Go bindings from a single unified codebase.
+A unified Rust template for building native CLIs, WebAssembly modules,
+Python extensions, and Go bindings from a single codebase.
 
 ### 🎯 Key Features
 
-**🦀 Rust at the Core** Write your logic once in Rust, then deploy everywhere.
-The template includes a high-performance core library and a CLI application
-scaffold with robust error handling and logging built in.
-
-**🌐 WebAssembly Integration** _(Optional)_ Seamlessly compile to WebAssembly
-and integrate with modern web frameworks. Includes a TypeScript starter with
-Vite for rapid development and hot module replacement.
-
-**🐍 Python Ecosystem** _(Optional)_ Leverage PyO3 to create Python bindings for
-your Rust code. Perfect for data science applications or extending existing
-Python projects with Rust's performance.
-
-**🦫 Go Integration** _(Optional)_ Create Go bindings for your Rust code using
-cgo. Ideal for integrating high-performance Rust components into Go applications
-or extending Go projects with Rust functionality.
-
-**🛠️ Development Experience**
-
-- Zero-config setup with Devbox and Mise
-- Comprehensive test coverage across all platforms
-- Modern CI pipeline with GitHub Actions
-- Automated code formatting and linting
+- 🦀 Cross-platform Rust core
+- 🌐 WASM bindings with web integration _(Optional)_
+- 🐍 Python bindings _(Optional)_
+- 🦫 Go bindings _(Optional)_
+- 🚀 GitHub Actions CI pipeline
+- 🛠️ Zero-config setup
+- 📊 Comprehensive testing
 
 ## Requirements
 
