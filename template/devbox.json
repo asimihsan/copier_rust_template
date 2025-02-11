@@ -9,14 +9,16 @@
     "cargo-watch@latest",
     "direnv@latest",
     "fd@latest",
+    "golangci-lint@latest",
+    "jq@latest",
     "just@latest",
     "mise@latest",
     "pnpm@latest",
     "pre-commit@latest",
+    "rust-cbindgen@latest",
     "uv@latest",
     "wasm-bindgen-cli@latest",
-    "wasm-pack@latest",
-    "jq@latest"
+    "wasm-pack@latest"
   ],
   "env": {
     "COREPACK_ENABLE_DOWNLOAD_PROMPT": "0",

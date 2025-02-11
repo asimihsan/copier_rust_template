@@ -461,6 +461,54 @@
         }
       }
     },
+    "golangci-lint@latest": {
+      "last_modified": "2025-01-19T08:16:51Z",
+      "resolved": "github:NixOS/nixpkgs/50165c4f7eb48ce82bd063e1fb8047a0f515f8ce#golangci-lint",
+      "source": "devbox-search",
+      "version": "1.63.4",
+      "systems": {
+        "aarch64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/p81vg4szd85xb1m5r17fn6h2cd433xv9-golangci-lint-1.63.4",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/p81vg4szd85xb1m5r17fn6h2cd433xv9-golangci-lint-1.63.4"
+        },
+        "aarch64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/45k8x4b0ygqwpf7di7rcglxsz8ykxz9z-golangci-lint-1.63.4",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/45k8x4b0ygqwpf7di7rcglxsz8ykxz9z-golangci-lint-1.63.4"
+        },
+        "x86_64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/2xslqh1iyjbhwyynxw09ygfaxzfhmakp-golangci-lint-1.63.4",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/2xslqh1iyjbhwyynxw09ygfaxzfhmakp-golangci-lint-1.63.4"
+        },
+        "x86_64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/71a493qsawf2gsh3s31zsbrw5pg8psmc-golangci-lint-1.63.4",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/71a493qsawf2gsh3s31zsbrw5pg8psmc-golangci-lint-1.63.4"
+        }
+      }
+    },
     "jq@latest": {
       "last_modified": "2025-02-08T12:54:32Z",
       "resolved": "github:NixOS/nixpkgs/fa35a3c8e17a3de613240fea68f876e5b4896aec#jq",
@@ -818,6 +866,54 @@
             }
           ],
           "store_path": "/nix/store/mysa4nbqz7i266qnrxng859gz436szjr-pre-commit-4.0.1"
+        }
+      }
+    },
+    "rust-cbindgen@latest": {
+      "last_modified": "2025-02-07T11:26:36Z",
+      "resolved": "github:NixOS/nixpkgs/d98abf5cf5914e5e4e9d57205e3af55ca90ffc1d#rust-cbindgen",
+      "source": "devbox-search",
+      "version": "0.28.0",
+      "systems": {
+        "aarch64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/k2d8hd05fxsiwls6x2bppahg79563x90-rust-cbindgen-0.28.0",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/k2d8hd05fxsiwls6x2bppahg79563x90-rust-cbindgen-0.28.0"
+        },
+        "aarch64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/99k7mbqfab68ggzslhfcasdx6rzc1wxx-rust-cbindgen-0.28.0",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/99k7mbqfab68ggzslhfcasdx6rzc1wxx-rust-cbindgen-0.28.0"
+        },
+        "x86_64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/2hakjjfbjw717vz729d3g7gmp122qcrz-rust-cbindgen-0.28.0",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/2hakjjfbjw717vz729d3g7gmp122qcrz-rust-cbindgen-0.28.0"
+        },
+        "x86_64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/p3xwjvwwh33c81c6iq7y369lckyk5x0i-rust-cbindgen-0.28.0",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/p3xwjvwwh33c81c6iq7y369lckyk5x0i-rust-cbindgen-0.28.0"
         }
       }
     },

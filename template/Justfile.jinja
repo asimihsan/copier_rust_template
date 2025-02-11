@@ -41,7 +41,6 @@ setup:
     {%- endif %}
 
     rustup toolchain install nightly
-    cargo binstall cbindgen --secure --no-confirm
     cargo binstall cargo-llvm-cov --secure --no-confirm
     rustup component add llvm-tools-preview
     rustup component add rustfmt
