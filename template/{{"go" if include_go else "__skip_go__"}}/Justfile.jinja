@@ -16,6 +16,9 @@ _setup-env:
         echo "export CGO_LDFLAGS=\"$CGO_LDFLAGS -F$(xcrun --show-sdk-path)/System/Library/Frameworks\""
         echo "export CGO_CPPFLAGS=\"-Wno-error -Wno-nullability-completeness -Wno-expansion-to-defined\""
         echo "export CC=\"$(xcrun -f clang)\""
+    elif [[ "$OSTYPE" == "linux"* ]]; then
+        # Linux-specific flags: ensure the shared library is found at runtime
+        echo "export LD_LIBRARY_PATH=\"${DEBUG_DIR}:$LD_LIBRARY_PATH\""
     fi
 
 # Generate C bindings using cbindgen
