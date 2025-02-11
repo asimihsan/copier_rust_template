@@ -1,0 +1,51 @@
+# Set up environment variables for CGO
+_setup-env:
+    #!/usr/bin/env bash
+    set -e
+    
+    if [[ "$OSTYPE" == "darwin"* ]]; then
+        TARGET_DIR=$(cargo metadata --format-version=1 --no-deps | jq -r '.target_directory')
+        DEBUG_DIR="$TARGET_DIR/debug"
+
+        echo "export CGO_CFLAGS=\"-I$(xcrun --show-sdk-path)/usr/include\""
+        echo "export CGO_LDFLAGS=\"-F$(xcrun --show-sdk-path)/System/Library/Frameworks -L${DEBUG_DIR} -l{{ project_slug_underscore }}_go\""
+        echo "export CGO_CPPFLAGS=\"-Wno-error -Wno-nullability-completeness -Wno-expansion-to-defined\""
+        echo "export CC=\"$(xcrun -f clang)\""
+    fi
+
+# Generate C bindings using cbindgen
+generate-bindings:
+    #!/usr/bin/env bash
+    set -e
+    
+    # Generate the bindings
+    cbindgen --config cbindgen.toml --output binding.h
+
+# Build the project
+build: generate-bindings
+    #!/usr/bin/env bash
+    set -e
+    
+    eval "$(just _setup-env)"
+    go build ./...
+
+# Run tests
+test: generate-bindings
+    #!/usr/bin/env bash
+    set -e
+    
+    eval "$(just _setup-env)"
+    go test ./...
+
+# Run linter
+lint:
+    #!/usr/bin/env bash
+    set -e
+    
+    eval "$(just _setup-env)"
+    golangci-lint run ./...
+
+# Clean build artifacts
+clean:
+    go clean ./...
+    rm -f binding.h

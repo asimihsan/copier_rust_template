@@ -1,0 +1,21 @@
+# Language configuration
+language = "C"
+include_guard = "{{ project_slug_underscore | upper }}_H"
+style = "both"
+cpp_compat = true
+
+# Documentation
+documentation = true
+documentation_style = "doxy"
+line_length = 80
+tab_width = 4
+
+# Type configuration
+[defines]
+"target_os = windows" = "WINDOWS"
+"target_os = macos" = "MACOS"
+"target_os = linux" = "LINUX"
+
+[export]
+include = ["ParseError"]
+prefix = "{{ project_slug_underscore }}_"

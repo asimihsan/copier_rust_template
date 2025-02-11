@@ -5,6 +5,9 @@ members = [
     {%- if include_wasm %}
     "wasm",
     {%- endif %}
+    {%- if include_go %}
+    "go",
+    {%- endif %}
 ]
 
 {%- if include_python %}

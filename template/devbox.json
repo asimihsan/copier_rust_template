@@ -15,7 +15,8 @@
     "pre-commit@latest",
     "uv@latest",
     "wasm-bindgen-cli@latest",
-    "wasm-pack@latest"
+    "wasm-pack@latest",
+    "jq@latest"
   ],
   "env": {
     "COREPACK_ENABLE_DOWNLOAD_PROMPT": "0",
