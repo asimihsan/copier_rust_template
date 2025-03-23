@@ -1,11 +1,11 @@
 use std::time::{SystemTime, UNIX_EPOCH};
 use {{ project_slug_underscore }}_core::parse;
 
-// Initialize Talc as the global allocator for WebAssembly
+{# // Initialize Talc as the global allocator for WebAssembly
 #[cfg(target_arch = "wasm32")]
 /// SAFETY: The runtime environment must be single-threaded WASM.
 #[global_allocator]
-static ALLOCATOR: talc::TalckWasm = unsafe { talc::TalckWasm::new_global() };
+static ALLOCATOR: talc::TalckWasm = unsafe { talc::TalckWasm::new_global() }; #}
 
 /// Version of the WASM interface
 pub const VERSION: &str = "1.0.0";
@@ -153,6 +153,7 @@ pub extern "C" fn get_timestamp_ms() -> u64 {
     }
 }
 
+#[cfg(target_arch = "wasm32")]
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -196,6 +197,7 @@ mod tests {
         }
     }
 
+    #[cfg(target_arch = "wasm32")]
     #[test]
     fn test_parse_expression_success() {
         match safe_parse("1+2") {
@@ -204,6 +206,7 @@ mod tests {
         }
     }
 
+    #[cfg(target_arch = "wasm32")]
     #[test]
     fn test_parse_expression_syntax_error() {
         match safe_parse("1+*2") {
@@ -212,6 +215,7 @@ mod tests {
         }
     }
 
+    #[cfg(target_arch = "wasm32")]
     #[test]
     fn test_parse_expression_empty_input() {
         match safe_parse("") {
@@ -220,6 +224,7 @@ mod tests {
         }
     }
 
+    #[cfg(target_arch = "wasm32")]
     #[test]
     fn test_parse_expression_complex() {
         // Our parser only supports addition, so this will actually fail
@@ -229,6 +234,7 @@ mod tests {
         }
     }
 
+    #[cfg(target_arch = "wasm32")]
     #[test]
     fn test_concurrent_allocation() {
         use std::sync::{Arc, Barrier};

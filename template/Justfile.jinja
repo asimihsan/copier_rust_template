@@ -119,6 +119,7 @@ check: rust-check rust-fmt rust-clippy rust-audit copyright-check
     {%- endif %}
     {%- if include_go %}
     just go lint
+    just go-wasm lint
     {%- endif %}
 
 test: rust-test
@@ -130,6 +131,7 @@ test: rust-test
     {%- endif %}
     {%- if include_go %}
     just go test
+    just go-wasm test
     {%- endif %}
 
 cov:
