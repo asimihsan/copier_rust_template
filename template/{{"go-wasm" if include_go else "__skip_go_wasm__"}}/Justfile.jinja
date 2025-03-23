@@ -6,11 +6,15 @@ default:
 build-wasm-debug:
     cd .. && cargo build --package {{ project_slug }}-go-wasm --target wasm32-wasip1
     cp ../target/wasm32-wasip1/debug/{{ project_slug_underscore }}_go_wasm.wasm go/{{ project_slug_underscore }}_go_wasm.wasm || cp ../target/wasm32-wasip1/debug/{{ project_slug_underscore }}_go.wasm go/{{ project_slug_underscore }}_go_wasm.wasm
+    go mod tidy
 
 # Build the WASM module in release mode
 build-wasm-release:
     cd .. && cargo build --package {{ project_slug }}-go-wasm --target wasm32-wasip1 --release
     cp ../target/wasm32-wasip1/release/{{ project_slug_underscore }}_go_wasm.wasm go/{{ project_slug_underscore }}_go_wasm.wasm || cp ../target/wasm32-wasip1/release/{{ project_slug_underscore }}_go.wasm go/{{ project_slug_underscore }}_go_wasm.wasm
+    go mod tidy
+
+build: build-wasm-release
 
 # Set up the required Rust target and Go dependencies
 setup:
@@ -25,7 +29,13 @@ test-go: build-wasm-release
 test: test-go
     @echo "All tests passed!"
 
+# Run linter
+lint: build-wasm-release
+    #!/usr/bin/env bash
+    set -e
+
+    cd go && golangci-lint run ./...
+
 # Clean build artifacts
 clean:
-    cargo clean
-    rm -rf target/
+    cd go && go clean ./...

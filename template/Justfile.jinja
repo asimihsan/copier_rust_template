@@ -163,6 +163,7 @@ build: rust-build
     {%- endif %}
     {%- if include_go %}
     just go build
+    just go-wasm build
     {%- endif %}
 
 clean: rust-clean
@@ -174,9 +175,10 @@ clean: rust-clean
     {%- endif %}
     {%- if include_go %}
     just go clean
+    just go-wasm clean
     {%- endif %}
 
-{%- if include_wasm %}
+{% if include_wasm %}
 web-dev: build
     just web dev
 {%- endif %}

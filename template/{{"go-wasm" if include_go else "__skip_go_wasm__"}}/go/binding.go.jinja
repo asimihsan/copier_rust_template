@@ -150,7 +150,7 @@ func Parse(ctx context.Context, input string) (*Expression, error) {
 	inputPtr := allocResults[0]
 
 	// Make sure we deallocate the input memory when we're done
-	defer deallocate.Call(ctx, inputPtr, inputLen)
+	defer deallocate.Call(ctx, inputPtr, inputLen) //nolint:errcheck
 
 	// Copy the input into WASM memory
 	if !module.Memory().Write(uint32(inputPtr), inputBytes) {
@@ -172,7 +172,7 @@ func Parse(ctx context.Context, input string) (*Expression, error) {
 	resultPtr, resultLen := unpackPtrLen(packed)
 
 	// Make sure we deallocate the result memory when we're done
-	defer deallocate.Call(ctx, uint64(resultPtr), uint64(resultLen))
+	defer deallocate.Call(ctx, uint64(resultPtr), uint64(resultLen)) //nolint:errcheck
 
 	// Check if the result is an error
 	errorCheckResults, err := isParseError.Call(ctx, uint64(resultPtr), uint64(resultLen))
