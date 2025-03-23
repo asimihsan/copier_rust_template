@@ -149,6 +149,26 @@ Your generated project will include:
 - `.envrc`: Automatic environment activation
 - `.pre-commit-config.yaml`: Git hooks for quality checks
 
+## Testing
+
+```plain
+cd ~/workplace && \
+    rm -rf ~/workplace/generated_project && \
+    copier copy ~/workplace/copier_rust_template ~/workplace/ouchie \
+        --data include_wasm=true \
+        --data include_python=true \
+        --data include_go=true \
+        --data project_name="Ouchie" \
+        --data project_slug=ouchie \
+        --data project_slug_underscore=ouchie \
+        --data author_name="Local Test" \
+        --force && \
+    cd ~/workplace/ouchie && \
+    git init && \
+    devbox install && \
+    just setup copyright ci
+```
+
 ## Contributing
 
 If you find issues or have improvements to suggest, please open an issue or

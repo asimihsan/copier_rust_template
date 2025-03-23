@@ -26,12 +26,6 @@ setup:
     mise install
 
     if [[ "$OSTYPE" == "darwin"* ]]; then
-        env CC=/usr/bin/clang RUSTFLAGS="-C linker=/usr/bin/clang" cargo install cargo-binstall
-    else
-        cargo binstall cargo-binstall
-    fi
-
-    if [[ "$OSTYPE" == "darwin"* ]]; then
         just mac-setup
     fi
 
@@ -46,6 +40,7 @@ setup:
     rustup component add rustfmt
     rustup component add clippy
     cargo binstall cargo-nextest --secure --no-confirm
+    cargo binstall cargo-deny --secure --no-confirm
     pre-commit install
     pre-commit install-hooks
 
@@ -97,10 +92,10 @@ rust-clean:
     cargo clean
 
 copyright:
-    fd -e rs -e ts -e js -e jsx -e tsx -e go -e py | xargs addlicense -f copyright.tmpl -c "{{ author_name }}" -v -s
+    mise x -- bash -c 'fd -e rs -e ts -e js -e jsx -e tsx -e go -e py | xargs addlicense -f copyright.tmpl -c "{{ author_name }}" -v -s'
 
 copyright-check:
-    fd -e rs -e ts -e js -e jsx -e tsx -e go -e py | xargs addlicense -f copyright.tmpl -c "{{ author_name }}" -v -s -check
+    mise x -- bash -c 'fd -e rs -e ts -e js -e jsx -e tsx -e go -e py | xargs addlicense -f copyright.tmpl -c "{{ author_name }}" -v -s -check'
 
 # Combined tasks
 check: rust-check rust-fmt rust-clippy rust-audit copyright-check

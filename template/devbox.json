@@ -1,22 +1,13 @@
 {
   "$schema": "https://raw.githubusercontent.com/jetify-com/devbox/0.13.7/.schema/devbox.schema.json",
   "packages": [
-    "addlicense@latest",
     "bash@latest",
     "cargo-audit@latest",
-    "cargo-binstall@latest",
     "cargo-deny@latest",
     "cargo-watch@latest",
-    "direnv@latest",
-    "fd@latest",
-    "golangci-lint@latest",
-    "jq@latest",
-    "just@latest",
     "mise@latest",
     "pnpm@latest",
-    "pre-commit@latest",
     "rust-cbindgen@latest",
-    "uv@latest",
     "wasm-bindgen-cli@latest",
     "wasm-pack@latest"
   ],
