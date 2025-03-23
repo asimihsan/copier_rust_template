@@ -89,6 +89,12 @@ jobs:
         run: |
           echo "GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}" >> $GITHUB_ENV
 
+      - name: Setup mise
+        uses: jdx/mise-action@v2
+        with:
+          install: true
+          cache: true
+
       - name: Setup Devbox
         uses: jetify-com/devbox-install-action@v0.11.0
         with:
