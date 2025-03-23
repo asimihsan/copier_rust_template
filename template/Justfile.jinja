@@ -11,6 +11,7 @@ mod python
 
 {%- if include_go %}
 mod go
+mod go-wasm
 {%- endif %}
 
 # Default action is to list all available tasks
@@ -35,6 +36,7 @@ setup:
     {%- endif %}
 
     rustup toolchain install nightly
+    rustup target add wasm32-wasip1
     cargo binstall cargo-llvm-cov --secure --no-confirm
     rustup component add llvm-tools-preview
     rustup component add rustfmt

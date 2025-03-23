@@ -42,3 +42,4 @@ _exclude:
   - "__skip_web__"
   - "__skip_python__"
   - "__skip_go__"
+  - "__skip_go_wasm__"

@@ -1,0 +1,300 @@
+// Package binding provides Go bindings for the {{ project_slug_underscore }} WASM module.
+package binding
+
+import (
+	"context"
+	"crypto/rand"
+	_ "embed"
+	"errors"
+	"fmt"
+	"sync"
+	"time"
+
+	"github.com/tetratelabs/wazero"
+	"github.com/tetratelabs/wazero/api"
+	"github.com/tetratelabs/wazero/imports/wasi_snapshot_preview1"
+)
+
+// Version of the binding package
+const Version = "1.0.0"
+
+var (
+	// Global runtime and module instances
+	runtimeOnce sync.Once
+	runtime     wazero.Runtime
+	module      api.Module
+	moduleMutex sync.RWMutex
+
+	//go:embed {{ project_slug_underscore }}_go_wasm.wasm
+	wasmBytes []byte
+)
+
+// Expression represents a parsed arithmetic expression
+type Expression struct {
+	// Result contains the computed value
+	Result string
+	// Raw contains the original expression
+	Raw string
+}
+
+// String returns a string representation of the expression
+func (e *Expression) String() string {
+	return fmt.Sprintf("%s = %s", e.Raw, e.Result)
+}
+
+// ParseError represents an error that occurred during parsing
+type ParseError struct {
+	msg string
+}
+
+func (e *ParseError) Error() string {
+	return e.msg
+}
+
+// Initialize the WASM runtime and load the module
+func initRuntime(ctx context.Context) error {
+	var initErr error
+	runtimeOnce.Do(func() {
+		// Create a new WebAssembly Runtime
+		runtime = wazero.NewRuntime(ctx)
+
+		// Instantiate WASI
+		wasi_snapshot_preview1.MustInstantiate(ctx, runtime)
+
+		// WASM module is embedded using go:embed directive
+
+		// Instantiate the module with WASI enabled
+		moduleConfig := wazero.NewModuleConfig().
+			WithName("{{ project_slug_underscore }}_go_wasm").
+			WithArgs("{{ project_slug_underscore }}_go_wasm").  // Program name for WASI
+			WithSysWalltime().           // Enable access to wall time
+			WithSysNanotime().           // Enable access to monotonic time
+			WithRandSource(rand.Reader)  // Use crypto/rand as random source
+
+		compiledModule, err := runtime.CompileModule(ctx, wasmBytes)
+		if err != nil {
+			initErr = fmt.Errorf("failed to compile WASM module: %w", err)
+			return
+		}
+
+		module, err = runtime.InstantiateModule(ctx, compiledModule, moduleConfig)
+		if err != nil {
+			initErr = fmt.Errorf("failed to instantiate WASM module: %w", err)
+			return
+		}
+	})
+
+	return initErr
+}
+
+// Parse parses an arithmetic expression with context support.
+// It returns an Expression containing both the original input and the computed result.
+// The context can be used to cancel long-running operations.
+func Parse(ctx context.Context, input string) (*Expression, error) {
+	// Check context before proceeding
+	select {
+	case <-ctx.Done():
+		return nil, ctx.Err()
+	default:
+	}
+
+	// Initialize the runtime if not already initialized
+	if err := initRuntime(ctx); err != nil {
+		return nil, err
+	}
+
+	// Acquire read lock on module
+	moduleMutex.RLock()
+	defer moduleMutex.RUnlock()
+
+	// Allocate memory for the input
+	allocate := module.ExportedFunction("allocate")
+	if allocate == nil {
+		return nil, errors.New("allocate function not exported from WASM module")
+	}
+
+	inputBytes := []byte(input)
+	inputLen := uint64(len(inputBytes))
+	
+	allocResults, err := allocate.Call(ctx, inputLen)
+	if err != nil {
+		return nil, fmt.Errorf("failed to allocate memory: %w", err)
+	}
+	inputPtr := allocResults[0]
+
+	// Copy the input into WASM memory
+	if !module.Memory().Write(uint32(inputPtr), inputBytes) {
+		// Free allocated memory before returning
+		deallocate := module.ExportedFunction("deallocate")
+		_, _ = deallocate.Call(ctx, inputPtr, inputLen)
+		return nil, errors.New("failed to write to WASM memory")
+	}
+
+	// Call the parse_expression function
+	parseExpression := module.ExportedFunction("parse_expression")
+	if parseExpression == nil {
+		// Free allocated memory before returning
+		deallocate := module.ExportedFunction("deallocate")
+		_, _ = deallocate.Call(ctx, inputPtr, inputLen)
+		return nil, errors.New("parse_expression function not exported from WASM module")
+	}
+
+	results, err := parseExpression.Call(ctx, inputPtr, inputLen)
+	
+	// Free the input memory
+	deallocate := module.ExportedFunction("deallocate")
+	_, _ = deallocate.Call(ctx, inputPtr, inputLen)
+	
+	if err != nil {
+		return nil, fmt.Errorf("failed to call parse_expression: %w", err)
+	}
+
+	status := results[0]
+	if status != 0 {
+		// Get the error message
+		resultPtr := module.ExportedFunction("get_result_ptr")
+		resultLen := module.ExportedFunction("get_result_len")
+		
+		ptrResults, _ := resultPtr.Call(ctx)
+		lenResults, _ := resultLen.Call(ctx)
+		
+		ptr := uint32(ptrResults[0])
+		length := uint32(lenResults[0])
+		
+		// Read the error message from memory
+		errorBytesRead, ok := module.Memory().Read(ptr, length)
+		if !ok {
+			return nil, errors.New("failed to read error message from WASM memory")
+		}
+
+		// Deallocate the result
+		deallocateResult := module.ExportedFunction("deallocate_result")
+		_, _ = deallocateResult.Call(ctx)
+		
+		return nil, &ParseError{msg: string(errorBytesRead)}
+	}
+
+	// Get the result
+	resultPtr := module.ExportedFunction("get_result_ptr")
+	resultLen := module.ExportedFunction("get_result_len")
+	
+	ptrResults, err := resultPtr.Call(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get result pointer: %w", err)
+	}
+	
+	lenResults, err := resultLen.Call(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get result length: %w", err)
+	}
+	
+	ptr := uint32(ptrResults[0])
+	length := uint32(lenResults[0])
+	
+	// Read the result from memory
+	resultBytesRead, ok := module.Memory().Read(ptr, length)
+	if !ok {
+		return nil, errors.New("failed to read result from WASM memory")
+	}
+
+	// Deallocate the result
+	deallocateResult := module.ExportedFunction("deallocate_result")
+	_, _ = deallocateResult.Call(ctx)
+	
+	// Return successful result
+	return &Expression{
+		Result: string(resultBytesRead),
+		Raw:    input,
+	}, nil
+}
+
+// MustParse is like Parse but panics on error.
+// It's useful for expressions that are known to be valid.
+func MustParse(input string) *Expression {
+	expr, err := Parse(context.Background(), input)
+	if err != nil {
+		panic(err)
+	}
+	return expr
+}
+
+// ParseConcurrent parses multiple expressions concurrently.
+// It returns a slice of results in the same order as the inputs.
+// If any parse fails, it returns an error and any successfully parsed expressions.
+func ParseConcurrent(ctx context.Context, inputs []string) ([]*Expression, error) {
+	var (
+		wg      sync.WaitGroup
+		mu      sync.Mutex
+		results = make([]*Expression, len(inputs))
+		errs    = make([]error, len(inputs))
+	)
+
+	// Process each input concurrently
+	for i, input := range inputs {
+		wg.Add(1)
+		go func(idx int, expr string) {
+			defer wg.Done()
+			result, err := Parse(ctx, expr)
+			mu.Lock()
+			results[idx] = result
+			errs[idx] = err
+			mu.Unlock()
+		}(i, input)
+	}
+
+	// Wait for all goroutines to complete
+	wg.Wait()
+
+	// Check for errors
+	var errMsgs []string
+	for i, err := range errs {
+		if err != nil {
+			errMsgs = append(errMsgs, fmt.Sprintf("input %d: %v", i, err))
+		}
+	}
+
+	if len(errMsgs) > 0 {
+		return results, &ParseError{msg: fmt.Sprintf("multiple parse errors: %v", errMsgs)}
+	}
+
+	return results, nil
+}
+
+// GetWasmTimestamp returns the current timestamp as reported by the WASM module.
+// This demonstrates calling a WASI-enabled function from the WASM module.
+func GetWasmTimestamp(ctx context.Context) (time.Time, error) {
+	// Initialize the runtime if not already initialized
+	if err := initRuntime(ctx); err != nil {
+		return time.Time{}, err
+	}
+
+	// Acquire read lock on module
+	moduleMutex.RLock()
+	defer moduleMutex.RUnlock()
+
+	// Call the get_timestamp_ms function
+	getTimestamp := module.ExportedFunction("get_timestamp_ms")
+	if getTimestamp == nil {
+		return time.Time{}, errors.New("get_timestamp_ms function not exported from WASM module")
+	}
+
+	results, err := getTimestamp.Call(ctx)
+	if err != nil {
+		return time.Time{}, fmt.Errorf("failed to call get_timestamp_ms: %w", err)
+	}
+
+	timestampMs := results[0]
+	return time.Unix(0, int64(timestampMs)*int64(time.Millisecond)), nil
+}
+
+// Close cleans up the WASM runtime and module.
+// It should be called when the application is shutting down.
+func Close(ctx context.Context) error {
+	moduleMutex.Lock()
+	defer moduleMutex.Unlock()
+
+	if runtime != nil {
+		return runtime.Close(ctx)
+	}
+	return nil
+}
