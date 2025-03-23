@@ -22,10 +22,7 @@
   "shell": {
     "init_hook": [
       "mise trust",
-      "mise install",
-      "if [ -x $(command -v brew) ]; then",
-      "  export PATH=$(brew --prefix llvm)/bin:$PATH",
-      "fi"
+      "mise install"
     ]
   }
 }
