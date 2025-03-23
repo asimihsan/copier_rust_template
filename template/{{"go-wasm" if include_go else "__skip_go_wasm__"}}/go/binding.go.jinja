@@ -155,8 +155,15 @@ func Parse(ctx context.Context, input string) (*Expression, error) {
 		resultPtr := module.ExportedFunction("get_result_ptr")
 		resultLen := module.ExportedFunction("get_result_len")
 		
-		ptrResults, _ := resultPtr.Call(ctx)
-		lenResults, _ := resultLen.Call(ctx)
+		ptrResults, err := resultPtr.Call(ctx)
+		if err != nil {
+			return nil, fmt.Errorf("failed to get error pointer: %w", err)
+		}
+		
+		lenResults, err := resultLen.Call(ctx)
+		if err != nil {
+			return nil, fmt.Errorf("failed to get error length: %w", err)
+		}
 		
 		ptr := uint32(ptrResults[0])
 		length := uint32(lenResults[0])

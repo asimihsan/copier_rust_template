@@ -166,7 +166,9 @@ cd ~/workplace && \
     cd ~/workplace/ouchie && \
     git init && \
     devbox install && \
-    just setup copyright ci
+    just setup copyright ci ; \
+    cd go-wasm && \
+    just setup test-go
 ```
 
 ## Contributing
