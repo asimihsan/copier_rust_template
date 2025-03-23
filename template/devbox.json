@@ -8,6 +8,7 @@
     "mise@latest",
     "pnpm@latest",
     "rust-cbindgen@latest",
+    "wabt@latest",
     "wasm-bindgen-cli@latest",
     "wasm-pack@latest"
   ],
