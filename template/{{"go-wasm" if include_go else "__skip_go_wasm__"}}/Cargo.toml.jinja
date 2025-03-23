@@ -10,5 +10,7 @@ path = "src/lib.rs"
 
 [dependencies]
 {{ project_slug }}-core = { path = "../core" }
+allocator-api2 = "0.2.18"
 anyhow = "1.0"
 chrono = { version = "0.4", default-features = false, features = ["std", "clock"] }
+talc = { version = "4.4.2", default-features = false, features = ["lock_api", "allocator-api2"] }

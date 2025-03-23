@@ -1,3 +1,10 @@
+// Copyright 2025 Local Test
+//
+// This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
+// If a copy of the MPL was not distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/.
+//
+// SPDX-License-Identifier: MPL-2.0
+
 use chumsky::prelude::*;
 use thiserror::Error;
 
@@ -9,31 +16,34 @@ pub enum ParseError {
 }
 
 /// A simple arithmetic expression parser that accepts expressions like "1+2+3"
-/// and computes their sum. (You can of course implement a more sophisticated grammar.)
+/// and computes their sum.
 pub fn parse(input: &str) -> Result<String, ParseError> {
     // The parser for an integer.
     let number = text::int::<char, Simple<char>>(10)
         .map(|s: String| s.parse::<i64>().unwrap())
-        .padded();
+        .padded()
+        .labelled("number");
 
-    // The expression parser: a number, optionally followed by one or more (“+ number”)
+    // The expression parser: a number, optionally followed by one or more ("+ number")
+    // The key change is to use a different approach for the repetition
     let expr = number
-        .then(just('+').ignore_then(number).repeated())
+        .then(
+            // Each operation requires an operator AND an operand
+            just('+').ignore_then(number).repeated(),
+        )
         .map(|(first, rest)| {
             // Fold the sequence of numbers with addition.
             rest.into_iter().fold(first, |acc, n| acc + n)
         })
         .map(|result| result.to_string())
+        // Make sure we can parse the entire input
+        .then_ignore(end())
         .padded();
 
     // Parse the input string.
     expr.parse(input).map_err(|errs| {
         // In production you might render these errors with ariadne, but here we simply join them.
-        let msg = errs
-            .into_iter()
-            .map(|e| e.to_string())
-            .collect::<Vec<_>>()
-            .join("\n");
+        let msg = errs.into_iter().map(|e| e.to_string()).collect::<Vec<_>>().join("\n");
         ParseError::Generic(msg)
     })
 }
@@ -47,5 +57,20 @@ mod tests {
         assert_eq!(parse("1+2+3").unwrap(), "6");
         assert_eq!(parse("10+20+30").unwrap(), "60");
         assert_eq!(parse("100+200+300").unwrap(), "600");
+    }
+
+    #[test]
+    fn test_parse_invalid() {
+        let res = parse("1+");
+        if let Err(e) = res {
+            assert_eq!(
+                e.to_string(),
+                "Parse error: found end of input but expected a number"
+            );
+        } else {
+            println!("Expected an error, but got a result");
+            println!("Result: {:?}", res);
+            panic!("Expected an error, but got a result");
+        }
     }
 }
