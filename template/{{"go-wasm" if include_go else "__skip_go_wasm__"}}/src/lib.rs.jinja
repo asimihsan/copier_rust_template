@@ -1,11 +1,11 @@
 use std::time::{SystemTime, UNIX_EPOCH};
 use {{ project_slug_underscore }}_core::parse;
 
-{# // Initialize Talc as the global allocator for WebAssembly
+// Initialize Talc as the global allocator for WebAssembly
 #[cfg(target_arch = "wasm32")]
 /// SAFETY: The runtime environment must be single-threaded WASM.
 #[global_allocator]
-static ALLOCATOR: talc::TalckWasm = unsafe { talc::TalckWasm::new_global() }; #}
+static ALLOCATOR: talc::TalckWasm = unsafe { talc::TalckWasm::new_global() };
 
 /// Version of the WASM interface
 pub const VERSION: &str = "1.0.0";
