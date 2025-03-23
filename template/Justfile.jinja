@@ -50,6 +50,16 @@ mac-setup:
     #!/usr/bin/env bash
     set -e
 
+    if [[ "$OSTYPE" != "darwin"* ]]; then
+        echo "This script is only for macOS."
+        exit 1
+    fi
+
+    if ! command -v brew &> /dev/null; then
+        echo "brew command not found, please install Homebrew first."
+        exit 1
+    fi
+
     brew install libiconv llvm
     cargo binstall cargo-llvm-cov --secure --no-confirm
     rustup component add llvm-tools-preview

@@ -153,7 +153,7 @@ Your generated project will include:
 
 ```plain
 cd ~/workplace && \
-    rm -rf ~/workplace/generated_project && \
+    rm -rf ~/workplace/ouchie && \
     copier copy ~/workplace/copier_rust_template ~/workplace/ouchie \
         --data include_wasm=true \
         --data include_python=true \
@@ -168,7 +168,8 @@ cd ~/workplace && \
     devbox install && \
     just setup copyright ci ; \
     cd go-wasm && \
-    just setup test-go
+    just setup test test-go && \
+    cd ..
 ```
 
 ## Contributing
