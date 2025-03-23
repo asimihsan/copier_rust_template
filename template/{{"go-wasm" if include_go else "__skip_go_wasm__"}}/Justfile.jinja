@@ -10,7 +10,7 @@ build-wasm-debug:
 # Build the WASM module in release mode
 build-wasm-release:
     cd .. && cargo build --package {{ project_slug }}-go-wasm --target wasm32-wasip1 --release
-    cp ../target/wasm32-wasip1/release/{{ project_slug_underscore }}_go_wasm.wasm go/o{{ project_slug_underscore }}_go_wasm.wasm || cp ../target/wasm32-wasip1/release/{{ project_slug_underscore }}_go.wasm go/{{ project_slug_underscore }}_go_wasm.wasm
+    cp ../target/wasm32-wasip1/release/{{ project_slug_underscore }}_go_wasm.wasm go/{{ project_slug_underscore }}_go_wasm.wasm || cp ../target/wasm32-wasip1/release/{{ project_slug_underscore }}_go.wasm go/{{ project_slug_underscore }}_go_wasm.wasm
 
 # Set up the required Rust target and Go dependencies
 setup:
