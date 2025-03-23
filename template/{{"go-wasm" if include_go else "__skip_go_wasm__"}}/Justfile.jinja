@@ -19,7 +19,7 @@ setup:
 
 # Run tests for the Go bindings
 test-go: build-wasm-release
-    cd go && go test -v ./...
+    cd go && go test -race -v ./...
 
 # Run all tests
 test: test-go

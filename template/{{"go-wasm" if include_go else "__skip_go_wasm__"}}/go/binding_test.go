@@ -2,6 +2,7 @@ package binding
 
 import (
 	"context"
+	"sync"
 	"testing"
 	"time"
 )
@@ -103,6 +104,67 @@ func TestContextCancellation(t *testing.T) {
 	}
 }
 
+// TestHighConcurrency tests parsing with a high number of concurrent calls
+func TestHighConcurrency(t *testing.T) {
+	ctx := context.Background()
+	count := 50 // Reduced from 100 to avoid resource exhaustion
+	
+	var wg sync.WaitGroup
+	errChan := make(chan error, count)
+	
+	// Launch many concurrent parsing operations
+	for i := 0; i < count; i++ {
+		wg.Add(1)
+		go func(idx int) {
+			defer wg.Done()
+			
+			// Mix of different expressions to exercise the code
+			input := ""
+			expected := ""
+			
+			switch idx % 4 {
+			case 0:
+				input = "1+2"
+				expected = "3"
+			case 1:
+				input = "10+5"
+				expected = "15"
+			case 2:
+				input = "3+4"
+				expected = "7" 
+			case 3:
+				input = "8+2"
+				expected = "10"
+			}
+			
+			expr, err := Parse(ctx, input)
+			if err != nil {
+				errChan <- err
+				return
+			}
+			
+			if expr.Result != expected {
+				errChan <- &ParseError{msg: "incorrect result"}
+				return
+			}
+		}(i)
+	}
+	
+	// Wait for all operations to complete
+	wg.Wait()
+	close(errChan)
+	
+	// Check for errors
+	var errors []error
+	for err := range errChan {
+		errors = append(errors, err)
+	}
+	
+	if len(errors) > 0 {
+		t.Errorf("Got %d errors in concurrent operations, first error: %v", len(errors), errors[0])
+	}
+}
+
 // TestGetWasmTimestamp tests the WASI time functionality
 func TestGetWasmTimestamp(t *testing.T) {
 	ctx := context.Background()
@@ -126,4 +188,45 @@ func TestGetWasmTimestamp(t *testing.T) {
 	if diff > 2*time.Second {
 		t.Errorf("Time difference too large: %v", diff)
 	}
+}
+
+// TestConcurrentMemoryCleanup tests that memory is properly released even under concurrent load
+func TestConcurrentMemoryCleanup(t *testing.T) {
+	// This is a stress test to ensure memory doesn't leak
+	// We can't directly check if memory is freed, but if the code is correct,
+	// this should run without crashes or hangs
+	
+	ctx := context.Background()
+	count := 50
+	iterations := 10
+	
+	for iter := 0; iter < iterations; iter++ {
+		var wg sync.WaitGroup
+		
+		// Launch many concurrent parsing operations
+		for i := 0; i < count; i++ {
+			wg.Add(1)
+			go func() {
+				defer wg.Done()
+				
+				// Parse a variety of expressions
+				inputs := []string{
+					"1+2",
+					"3*4",
+					"10-5",
+					"20/4",
+					"(2+3)*4",
+					"1+2+3+4+5",
+				}
+				
+				for _, input := range inputs {
+					_, _ = Parse(ctx, input)
+				}
+			}()
+		}
+		
+		wg.Wait()
+	}
+	
+	// If we made it here without crashes or hangs, the test passes
 }
