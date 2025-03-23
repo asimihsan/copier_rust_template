@@ -85,6 +85,10 @@ jobs:
           mkdir -p ~/.local/state/mise
           sudo chown -R $USER:$USER ~/.local/state/mise
 
+      - name: Set GITHUB_TOKEN for mise
+        run: |
+          echo "GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}" >> $GITHUB_ENV
+
       - name: Setup Devbox
         uses: jetify-com/devbox-install-action@v0.11.0
         with:
