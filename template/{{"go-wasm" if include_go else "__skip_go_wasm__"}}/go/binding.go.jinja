@@ -103,9 +103,8 @@ func Parse(ctx context.Context, input string) (*Expression, error) {
 		return nil, err
 	}
 
-	// Acquire read lock on module
-	moduleMutex.RLock()
-	defer moduleMutex.RUnlock()
+	moduleMutex.Lock()
+	defer moduleMutex.Unlock()
 
 	// Allocate memory for the input
 	allocate := module.ExportedFunction("allocate")
@@ -204,13 +203,16 @@ func Parse(ctx context.Context, input string) (*Expression, error) {
 		return nil, errors.New("failed to read result from WASM memory")
 	}
 
+	resultCopy := make([]byte, len(resultBytesRead))
+	copy(resultCopy, resultBytesRead)
+
 	// Deallocate the result
 	deallocateResult := module.ExportedFunction("deallocate_result")
 	_, _ = deallocateResult.Call(ctx)
 	
 	// Return successful result
 	return &Expression{
-		Result: string(resultBytesRead),
+		Result: string(resultCopy),
 		Raw:    input,
 	}, nil
 }
@@ -236,11 +238,16 @@ func ParseConcurrent(ctx context.Context, inputs []string) ([]*Expression, error
 		errs    = make([]error, len(inputs))
 	)
 
-	// Process each input concurrently
+	sem := make(chan struct{}, 1)
+	
 	for i, input := range inputs {
 		wg.Add(1)
 		go func(idx int, expr string) {
 			defer wg.Done()
+
+			sem <- struct{}{}
+			defer func() { <-sem }()
+
 			result, err := Parse(ctx, expr)
 			mu.Lock()
 			results[idx] = result
@@ -251,6 +258,7 @@ func ParseConcurrent(ctx context.Context, inputs []string) ([]*Expression, error
 
 	// Wait for all goroutines to complete
 	wg.Wait()
+	close(sem)
 
 	// Check for errors
 	var errMsgs []string
@@ -275,9 +283,8 @@ func GetWasmTimestamp(ctx context.Context) (time.Time, error) {
 		return time.Time{}, err
 	}
 
-	// Acquire read lock on module
-	moduleMutex.RLock()
-	defer moduleMutex.RUnlock()
+	moduleMutex.Lock()
+	defer moduleMutex.Unlock()
 
 	// Call the get_timestamp_ms function
 	getTimestamp := module.ExportedFunction("get_timestamp_ms")
