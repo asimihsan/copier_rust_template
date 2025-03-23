@@ -12,8 +12,9 @@ _setup-env:
 
     if [[ "$OSTYPE" == "darwin"* ]]; then
         # macOS-specific flags
-        echo "export CGO_CFLAGS=\"-I$(xcrun --show-sdk-path)/usr/include\""
-        echo "export CGO_LDFLAGS=\"$CGO_LDFLAGS -F$(xcrun --show-sdk-path)/System/Library/Frameworks\""
+        SDK_PATH=$(xcrun --show-sdk-path)
+        echo "export CGO_CFLAGS=\"-I${SDK_PATH}/usr/include\""
+        echo "export CGO_LDFLAGS=\"$CGO_LDFLAGS -F${SDK_PATH}/System/Library/Frameworks -L${SDK_PATH}/usr/lib\""
         echo "export CGO_CPPFLAGS=\"-Wno-error -Wno-nullability-completeness -Wno-expansion-to-defined\""
         echo "export CC=\"$(xcrun -f clang)\""
     elif [[ "$OSTYPE" == "linux"* ]]; then
