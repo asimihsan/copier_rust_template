@@ -1,0 +1,31 @@
+# CLAUDE.md - Guidelines for {{ project_name }} 
+
+## Commands
+- Build: `just build` (all), `cargo build` (Rust only)
+- Lint: `just check` (all), `cargo clippy` (Rust only), `just web lint` (TS/JS)
+- Format: `cargo fmt` (Rust), `pnpm run format` (TS/JS), `ruff format` (Python)
+- Test: `just test` (all), `cargo nextest run` (all Rust), `cargo test specific_test` (single test)
+- Single module tests: `just web test`, `just python test`, `just go test`, `just go-wasm test`
+- Coverage: `just cov` or `just cov-local` (more detailed)
+- Watch: `just watch` or `cargo watch -x check -x test` (Rust)
+- Dev server: `just web-dev` or `just web dev`
+
+## Code Style Guidelines
+- **Rust**:
+  - Line length: 100 chars max
+  - Indentation: 4 spaces
+  - Imports: Reordered automatically with rustfmt
+  - Prefer `Result` types for error handling
+
+- **TypeScript**:
+  - Use ESLint and Prettier configs
+  - Prefer explicit types over `any`
+  - Use async/await for async operations
+
+- **Python**:
+  - Use Ruff for linting and formatting
+  - Use Pyright for type checking
+
+- **General**:
+  - Add copyright headers (checked with `just copyright-check`)
+  - Write tests for all new functionality
