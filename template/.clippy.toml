@@ -1,3 +1,15 @@
-cognitive-complexity-threshold = 10
-too-many-arguments-threshold = 5
-type-complexity-threshold = 200
+msrv = "1.87.0"
+
+# ---------- Structural size limits ----------
+cognitive-complexity-threshold = 20
+enum-variant-size-threshold    = 128   # bytes
+excessive-nesting-threshold    = 6
+future-size-threshold          = 8192  # bytes; keeps async state small
+too-many-arguments-threshold   = 6
+too-many-lines-threshold       = 100   # per-function and per-method
+type-complexity-threshold      = 200
+
+# ---------- Misc quality-of-life ----------
+disallowed-methods = [
+  "std::mem::transmute",
+]

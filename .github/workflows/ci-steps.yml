@@ -102,6 +102,7 @@ jobs:
             --data project_slug=test-project \
             --data project_slug_underscore=test_project \
             --data author_name="CI Bot" \
+            --data github_username="ci-bot" \
             --data include_wasm=${{ inputs.wasm }} \
             --data include_python=${{ inputs.python }} \
             --data include_go=${{ inputs.go }} \

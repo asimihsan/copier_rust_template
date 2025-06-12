@@ -10,6 +10,26 @@ backend = "cargo:cargo-audit"
 version = "0.18.2"
 backend = "cargo:cargo-deny"
 
+[tools."cargo:cargo-hack"]
+version = "0.6.36"
+backend = "cargo:cargo-hack"
+
+[tools."cargo:cargo-llvm-cov"]
+version = "0.6.16"
+backend = "cargo:cargo-llvm-cov"
+
+[tools."cargo:cargo-msrv"]
+version = "0.18.4"
+backend = "cargo:cargo-msrv"
+
+[tools."cargo:cargo-nextest"]
+version = "0.9.98"
+backend = "cargo:cargo-nextest"
+
+[tools."cargo:cargo-outdated"]
+version = "0.17.0"
+backend = "cargo:cargo-outdated"
+
 [tools."cargo:cargo-watch"]
 version = "8.5.3"
 backend = "cargo:cargo-watch"
@@ -21,6 +41,10 @@ backend = "cargo:cbindgen"
 [tools."cargo:wasm-bindgen-cli"]
 version = "0.2.100"
 backend = "cargo:wasm-bindgen-cli"
+
+[tools."cargo:wasm-pack"]
+version = "0.13.1"
+backend = "cargo:wasm-pack"
 
 [tools.fd]
 version = "10.2.0"
@@ -66,13 +90,13 @@ backend = "core:python"
 version = "1.87.0"
 backend = "core:rust"
 
+[tools.sccache]
+version = "0.10.0"
+backend = "ubi:mozilla/sccache"
+
 [tools."ubi:https://github.com/WebAssembly/wabt/releases/tag/1.0.37"]
 version = "latest"
 backend = "ubi:https://github.com/WebAssembly/wabt/releases/tag/1.0.37"
-
-[tools."ubi:https://github.com/rustwasm/wasm-pack"]
-version = "latest"
-backend = "ubi:https://github.com/rustwasm/wasm-pack"
 
 [tools.uv]
 version = "0.7.9"

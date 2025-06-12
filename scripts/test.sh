@@ -18,6 +18,7 @@ copier copy ~/workplace/copier_rust_template ~/workplace/foobaz \
     --data project_slug=foobaz \
     --data project_slug_underscore=foobaz \
     --data author_name="Local Test" \
+    --data github_username="local-test" \
     --force
 
 cd ~/workplace/foobaz

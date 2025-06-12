@@ -22,14 +22,14 @@ repos:
     hooks:
       - id: rust-fmt
         name: Rust formatter
-        entry: just rust-fmt
+        entry: just format
         types: [rust]
         language: system
         pass_filenames: false
 
-      - id: rust-check
-        name: Rust checker
-        entry: just rust-check
+      - id: rust-check-format
+        name: Rust format check
+        entry: just check-format
         types: [rust]
         language: system
         pass_filenames: false
@@ -37,7 +37,7 @@ repos:
 
       - id: rust-clippy
         name: Rust clippy
-        entry: just rust-clippy
+        entry: just check-clippy
         types: [rust]
         language: system
         pass_filenames: false

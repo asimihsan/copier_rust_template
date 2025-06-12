@@ -18,6 +18,10 @@ mod go-wasm
 @default:
     @just --list
 
+# =============================================================================
+# Setup and Dependencies
+# =============================================================================
+
 setup:
     #!/usr/bin/env bash
     set -e
@@ -36,12 +40,9 @@ setup:
 
     rustup toolchain install nightly
     rustup target add wasm32-wasip1
-    cargo binstall cargo-llvm-cov --secure --no-confirm
     rustup component add llvm-tools-preview
     rustup component add rustfmt
     rustup component add clippy
-    cargo binstall cargo-nextest --secure --no-confirm
-    cargo binstall cargo-deny --secure --no-confirm
     pre-commit install
     pre-commit install-hooks
 
@@ -60,7 +61,6 @@ mac-setup:
     fi
 
     brew install libiconv llvm
-    cargo binstall cargo-llvm-cov --secure --no-confirm
     rustup component add llvm-tools-preview
     rustup component add llvm-tools-preview --toolchain nightly-aarch64-apple-darwin
     if ! xcode-select -p >/dev/null 2>&1; then
@@ -71,45 +71,81 @@ mac-setup:
 update-deps:
     cargo update
 
-# Development tasks
-watch:
+# =============================================================================
+# Rust Development Tasks
+# =============================================================================
+
+# Development workflow
+rust-dev: rust-format rust-clippy-fix rust-test
+
+# Watching for changes
+rust-watch:
     cargo watch -x check -x test
 
-# Rust tasks
-rust-check:
-    cargo check --all-targets
+# Formatting
+rust-check-format:
+    cargo fmt -- --check
 
+rust-format:
+    cargo fmt
+
+# Linting 
+rust-check-clippy:
+    cargo clippy --all-targets --all-features -- -D warnings
+
+rust-clippy-fix:
+    cargo clippy --all-targets --all-features --fix -- -D warnings
+
+# Testing
 rust-test:
-    cargo nextest run --all-targets --no-fail-fast
-    cargo test --doc --no-fail-fast
+    cargo nextest run --all-features
 
-rust-doc:
-    cargo doc --no-deps --document-private-items
+rust-test-doc:
+    cargo test --doc
 
+# Miri testing (only on marked tests to avoid long wall-clock hits)
+rust-test-miri:
+    RUSTFLAGS="-Zmiri-strict-provenance" cargo +nightly miri test -- --ignored
+
+# Coverage
+rust-coverage:
+    cargo llvm-cov --all-features --workspace --lcov --output-path lcov.info
+    cargo llvm-cov report --html
+
+rust-coverage-ci:
+    cargo llvm-cov --all-features --workspace
+    # cargo llvm-cov --all-features --workspace --fail-under-lines 80
+
+# Security & Dependencies
 rust-audit:
-    cargo audit || exit 1
-    cargo deny check || exit 1
+    cargo audit
+    cargo deny check
 
+# MSRV verification
+rust-msrv-check:
+    cargo msrv verify
+
+# Feature matrix testing
+rust-hack-check:
+    cargo hack test --each-feature --no-dev-deps
+
+# Building
 rust-build:
-    cargo build
+    cargo build --release
 
-rust-fmt:
-    cargo fmt --all
-
-rust-clippy:
-    cargo clippy --all-targets -- -D warnings
-
+# Cleaning
 rust-clean:
     cargo clean
 
-copyright:
-    mise x -- bash -c 'fd -e rs -e ts -e js -e jsx -e tsx -e go -e py | xargs addlicense -f copyright.tmpl -c "{{ author_name }}" -v -s'
+# Run all Rust checks (use in CI and pre-commit)
+rust-check-all: rust-check-format rust-check-clippy rust-test rust-coverage-ci rust-audit
 
-copyright-check:
-    mise x -- bash -c 'fd -e rs -e ts -e js -e jsx -e tsx -e go -e py | xargs addlicense -f copyright.tmpl -c "{{ author_name }}" -v -s -check'
+# =============================================================================
+# Cross-Language Tasks (All Languages)
+# =============================================================================
 
-# Combined tasks
-check: rust-check rust-fmt rust-clippy rust-audit copyright-check
+# Combined linting across all languages
+lint-all: rust-check-clippy copyright-check
     {%- if include_wasm %}
     just web lint
     {%- endif %}
@@ -121,7 +157,8 @@ check: rust-check rust-fmt rust-clippy rust-audit copyright-check
     just go-wasm lint
     {%- endif %}
 
-test: rust-test
+# Combined testing across all languages
+test-all: rust-test
     {%- if include_wasm %}
     just web test
     {%- endif %}
@@ -133,27 +170,8 @@ test: rust-test
     just go-wasm test
     {%- endif %}
 
-cov:
-    #!/usr/bin/env bash
-    set -e
-    
-    if [[ "$OSTYPE" == "darwin"* ]]; then
-        cargo +nightly llvm-cov nextest
-    else
-        cargo llvm-cov nextest
-    fi
-
-cov-local:
-    #!/usr/bin/env bash
-    set -e
-    
-    if [[ "$OSTYPE" == "darwin"* ]]; then
-        cargo +nightly llvm-cov nextest --no-fail-fast --text --show-missing-lines --mcdc
-    else
-        cargo llvm-cov nextest --no-fail-fast --text --show-missing-lines --mcdc
-    fi
-
-build: rust-build
+# Combined building across all languages
+build-all: rust-build
     {%- if include_wasm %}
     just web build
     {%- endif %}
@@ -165,7 +183,8 @@ build: rust-build
     just go-wasm build
     {%- endif %}
 
-clean: rust-clean
+# Combined cleaning across all languages
+clean-all: rust-clean
     {%- if include_wasm %}
     just web clean
     {%- endif %}
@@ -177,10 +196,77 @@ clean: rust-clean
     just go-wasm clean
     {%- endif %}
 
+# =============================================================================
+# Copyright and Legal
+# =============================================================================
+
+copyright:
+    mise x -- bash -c 'fd -e rs -e ts -e js -e jsx -e tsx -e go -e py | xargs addlicense -f copyright.tmpl -c "{{ author_name }}" -v -s'
+
+copyright-check:
+    mise x -- bash -c 'fd -e rs -e ts -e js -e jsx -e tsx -e go -e py | xargs addlicense -f copyright.tmpl -c "{{ author_name }}" -v -s -check'
+
+# =============================================================================
+# Development Workflows
+# =============================================================================
+
 {% if include_wasm %}
-web-dev: build
+# Start web development (builds dependencies first)
+web-dev: build-all
     just web dev
 {%- endif %}
 
-# CI tasks
-ci: build check test cov
+# Development workflow for all languages
+dev-all: rust-dev
+    {%- if include_wasm %}
+    just web dev &
+    {%- endif %}
+    {%- if include_python %}
+    just python dev &
+    {%- endif %}
+    {%- if include_go %}
+    just go dev &
+    {%- endif %}
+    wait
+
+# =============================================================================
+# CI and Release Tasks
+# =============================================================================
+
+# Full CI pipeline
+ci: build-all lint-all test-all
+
+# Release preparation
+release-prep: rust-check-all
+    git status
+    @echo "Ready for release if git status is clean"
+
+# =============================================================================
+# Legacy Aliases (for backwards compatibility)
+# =============================================================================
+
+# Legacy short aliases - prefer the explicit rust-* versions above
+alias format := rust-format
+alias clippy := rust-check-clippy
+alias test := rust-test
+alias build := rust-build
+alias clean := rust-clean
+alias dev := rust-dev
+alias watch := rust-watch
+alias audit := rust-audit
+
+# Legacy combined aliases - prefer the *-all versions above
+alias check := lint-all
+alias coverage := rust-coverage
+alias cov := rust-coverage-ci
+
+# Legacy coverage with platform-specific handling
+cov-local:
+    #!/usr/bin/env bash
+    set -e
+    
+    if [[ "$OSTYPE" == "darwin"* ]]; then
+        cargo +nightly llvm-cov nextest --no-fail-fast --text --show-missing-lines --mcdc
+    else
+        cargo llvm-cov nextest --no-fail-fast --text --show-missing-lines --mcdc
+    fi

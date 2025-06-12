@@ -2,8 +2,31 @@
 name = "{{ project_slug }}-cli"
 version = "0.1.0"
 edition = "2021"
+rust-version = "1.87.0"
+authors = ["{{ author_name }}"]
 license = "MPL-2.0"
+description = "Command-line interface for {{ project_name }}"
+homepage = "https://github.com/{{ github_username }}/{{ project_slug }}"
+repository = "https://github.com/{{ github_username }}/{{ project_slug }}"
+documentation = "https://docs.rs/{{ project_slug }}-cli"
+readme = "../README.md"
+keywords = ["{{ project_slug }}", "cli"]
+categories = ["command-line-utilities"]
+
+[dependencies]
+{{ project_slug }}-core = { path = "../core" }
 
 [[bin]]
 name = "{{ project_slug }}-cli"
 path = "src/main.rs"
+
+[lints.rust]
+unsafe_code = "forbid"
+missing_docs = "warn"
+
+[lints.clippy]
+all = "warn"
+pedantic = "warn"
+nursery = "warn"
+unwrap_used = "deny"
+expect_used = "deny"
