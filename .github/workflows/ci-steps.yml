@@ -116,5 +116,6 @@ jobs:
         working-directory: ../test-project
         run: |
           git init
+          ./scripts/dev-setup.sh
           mise install
           just setup copyright ci
