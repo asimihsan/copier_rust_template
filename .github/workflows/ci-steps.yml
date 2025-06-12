@@ -89,6 +89,10 @@ jobs:
         run: |
           echo "GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}" >> $GITHUB_ENV
 
+      - name: Run dev-setup.sh
+        run: |
+          ./scripts/dev-setup.sh
+
       - name: Setup mise
         uses: jdx/mise-action@v2
         with:

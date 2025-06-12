@@ -15,3 +15,6 @@ else
         curl https://mise.run | sh
     fi
 fi
+
+# Need to install rust first
+mise use "rust@prefix:1.87"
