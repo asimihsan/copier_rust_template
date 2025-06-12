@@ -1,16 +1,3 @@
-max_width = 100                  # Set maximum line width to 100 characters.
-hard_tabs = false                # Use spaces for indentation.
-tab_spaces = 4                   # 4 spaces per indentation level.
-newline_style = "Unix"           # Use Unix-style line endings.
-use_small_heuristics = "Default" # Enable default heuristics for layout decisions.
-
-# Function and method formatting:
-fn_params_layout = "Tall" # Format function arguments on separate lines when needed.
-chain_width = 100       # Allow chains (e.g. method chains) to extend up to 100 characters.
-
-# Struct and literal formatting:
-struct_lit_width = 100     # Maximum width for struct literals.
-struct_variant_width = 100 # Maximum width for enum variants with struct-like syntax.
-
-# Import formatting:
-reorder_imports = true      # Automatically reorder imports alphabetically.
+max_width = 120
+edition = "2021"
+newline_style = "Unix"

@@ -1,2 +1,38 @@
+[graph]
+all-features = true
+
+[advisories]
+# advisory DB configuration
+db-path    = "~/.cargo/advisory-db"
+db-urls    = ["https://github.com/rustsec/advisory-db"]
+
+# choose how to treat unmaintained advisories: all|workspace|transitive|none
+unmaintained = "workspace"
+
+# what to do on yanked crates: deny|warn|allow
+yanked       = "deny"
+
 [licenses]
-allow = ["Apache-2.0", "MIT", "MPL-2.0", "Unicode-3.0"]
+# only these SPDX licenses are permitted (everything else is denied by default)
+allow = [
+  "MIT",
+  "Apache-2.0",
+  "MPL-2.0",
+  "Unicode-DFS-2016",
+]
+
+# (optional) lint if an allowed license isn't actually used:
+# unused-allowed-license = "warn"
+
+# (optional) override AskAlono's confidence threshold:
+# confidence-threshold = 0.8
+
+[bans]
+# duplicate-version policy: warn | deny | allow
+multiple-versions = "warn"
+
+# wildcard dependencies: allow | deny
+wildcards         = "allow"
+
+# graph coloring when dumping dotgraphs: none | all
+highlight         = "all"

@@ -1,3 +1,14 @@
+[target.'cfg(not(build))'.build]
+# Prevents unavoidable warnings from build.rs scripts from failing the build
+rustflags = ["-D", "warnings"]
+
+[env]
+RUST_BACKTRACE = "1"
+
+# Nextest configuration
+[test]
+runner = "cargo nextest"
+
 [target.x86_64-apple-darwin]
 rustflags = [
   "-C", "link-arg=-undefined",

@@ -1,10 +1,116 @@
 # {{ project_name }}
 
-This project is generated from our multi-crate template. It contains:
+<p align="center">
+  <a href="https://github.com/{{ github_username }}/{{ project_slug }}/actions/workflows/ci.yml">
+    <img src="https://img.shields.io/github/actions/workflow/status/{{ github_username }}/{{ project_slug }}/ci.yml?style=flat-square" alt="CI Status">
+  </a>
+  <a href="https://codecov.io/gh/{{ github_username }}/{{ project_slug }}">
+    <img src="https://codecov.io/gh/{{ github_username }}/{{ project_slug }}/branch/main/graph/badge.svg" alt="Coverage">
+  </a>
+  <img src="https://img.shields.io/badge/MSRV-1.87-blue?style=flat-square" alt="MSRV">
+  <a href="https://crates.io/crates/{{ project_slug }}-core">
+    <img src="https://img.shields.io/crates/v/{{ project_slug }}-core?style=flat-square" alt="Crates.io">
+  </a>
+  <a href="https://docs.rs/{{ project_slug }}-core">
+    <img src="https://docs.rs/{{ project_slug }}-core/badge.svg" alt="Documentation">
+  </a>
+  <a href="LICENSE">
+    <img src="https://img.shields.io/badge/License-MPL%202.0-brightgreen.svg?style=flat-square" alt="License">
+  </a>
+</p>
 
-• A CLI binary crate
-• A core library crate
+{{ project_name }} is a multi-platform Rust project with:
 
-You can build and run the CLI using Cargo commands from the workspace root.
+- 🦀 **Core Library**: Shared functionality in `{{ project_slug }}-core`
+- 🖥️ **CLI Tool**: Command-line interface in `{{ project_slug }}-cli`
+{%- if include_wasm %}
+- 🌐 **WebAssembly**: Browser-compatible WASM bindings
+- 🎨 **Web Frontend**: TypeScript/React web interface
+{%- endif %}
+{%- if include_python %}
+- 🐍 **Python Bindings**: Native Python extension module
+{%- endif %}
+{%- if include_go %}
+- 🦫 **Go Bindings**: CGO-based Go library bindings
+{%- endif %}
 
-Happy coding!
+## Quick Start
+
+### Prerequisites
+
+- **[Mise](https://mise.jdx.dev/)**: Manages all tools and dependencies
+- **Git**: For version control
+
+### Installation
+
+1. **Clone and setup**:
+   ```bash
+   git clone https://github.com/{{ github_username }}/{{ project_slug }}.git
+   cd {{ project_slug }}
+   ./scripts/dev-setup.sh  # Installs mise if needed
+   mise install            # Installs all tools
+   ```
+
+2. **Initialize the project**:
+   ```bash
+   just setup              # Sets up development environment
+   just copyright          # Adds copyright headers
+   ```
+
+3. **Build and test**:
+   ```bash
+   just check-all          # Run all quality checks
+   just build              # Build all components
+   just test               # Run test suite
+   ```
+
+## Development
+
+### Available Commands
+
+- `just check-all` - Run all checks (formatting, linting, tests, coverage, audit)
+- `just dev` - Development workflow (format, fix clippy issues, test)
+- `just format` - Format code with rustfmt
+- `just test` - Run test suite with nextest
+- `just coverage` - Generate code coverage report
+- `just audit` - Security and dependency audit
+- `just release-prep` - Prepare for release
+
+### Project Structure
+
+```
+{{ project_slug }}/
+├── core/           # Core library ({{ project_slug }}-core)
+├── cli/            # Command-line tool ({{ project_slug }}-cli)
+{%- if include_wasm %}
+├── wasm/           # WebAssembly bindings
+├── web/            # Web frontend (TypeScript)
+{%- endif %}
+{%- if include_python %}
+├── python/         # Python bindings
+{%- endif %}
+{%- if include_go %}
+├── go/             # Go bindings
+├── go-wasm/        # Go WebAssembly bindings
+{%- endif %}
+├── scripts/        # Development scripts
+└── Justfile        # Task runner configuration
+```
+
+## Contributing
+
+We welcome contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
+
+### Development Workflow
+
+1. Fork the repository
+2. Create a feature branch: `git checkout -b feature/amazing-feature`
+3. Make your changes
+4. Run quality checks: `just check-all`
+5. Commit your changes: `git commit -m 'Add amazing feature'`
+6. Push to the branch: `git push origin feature/amazing-feature`
+7. Open a Pull Request
+
+## License
+
+This project is licensed under the Mozilla Public License 2.0 - see the [LICENSE](LICENSE) file for details.

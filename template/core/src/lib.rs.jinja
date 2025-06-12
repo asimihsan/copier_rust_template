@@ -1,9 +1,14 @@
-// Copyright 2025 Local Test
+// Copyright 2025 {{ author_name }}
 //
 // This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
 // If a copy of the MPL was not distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/.
 //
 // SPDX-License-Identifier: MPL-2.0
+
+//! Core library for {{ project_name }}.
+//!
+//! This library provides the core functionality for parsing and processing
+//! arithmetic expressions.
 
 use chumsky::prelude::*;
 use thiserror::Error;
@@ -11,16 +16,39 @@ use thiserror::Error;
 /// Our custom error type for parsing failures.
 #[derive(Error, Debug)]
 pub enum ParseError {
+    /// A generic parsing error with a descriptive message.
     #[error("Parse error: {0}")]
     Generic(String),
 }
 
 /// A simple arithmetic expression parser that accepts expressions like "1+2+3"
 /// and computes their sum.
+///
+/// # Errors
+///
+/// Returns a `ParseError` if:
+/// - The input contains non-numeric characters (except '+')
+/// - The input has invalid syntax (e.g., "1+" or "+2")
+/// - The input is empty or contains only whitespace
+///
+/// # Examples
+///
+/// ```
+/// use {{ project_slug_underscore }}_core::parse;
+///
+/// # fn main() -> Result<(), Box<dyn std::error::Error>> {
+/// assert_eq!(parse("1+2+3")?, "6");
+/// assert_eq!(parse("10+20+30")?, "60");
+/// # Ok(())
+/// # }
+/// ```
 pub fn parse(input: &str) -> Result<String, ParseError> {
     // The parser for an integer.
     let number = text::int::<char, Simple<char>>(10)
-        .map(|s: String| s.parse::<i64>().unwrap())
+        .try_map(|s: String, span| {
+            s.parse::<i64>()
+                .map_err(|e| Simple::custom(span, format!("Invalid number: {e}")))
+        })
         .padded()
         .labelled("number");
 
@@ -54,9 +82,20 @@ mod tests {
 
     #[test]
     fn test_parse() {
-        assert_eq!(parse("1+2+3").unwrap(), "6");
-        assert_eq!(parse("10+20+30").unwrap(), "60");
-        assert_eq!(parse("100+200+300").unwrap(), "600");
+        match parse("1+2+3") {
+            Ok(result) => assert_eq!(result, "6"),
+            Err(e) => panic!("Expected successful parse of '1+2+3', got error: {e}"),
+        }
+        
+        match parse("10+20+30") {
+            Ok(result) => assert_eq!(result, "60"),
+            Err(e) => panic!("Expected successful parse of '10+20+30', got error: {e}"),
+        }
+        
+        match parse("100+200+300") {
+            Ok(result) => assert_eq!(result, "600"),
+            Err(e) => panic!("Expected successful parse of '100+200+300', got error: {e}"),
+        }
     }
 
     #[test]
@@ -70,7 +109,7 @@ mod tests {
             );
         } else {
             println!("Expected an error, but got a result");
-            println!("Result: {:?}", res);
+            println!("Result: {res:?}");
             panic!("Expected an error, but got a result");
         }
     }

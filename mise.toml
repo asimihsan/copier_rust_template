@@ -1,2 +1,3 @@
 [tools]
+copier = "latest"
 python = "prefix:3.12"

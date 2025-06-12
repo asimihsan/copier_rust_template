@@ -1,0 +1,99 @@
+[tools.cargo-binstall]
+version = "1.12.7"
+backend = "aqua:cargo-bins/cargo-binstall"
+
+[tools."cargo:cargo-audit"]
+version = "0.21.2"
+backend = "cargo:cargo-audit"
+
+[tools."cargo:cargo-deny"]
+version = "0.18.2"
+backend = "cargo:cargo-deny"
+
+[tools."cargo:cargo-hack"]
+version = "0.6.36"
+backend = "cargo:cargo-hack"
+
+[tools."cargo:cargo-llvm-cov"]
+version = "0.6.16"
+backend = "cargo:cargo-llvm-cov"
+
+[tools."cargo:cargo-msrv"]
+version = "0.18.4"
+backend = "cargo:cargo-msrv"
+
+[tools."cargo:cargo-nextest"]
+version = "0.9.98"
+backend = "cargo:cargo-nextest"
+
+[tools."cargo:cargo-outdated"]
+version = "0.17.0"
+backend = "cargo:cargo-outdated"
+
+[tools."cargo:cargo-watch"]
+version = "8.5.3"
+backend = "cargo:cargo-watch"
+
+[tools."cargo:cbindgen"]
+version = "0.29.0"
+backend = "cargo:cbindgen"
+
+[tools."cargo:wasm-bindgen-cli"]
+version = "0.2.100"
+backend = "cargo:wasm-bindgen-cli"
+
+[tools."cargo:wasm-pack"]
+version = "0.13.1"
+backend = "cargo:wasm-pack"
+
+[tools.fd]
+version = "10.2.0"
+backend = "aqua:sharkdp/fd"
+
+[tools.go]
+version = "1.24.4"
+backend = "core:go"
+
+[tools."go:github.com/google/addlicense"]
+version = "1.1.1"
+backend = "go:github.com/google/addlicense"
+
+[tools.golangci-lint]
+version = "2.1.6"
+backend = "aqua:golangci/golangci-lint"
+
+[tools.jq]
+version = "1.8.0"
+backend = "aqua:jqlang/jq"
+
+[tools.just]
+version = "1.40.0"
+backend = "ubi:casey/just"
+
+[tools.node]
+version = "22.16.0"
+backend = "core:node"
+
+[tools.pnpm]
+version = "10.11.1"
+backend = "aqua:pnpm/pnpm"
+
+[tools.pre-commit]
+version = "4.1.0"
+backend = "aqua:pre-commit/pre-commit"
+
+[tools.python]
+version = "3.12.11"
+backend = "core:python"
+
+[tools.rust]
+version = "1.87.0"
+backend = "core:rust"
+
+[tools."ubi:https://github.com/WebAssembly/wabt/releases/tag/1.0.37"]
+version = "latest"
+backend = "ubi:https://github.com/WebAssembly/wabt/releases/tag/1.0.37"
+
+[tools.uv]
+version = "0.7.9"
+backend = "aqua:astral-sh/uv"

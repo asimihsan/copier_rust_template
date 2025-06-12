@@ -33,7 +33,7 @@ generate-bindings:
 # Build the project
 build: generate-bindings
     #!/usr/bin/env bash
-    set -e
+    set -euxo pipefail
     
     eval "$(just _setup-env)"
     go build ./...
@@ -41,7 +41,7 @@ build: generate-bindings
 # Run tests
 test: generate-bindings
     #!/usr/bin/env bash
-    set -e
+    set -euxo pipefail
     
     eval "$(just _setup-env)"
     go test ./...
@@ -49,7 +49,7 @@ test: generate-bindings
 # Run linter
 lint:
     #!/usr/bin/env bash
-    set -e
+    set -euxo pipefail
     
     eval "$(just _setup-env)"
     golangci-lint run ./...

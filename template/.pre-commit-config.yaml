@@ -22,14 +22,14 @@ repos:
     hooks:
       - id: rust-fmt
         name: Rust formatter
-        entry: devbox run -- just rust-fmt
+        entry: just format
         types: [rust]
         language: system
         pass_filenames: false
 
-      - id: rust-check
-        name: Rust checker
-        entry: devbox run -- just rust-check
+      - id: rust-check-format
+        name: Rust format check
+        entry: just check-format
         types: [rust]
         language: system
         pass_filenames: false
@@ -37,7 +37,7 @@ repos:
 
       - id: rust-clippy
         name: Rust clippy
-        entry: devbox run -- just rust-clippy
+        entry: just check-clippy
         types: [rust]
         language: system
         pass_filenames: false
@@ -45,14 +45,14 @@ repos:
 
       - id: web-lint
         name: Web lint and format
-        entry: devbox run -- just web-lint
+        entry: just web-lint
         types: [javascript, ts, jsx, tsx]
         language: system
         pass_filenames: false
 
       - id: copyright-check
         name: Copyright check
-        entry: devbox run -- just copyright-check
+        entry: just copyright-check
         types: [rust, javascript, ts, jsx, tsx]
         language: system
         pass_filenames: false

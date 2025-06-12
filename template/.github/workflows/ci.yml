@@ -6,53 +6,120 @@ on:
   pull_request:
     branches: [main]
 
-defaults:
-  run:
-    shell: bash
+env:
+  CARGO_TERM_COLOR: always
+  RUST_BACKTRACE: 1
 
 jobs:
-  test:
-    name: Test
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [ubuntu-latest]
-
+  check:
+    name: Check
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
       - uses: jdx/mise-action@v2
         with:
-          cache: true
-
-      - name: Setup Devbox
-        uses: jetify-com/devbox-install-action@v0.11.0
-        with:
-          enable-cache: true
-
+          experimental: true
       - name: Cache cargo
         uses: actions/cache@v4
         with:
           path: |
             ~/.cargo/registry
             ~/.cargo/git
-            target
-          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
-          restore-keys: ${{ runner.os }}-cargo-
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}-check
+      - name: Setup environment
+        run: just setup
+      - name: Check formatting
+        run: just check-format
+      - name: Check clippy
+        run: just check-clippy
+      - name: Check dependencies
+        run: just audit
 
-      - name: Cache pnpm dependencies
+  test:
+    name: Test Suite
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        include:
+          - {os: ubuntu-latest , rust: stable}
+          - {os: ubuntu-latest , rust: nightly}
+          - {os: ubuntu-latest , rust: "1.87.0"}   # MSRV  
+          - {os: windows-latest, rust: stable}
+          - {os: macos-latest  , rust: stable}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: jdx/mise-action@v2
+        with:
+          experimental: true
+      - name: Cache cargo
         uses: actions/cache@v4
         with:
           path: |
-            ~/.pnpm-store
-            web/node_modules
-          key: ${{ runner.os }}-pnpm-${{ hashFiles('web/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-pnpm-
-
+            ~/.cargo/registry
+            ~/.cargo/git
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}-${{ matrix.rust }}
+      - name: Install Rust
+        run: rustup toolchain install ${{ matrix.rust }} --component rustfmt clippy miri
       - name: Setup environment
-        run: |
-          devbox run -- just setup
+        run: just setup
+      - name: Run tests
+        run: just test
+      - name: Run doc tests  
+        run: just test-doc
+      - name: Run miri (nightly only)
+        if: matrix.rust == 'nightly'
+        run: just test-miri
 
-      - name: CI
-        run: devbox run -- just ci
+  coverage:
+    name: Coverage
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: jdx/mise-action@v2
+        with:
+          experimental: true
+      - name: Cache cargo
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}-coverage
+      - name: Setup environment
+        run: just setup
+      - name: Generate coverage
+        run: just coverage
+      - name: Upload to codecov
+        uses: codecov/codecov-action@v3
+        with:
+          files: lcov.info
+      - name: Upload HTML report artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: target/llvm-cov/html/
+
+  cross-compile:
+    name: Cross Compile
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        target: [x86_64-unknown-linux-musl, aarch64-unknown-linux-gnu]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: jdx/mise-action@v2
+        with:
+          experimental: true
+      - name: Cache cargo
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}-cross-${{ matrix.target }}
+      - name: Install cross
+        run: cargo install cross --locked
+      - name: Setup environment
+        run: just setup
+      - name: Cross compile and test
+        run: cross test --release --all-features --target ${{ matrix.target }}

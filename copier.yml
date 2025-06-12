@@ -36,6 +36,11 @@ author_name:
   help: "Enter the author's name."
   default: "Your Name"
 
+github_username:
+  type: str
+  help: "Enter your GitHub username."
+  default: "your-username"
+
 _exclude:
   - ".git"
   - "__skip_wasm__"
