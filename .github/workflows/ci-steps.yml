@@ -75,7 +75,7 @@ jobs:
           path: |
             ~/.cache/mise
             ~/.local/share/mise
-          key: mise-${{ runner.os }}-${{ inputs.cache_suffix }}-${{ hashFiles('mise.toml', 'template/mise.toml.jinja', 'devbox.json', 'devbox.lock') }}
+          key: mise-${{ runner.os }}-${{ inputs.cache_suffix }}-${{ hashFiles('mise.toml', 'template/mise.toml.jinja') }}
           restore-keys: |
             mise-${{ runner.os }}-${{ inputs.cache_suffix }}-
             mise-${{ runner.os }}-
@@ -95,14 +95,9 @@ jobs:
           install: true
           cache: true
 
-      - name: Setup Devbox
-        uses: jetify-com/devbox-install-action@v0.11.0
-        with:
-          enable-cache: true
-
       - name: Generate Test Project
         run: |
-          devbox run copier copy . ../test-project --vcs-ref HEAD \
+          copier copy . ../test-project --vcs-ref HEAD \
             --data project_name="Test Project" \
             --data project_slug=test-project \
             --data project_slug_underscore=test_project \
@@ -116,5 +111,5 @@ jobs:
         working-directory: ../test-project
         run: |
           git init
-          devbox install
-          devbox run just setup copyright ci
+          mise install
+          just setup copyright ci

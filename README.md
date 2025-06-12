@@ -29,8 +29,8 @@ Python extensions, and Go bindings from a single codebase.
 
 To use this template, you need to install the following tools:
 
-- **[Devbox](https://www.jetify.com/docs/devbox/):** Sets up your development
-  environment by installing Rust, wasm‑pack, Node, PNPM, and Mise automatically.
+- **[Mise](https://mise.jdx.dev/):** Installs and manages Rust, Node, Python, PNPM, and every other tool used by this template.
+  If you don't have Mise yet, simply run `scripts/dev-setup.sh` and follow the prompts.
 - **[Copier](https://copier.readthedocs.io/):** Generates a new project from
   this template.
 
@@ -50,11 +50,11 @@ git init
 jj git init --colocate
 ```
 
-Enter the Devbox shell:
+Install dependencies (Mise will take care of everything):
 
 ```bash
-devbox install
-devbox run direnv allow
+./scripts/dev-setup.sh   # one-time, installs mise if missing
+mise install             # installs the toolchain versions specified in mise.toml
 ```
 
 Set up tools:
@@ -77,8 +77,8 @@ just ci
 
 ## Development Tools & Workflow
 
-The template provides a comprehensive development environment powered by Devbox
-and Mise. No manual tool installation required—everything from Rust nightly to
+The template provides a comprehensive development environment powered by Mise.
+No manual tool installation required—everything from Rust nightly to
 WebAssembly toolchains is automatically configured.
 
 **Testing & Quality** Comprehensive test suites run across all platforms, with
@@ -144,8 +144,7 @@ Your generated project will include:
 
 **Development Environment**
 
-- `devbox.json`: Zero-config development environment
-- `mise.toml`: Task runner for common operations
+- `mise.toml`: Toolchain configuration and common operations
 - `.envrc`: Automatic environment activation
 - `.pre-commit-config.yaml`: Git hooks for quality checks
 
@@ -153,19 +152,20 @@ Your generated project will include:
 
 ```plain
 cd ~/workplace && \
-    rm -rf ~/workplace/ouchie && \
-    copier copy ~/workplace/copier_rust_template ~/workplace/ouchie \
+    rm -rf ~/workplace/foobaz && \
+    copier copy ~/workplace/copier_rust_template ~/workplace/foobaz \
         --data include_wasm=true \
         --data include_python=true \
         --data include_go=true \
-        --data project_name="Ouchie" \
-        --data project_slug=ouchie \
-        --data project_slug_underscore=ouchie \
+        --data project_name="Foobaz" \
+        --data project_slug=foobaz \
+        --data project_slug_underscore=foobaz \
         --data author_name="Local Test" \
         --force && \
-    cd ~/workplace/ouchie && \
+    cd ~/workplace/foobaz && \
     git init && \
-    devbox install && \
+    ./scripts/dev-setup.sh && \
+    mise install && \
     just setup copyright ci ; \
     cd go-wasm && \
     just setup test test-go && \

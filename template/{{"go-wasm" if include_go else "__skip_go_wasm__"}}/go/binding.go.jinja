@@ -127,7 +127,12 @@ func Parse(ctx context.Context, input string) (*Expression, error) {
 	if err != nil {
 		return nil, fmt.Errorf("failed to instantiate WASM module: %w", err)
 	}
-	defer module.Close(ctx) // Clean up this instance when done
+	defer func() {
+		if closeErr := module.Close(ctx); closeErr != nil {
+			// Log cleanup error - this shouldn't normally happen but good to know if it does
+			log.Printf("warning: failed to close WASM module: %v\n", closeErr)
+		}
+	}()
 
 	// Get the needed export functions
 	allocate := module.ExportedFunction("allocate")
@@ -274,7 +279,12 @@ func GetWasmTimestamp(ctx context.Context) (time.Time, error) {
 	if err != nil {
 		return time.Time{}, fmt.Errorf("failed to instantiate WASM module: %w", err)
 	}
-	defer module.Close(ctx)
+	defer func() {
+		if closeErr := module.Close(ctx); closeErr != nil {
+			// Log cleanup error - this shouldn't normally happen but good to know if it does
+			log.Printf("warning: failed to close WASM module: %v\n", closeErr)
+		}
+	}()
 
 	// Call the get_timestamp_ms function
 	getTimestamp := module.ExportedFunction("get_timestamp_ms")
