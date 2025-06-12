@@ -90,10 +90,6 @@ backend = "core:python"
 version = "1.87.0"
 backend = "core:rust"
 
-[tools.sccache]
-version = "0.10.0"
-backend = "ubi:mozilla/sccache"
-
 [tools."ubi:https://github.com/WebAssembly/wabt/releases/tag/1.0.37"]
 version = "latest"
 backend = "ubi:https://github.com/WebAssembly/wabt/releases/tag/1.0.37"
