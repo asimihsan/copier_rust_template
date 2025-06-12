@@ -131,6 +131,9 @@ rust-hack-check:
 
 # Building
 rust-build:
+    cargo build
+
+rust-build-release:
     cargo build --release
 
 # Cleaning
@@ -171,7 +174,7 @@ test-all: rust-test
     {%- endif %}
 
 # Combined building across all languages
-build-all: rust-build
+build-all: rust-build rust-build-release
     {%- if include_wasm %}
     just web build
     {%- endif %}
