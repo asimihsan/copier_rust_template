@@ -90,7 +90,7 @@ jobs:
       - name: Generate coverage
         run: just coverage
       - name: Upload to codecov
-        uses: codecov/codecov-action@v3
+        uses: codecov/codecov-action@v5
         with:
           files: lcov.info
       - name: Upload HTML report artifact

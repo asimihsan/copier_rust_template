@@ -2,6 +2,7 @@
 
 <p align="center">
   <a href="https://github.com/{{ github_username }}/{{ project_slug }}/actions/workflows/ci.yml">
+    <!-- markdownlint-disable MD013 -->
     <img src="https://img.shields.io/github/actions/workflow/status/{{ github_username }}/{{ project_slug }}/ci.yml?style=flat-square" alt="CI Status">
   </a>
   <a href="https://codecov.io/gh/{{ github_username }}/{{ project_slug }}">
@@ -44,6 +45,7 @@
 ### Installation
 
 1. **Clone and setup**:
+
    ```bash
    git clone https://github.com/{{ github_username }}/{{ project_slug }}.git
    cd {{ project_slug }}
@@ -52,12 +54,14 @@
    ```
 
 2. **Initialize the project**:
+
    ```bash
    just setup              # Sets up development environment
    just copyright          # Adds copyright headers
    ```
 
 3. **Build and test**:
+
    ```bash
    just check-all          # Run all quality checks
    just build              # Build all components
@@ -78,7 +82,7 @@
 
 ### Project Structure
 
-```
+```plaintext
 {{ project_slug }}/
 ├── core/           # Core library ({{ project_slug }}-core)
 ├── cli/            # Command-line tool ({{ project_slug }}-cli)

@@ -147,8 +147,14 @@ rust-check-all: rust-check-format rust-check-clippy rust-test rust-coverage-ci r
 # Cross-Language Tasks (All Languages)
 # =============================================================================
 
+gha-lint:
+    actionlint
+
+markdown-lint:
+    markdownlint-cli2
+
 # Combined linting across all languages
-lint-all: rust-check-clippy copyright-check
+lint-all: rust-check-clippy copyright-check gha-lint markdown-lint
     {%- if include_wasm %}
     just web lint
     {%- endif %}
