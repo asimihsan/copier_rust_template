@@ -1,0 +1,102 @@
+{
+    // Enable schema + autocompletion in editors
+    "$schema": "https://raw.githubusercontent.com/DavidAnson/markdownlint-cli2/main/schema/markdownlint-cli2-config-schema.json",
+    // What to lint (merged with CLI args)
+    "globs": [
+        "**/*.md",
+        "**/*.markdown",
+        "#node_modules",
+        "#.git",
+        "#dist",
+        "#build",
+        "#coverage"
+    ],
+    // Respect .gitignore files across the tree
+    "gitignore": true,
+    // Extra ignore patterns (fastest at repo root)
+    "ignores": [
+        "**/vendor/**"
+        // , "**/CHANGELOG.md" // uncomment if you prefer to skip it
+    ],
+    // Keep CI output minimal
+    "noBanner": true,
+    "noProgress": true,
+    "showFound": false,
+    // Only fix on demand (override with --fix)
+    "fix": false,
+    // Treat YAML front matter as non-content
+    "frontMatter": "(^---\\s*$[^]*?^---\\s*$)(\\r\\n|\\r|\\n|$)",
+    // Load markdown-it plugins if you use extra syntax (footnotes, attrs, etc.)
+    // "markdownItPlugins": [
+    //   ["markdown-it-footnote"],
+    //   ["markdown-it-attrs"]
+    // ],
+    // Optional: custom rules from node_modules or a local path
+    // "customRules": [
+    //   "markdownlint-rule-extended-ascii"
+    // ],
+    // Optional: choose output format (pretty, json, junit, sarif, template…)
+    // "outputFormatters": [
+    //   ["markdownlint-cli2-formatter-pretty"]
+    // ],
+    // ---- markdownlint rule config ----
+    "config": {
+        "default": true,
+
+        // MD004: unordered list style
+        "MD004": {
+            "style": "dash"
+        },
+
+        // MD013: line length (be lenient for code & tables)
+        "MD013": {
+            "line_length": 100,
+            "heading_line_length": 80,
+            "code_blocks": false,
+            "tables": false,
+            "strict": false,
+            "stern": false
+        },
+        // MD024: allow same headings when they’re not siblings (e.g., changelogs)
+        "MD024": {
+            "siblings_only": true
+        },
+        // MD025: don’t consider front-matter titles
+        "MD025": {
+            "front_matter_title": ""
+        },
+        // MD026: allow question marks in headings
+        "MD026": {
+            "punctuation": ".,;:!"
+        },
+        // MD033: permit a few safe inline HTML tags often used in docs
+        "MD033": {
+            "allowed_elements": [
+                "p",
+                "a",
+                "img",
+                "br",
+                "sub",
+                "sup",
+                "details",
+                "summary",
+                "kbd"
+            ]
+        },
+        // MD034: bare URLs (often disabled to avoid busywork)
+        "MD034": false,
+        // MD041: first line must be a heading (disable if your docs use front matter)
+        "MD041": false,
+        // MD046: enforce fenced code blocks
+        "MD046": {
+            "style": "fenced"
+        },
+        // Consistent emphasis/strong markers
+        "MD049": {
+            "style": "consistent"
+        },
+        "MD050": {
+            "style": "consistent"
+        }
+    }
+}
