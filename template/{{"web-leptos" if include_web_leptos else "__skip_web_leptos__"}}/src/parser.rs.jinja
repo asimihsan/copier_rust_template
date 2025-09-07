@@ -1,0 +1,12 @@
+use leptos::prelude::*;
+use {{ project_slug_underscore }}_core::ParseError;
+
+pub fn create_parse_action() -> Action<String, Result<String, ParseError>> {
+    Action::new(|input: &String| {
+        let input = input.clone();
+
+        async move {
+            {{ project_slug_underscore }}_core::parse(&input)
+        }
+    })
+}

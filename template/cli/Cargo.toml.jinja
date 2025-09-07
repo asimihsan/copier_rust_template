@@ -1,10 +1,11 @@
 [package]
 name = "{{ project_slug }}-cli"
-version = "0.1.0"
-edition = "2021"
-rust-version = "1.87.0"
-authors = ["{{ author_name }}"]
-license = "MPL-2.0"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+authors.workspace = true
+
 description = "Command-line interface for {{ project_name }}"
 homepage = "https://github.com/{{ github_username }}/{{ project_slug }}"
 repository = "https://github.com/{{ github_username }}/{{ project_slug }}"

@@ -1,4 +1,4 @@
-msrv = "1.87.0"
+msrv = "1.85.0"
 
 # ---------- Structural size limits ----------
 cognitive-complexity-threshold = 20
@@ -13,3 +13,5 @@ type-complexity-threshold      = 200
 disallowed-methods = [
   "std::mem::transmute",
 ]
+allow-unwrap-in-tests = true
+allow-expect-in-tests = true

@@ -1,0 +1,98 @@
+@import "tailwindcss";
+
+@layer base {
+  html {
+    @apply dark:bg-gray-900 dark:text-white;
+  }
+  
+  body {
+    @apply dark:bg-gray-900 dark:text-white;
+  }
+}
+
+@layer components {
+  /* Layout Components */
+  .app-container {
+    @apply font-mono flex flex-col min-h-screen;
+  }
+
+  .content-wrapper {
+    @apply container mx-auto p-4;
+  }
+
+  .two-column-grid {
+    @apply grid grid-cols-1 md:grid-cols-2 gap-4;
+  }
+
+  .single-column-layout {
+    @apply space-y-4;
+  }
+
+  /* Typography */
+  .heading-primary {
+    @apply text-3xl font-bold mb-4;
+  }
+
+  .heading-section {
+    @apply text-xl font-semibold mb-2;
+  }
+
+  .heading-section-spaced {
+    @apply text-xl font-semibold mt-4 mb-2;
+  }
+
+  /* Form Controls */
+  .select-input {
+    @apply w-full p-2 border border-gray-700 rounded mb-2
+           dark:border-gray-600 dark:bg-gray-800 dark:text-white;
+  }
+
+  .textarea-input {
+    @apply w-full h-48 p-2 border border-gray-700 rounded
+           dark:border-gray-600 dark:bg-gray-800 dark:text-white;
+  }
+
+  /* Buttons */
+  .btn-primary {
+    @apply mt-2 rounded px-4 py-2 text-white
+           bg-blue-700 hover:bg-blue-600 
+           border-b-4 border-l-2 border-blue-800 shadow-lg
+           dark:bg-blue-600 dark:hover:bg-blue-500 dark:border-blue-700;
+  }
+
+  .btn-secondary {
+    @apply mt-2 rounded px-3 py-1 text-gray-900
+           bg-gray-200 hover:bg-gray-300
+           border-b-2 border-l border-gray-300 shadow
+           dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-white dark:border-gray-600;
+  }
+
+  /* Cards and Panels */
+  .card-compact {
+    @apply p-2 border border-gray-700 rounded min-h-24
+           dark:border-gray-600 dark:bg-gray-800;
+  }
+
+  .card-large {
+    @apply p-2 border border-gray-700 rounded min-h-48
+           dark:border-gray-600 dark:bg-gray-800;
+  }
+
+  .section-wrapper {
+    @apply mt-4;
+  }
+
+  .scroll-container {
+    @apply overflow-x-auto;
+  }
+}
+
+[data-theme='dark'] .mermaid {
+  filter: invert(0.88);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) .mermaid {
+      filter: invert(0.88);
+  }
+}

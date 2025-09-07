@@ -3,7 +3,7 @@ version = "1.7.7"
 backend = "aqua:rhysd/actionlint"
 
 [tools.cargo-binstall]
-version = "1.12.7"
+version = "1.15.4"
 backend = "aqua:cargo-bins/cargo-binstall"
 
 [tools."cargo:cargo-audit"]
@@ -11,15 +11,19 @@ version = "0.21.2"
 backend = "cargo:cargo-audit"
 
 [tools."cargo:cargo-deny"]
-version = "0.18.2"
+version = "0.18.4"
 backend = "cargo:cargo-deny"
 
 [tools."cargo:cargo-hack"]
-version = "0.6.36"
+version = "0.6.38"
 backend = "cargo:cargo-hack"
 
+[tools."cargo:cargo-insta"]
+version = "1.43.2"
+backend = "cargo:cargo-insta"
+
 [tools."cargo:cargo-llvm-cov"]
-version = "0.6.16"
+version = "0.6.19"
 backend = "cargo:cargo-llvm-cov"
 
 [tools."cargo:cargo-msrv"]
@@ -27,7 +31,7 @@ version = "0.18.4"
 backend = "cargo:cargo-msrv"
 
 [tools."cargo:cargo-nextest"]
-version = "0.9.98"
+version = "0.9.103"
 backend = "cargo:cargo-nextest"
 
 [tools."cargo:cargo-outdated"]
@@ -42,8 +46,16 @@ backend = "cargo:cargo-watch"
 version = "0.29.0"
 backend = "cargo:cbindgen"
 
+[tools."cargo:leptosfmt"]
+version = "0.1.33"
+backend = "cargo:leptosfmt"
+
+[tools."cargo:trunk"]
+version = "0.21.14"
+backend = "cargo:trunk"
+
 [tools."cargo:wasm-bindgen-cli"]
-version = "0.2.100"
+version = "0.2.101"
 backend = "cargo:wasm-bindgen-cli"
 
 [tools."cargo:wasm-pack"]
@@ -51,41 +63,31 @@ version = "0.13.1"
 backend = "cargo:wasm-pack"
 
 [tools.fd]
-version = "10.2.0"
+version = "10.3.0"
 backend = "aqua:sharkdp/fd"
-
-[tools.fd.platforms.macos-arm64]
-checksum = "blake3:40f4e51b406baca55370c1eb13e627c4bb0e55972d6e96a419470f19077c3459"
-size = 1220905
-url = "https://github.com/sharkdp/fd/releases/download/v10.2.0/fd-v10.2.0-aarch64-apple-darwin.tar.gz"
 
 [tools.go]
 version = "1.25.1"
 backend = "core:go"
 
-[tools.go.platforms.macos-arm64]
-checksum = "sha256:68deebb214f39d542e518ebb0598a406ab1b5a22bba8ec9ade9f55fb4dd94a6c"
-size = 57906702
-url = "https://dl.google.com/go/go1.25.1.darwin-arm64.tar.gz"
-
 [tools."go:github.com/google/addlicense"]
-version = "1.1.1"
+version = "1.2.0"
 backend = "go:github.com/google/addlicense"
 
 [tools.golangci-lint]
-version = "2.1.6"
+version = "2.4.0"
 backend = "aqua:golangci/golangci-lint"
 
 [tools.jq]
-version = "1.8.0"
+version = "1.8.1"
 backend = "aqua:jqlang/jq"
 
 [tools.just]
-version = "1.40.0"
+version = "1.42.4"
 backend = "ubi:casey/just"
 
 [tools.node]
-version = "22.19.0"
+version = "24.7.0"
 backend = "core:node"
 
 [tools."npm:markdownlint-cli2"]
@@ -93,11 +95,11 @@ version = "0.18.1"
 backend = "npm:markdownlint-cli2"
 
 [tools.pnpm]
-version = "10.11.1"
+version = "10.15.1"
 backend = "aqua:pnpm/pnpm"
 
 [tools.pre-commit]
-version = "4.1.0"
+version = "4.3.0"
 backend = "aqua:pre-commit/pre-commit"
 
 [tools.python]
@@ -113,5 +115,5 @@ version = "latest"
 backend = "ubi:https://github.com/WebAssembly/wabt/releases/tag/1.0.37"
 
 [tools.uv]
-version = "0.7.9"
+version = "0.8.15"
 backend = "aqua:astral-sh/uv"

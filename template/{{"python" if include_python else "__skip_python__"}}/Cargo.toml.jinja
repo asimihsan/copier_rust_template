@@ -1,7 +1,10 @@
 [package]
 name = "{{ project_slug }}-py"
-version = "0.1.0"
-edition = "2021"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+authors.workspace = true
 
 [lib]
 name = "{{ project_slug_underscore }}_py"

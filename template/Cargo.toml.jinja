@@ -9,6 +9,9 @@ members = [
     "go",
     "go-wasm",
     {%- endif %}
+    {%- if include_web_leptos %}
+    "web-leptos",
+    {%- endif %}
 ]
 
 {%- if include_python %}
@@ -18,6 +21,13 @@ exclude = [
 {%- endif %}
 
 resolver = "2"
+
+[workspace.package]
+version = "0.1.0"
+edition = "2024"
+license = "MPL-2.0"
+rust-version = "1.85"
+authors = ["{{ author_name }}"]
 
 [profile.release]
 lto = true

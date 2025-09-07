@@ -14,6 +14,10 @@ mod go
 mod go-wasm
 {%- endif %}
 
+{%- if include_web_leptos %}
+mod web-leptos
+{%- endif %}
+
 # Default action is to list all available tasks
 @default:
     @just --list
@@ -88,6 +92,9 @@ rust-check-format:
 
 rust-format:
     cargo fmt
+    {%- if include_web_leptos %}
+    just web-leptos fmt
+    {%- endif %}
 
 # Linting 
 rust-check-clippy:

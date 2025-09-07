@@ -14,7 +14,7 @@ use chumsky::prelude::*;
 use thiserror::Error;
 
 /// Our custom error type for parsing failures.
-#[derive(Error, Debug)]
+#[derive(Error, Debug, Clone)]
 pub enum ParseError {
     /// A generic parsing error with a descriptive message.
     #[error("Parse error: {0}")]

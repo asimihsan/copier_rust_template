@@ -21,6 +21,16 @@ include_python:
   default: true
   help: "Include Python language bindings?"
 
+include_web:
+  type: bool
+  default: true
+  help: "Include web frontend components?"
+
+include_web_leptos:
+  type: bool
+  default: true
+  help: "Include web frontend components using Leptos?"
+
 project_slug:
   type: str
   help: "Enter a project slug (lowercase, dash-separated)."
@@ -45,6 +55,7 @@ _exclude:
   - ".git"
   - "__skip_wasm__"
   - "__skip_web__"
+  - "__skip_web_leptos__"
   - "__skip_python__"
   - "__skip_go__"
   - "__skip_go_wasm__"
