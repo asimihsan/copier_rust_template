@@ -11,12 +11,14 @@
 "cargo:wasm-bindgen-cli" = "latest"
 "cargo:wasm-pack" = "latest"
 "go:github.com/google/addlicense" = "latest"
+"npm:markdownlint-cli2" = "latest"
 "ubi:https://github.com/WebAssembly/wabt/releases/tag/1.0.37" = "latest"
 
 # Build tools
+actionlint = "latest"
 cargo-binstall = "latest"
 fd = "latest"
-go = "prefix:1.24"
+go = "prefix:1.25"
 golangci-lint = "latest"
 jq = "latest"
 just = "latest"
@@ -24,7 +26,7 @@ node = "lts"
 pnpm = "latest"
 pre-commit = "latest"
 python = "prefix:3.12"
-rust = "prefix:1.87"
+rust = "prefix:1.89"
 uv = "latest"
 
 [env]
@@ -32,7 +34,7 @@ COREPACK_ENABLE_DOWNLOAD_PROMPT = "1"
 LIBRARY_PATH = "$LIBRARY_PATH:/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/lib:/opt/homebrew/opt/libiconv/lib"
 MACOSX_DEPLOYMENT_TARGET = "11.0"
 RUST_BACKTRACE = "1"
-RUSTFLAGS = "-D warnings"
 
 [settings]
 experimental = true
+idiomatic_version_file_enable_tools = ["rust"]

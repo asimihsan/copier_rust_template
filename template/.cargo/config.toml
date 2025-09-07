@@ -1,7 +1,3 @@
-[target.'cfg(not(build))'.build]
-# Prevents unavoidable warnings from build.rs scripts from failing the build
-rustflags = ["-D", "warnings"]
-
 [env]
 RUST_BACKTRACE = "1"
 

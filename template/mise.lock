@@ -1,3 +1,7 @@
+[tools.actionlint]
+version = "1.7.7"
+backend = "aqua:rhysd/actionlint"
+
 [tools.cargo-binstall]
 version = "1.12.7"
 backend = "aqua:cargo-bins/cargo-binstall"
@@ -50,9 +54,19 @@ backend = "cargo:wasm-pack"
 version = "10.2.0"
 backend = "aqua:sharkdp/fd"
 
+[tools.fd.platforms.macos-arm64]
+checksum = "blake3:40f4e51b406baca55370c1eb13e627c4bb0e55972d6e96a419470f19077c3459"
+size = 1220905
+url = "https://github.com/sharkdp/fd/releases/download/v10.2.0/fd-v10.2.0-aarch64-apple-darwin.tar.gz"
+
 [tools.go]
-version = "1.24.4"
+version = "1.25.1"
 backend = "core:go"
+
+[tools.go.platforms.macos-arm64]
+checksum = "sha256:68deebb214f39d542e518ebb0598a406ab1b5a22bba8ec9ade9f55fb4dd94a6c"
+size = 57906702
+url = "https://dl.google.com/go/go1.25.1.darwin-arm64.tar.gz"
 
 [tools."go:github.com/google/addlicense"]
 version = "1.1.1"
@@ -71,8 +85,12 @@ version = "1.40.0"
 backend = "ubi:casey/just"
 
 [tools.node]
-version = "22.16.0"
+version = "22.19.0"
 backend = "core:node"
+
+[tools."npm:markdownlint-cli2"]
+version = "0.18.1"
+backend = "npm:markdownlint-cli2"
 
 [tools.pnpm]
 version = "10.11.1"
@@ -87,7 +105,7 @@ version = "3.12.11"
 backend = "core:python"
 
 [tools.rust]
-version = "1.87.0"
+version = "1.89.0"
 backend = "core:rust"
 
 [tools."ubi:https://github.com/WebAssembly/wabt/releases/tag/1.0.37"]
