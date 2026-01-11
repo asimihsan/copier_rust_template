@@ -60,19 +60,19 @@ mise install             # installs the toolchain versions specified in mise.tom
 Set up tools:
 
 ```bash
-just setup
+mise setup
 ```
 
 Add copyright header:
 
 ```bash
-just copyright
+mise copyright
 ```
 
 Build and test your project:
 
 ```bash
-just ci
+mise ci
 ```
 
 ## Development Tools & Workflow
@@ -166,9 +166,12 @@ cd ~/workplace && \
     git init && \
     ./scripts/dev-setup.sh && \
     mise install && \
-    just setup copyright ci ; \
+    mise setup && \
+    mise copyright && \
+    mise ci ; \
     cd go-wasm && \
-    just setup test test-go && \
+    mise go-wasm:setup && \
+    mise go-wasm:test && \
     cd ..
 ```
 

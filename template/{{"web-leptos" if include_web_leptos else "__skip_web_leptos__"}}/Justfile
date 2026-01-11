@@ -1,8 +1,0 @@
-dev:
-    trunk serve --open --verbose
-
-clean:
-    rm -rf dist
-
-fmt:
-    leptosfmt ./**/*.rs

@@ -56,29 +56,29 @@
 2. **Initialize the project**:
 
    ```bash
-   just setup              # Sets up development environment
-   just copyright          # Adds copyright headers
+   mise setup              # Sets up development environment
+   mise copyright          # Adds copyright headers
    ```
 
 3. **Build and test**:
 
    ```bash
-   just check-all          # Run all quality checks
-   just build              # Build all components
-   just test               # Run test suite
+   mise lint-all           # Run all quality checks
+   mise build-all          # Build all components
+   mise test-all           # Run test suite
    ```
 
 ## Development
 
 ### Available Commands
 
-- `just check-all` - Run all checks (formatting, linting, tests, coverage, audit)
-- `just dev` - Development workflow (format, fix clippy issues, test)
-- `just format` - Format code with rustfmt
-- `just test` - Run test suite with nextest
-- `just coverage` - Generate code coverage report
-- `just audit` - Security and dependency audit
-- `just release-prep` - Prepare for release
+- `mise lint-all` - Run all linters across the project
+- `mise dev` - Development workflow (format, fix clippy issues, test)
+- `mise format` - Format code with rustfmt
+- `mise test` - Run test suite with nextest
+- `mise coverage` - Generate code coverage report
+- `mise audit` - Security and dependency audit
+- `mise release-prep` - Prepare for release
 
 ### Project Structure
 
@@ -98,7 +98,7 @@
 ├── go-wasm/        # Go WebAssembly bindings
 {%- endif %}
 ├── scripts/        # Development scripts
-└── Justfile        # Task runner configuration
+└── mise.toml       # Task runner configuration
 ```
 
 ## Contributing
@@ -110,7 +110,7 @@ We welcome contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guid
 1. Fork the repository
 2. Create a feature branch: `git checkout -b feature/amazing-feature`
 3. Make your changes
-4. Run quality checks: `just check-all`
+4. Run quality checks: `mise lint-all`
 5. Commit your changes: `git commit -m 'Add amazing feature'`
 6. Push to the branch: `git push origin feature/amazing-feature`
 7. Open a Pull Request

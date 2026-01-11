@@ -19,4 +19,4 @@ fi
 mise settings add idiomatic_version_file_enable_tools rust
 
 # Need to install rust first
-mise use "rust@prefix:1.87"
+mise use "rust@prefix:1.89"

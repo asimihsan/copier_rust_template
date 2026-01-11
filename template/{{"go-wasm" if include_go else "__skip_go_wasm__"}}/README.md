@@ -1,6 +1,7 @@
 # Go WASM Bindings
 
-This directory contains a Go binding for the parser that uses WebAssembly (WASM) with WASI support instead of a native Rust library.
+This directory contains a Go binding for the parser that uses WebAssembly (WASM)
+with WASI support instead of a native Rust library.
 
 ## Features
 
@@ -18,13 +19,13 @@ This directory contains a Go binding for the parser that uses WebAssembly (WASM)
 
 ```bash
 # Install wasm32-wasi target if needed
-just setup
+mise go-wasm:setup
 
 # Build the WASM module
-just build-wasm-release
+mise go-wasm:build-wasm-release
 
 # Run the tests
-just test
+mise go-wasm:test
 ```
 
 ## Usage
