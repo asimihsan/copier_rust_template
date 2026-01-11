@@ -1,119 +1,127 @@
-[tools.actionlint]
-version = "1.7.7"
+[[tools.actionlint]]
+version = "1.7.10"
 backend = "aqua:rhysd/actionlint"
+"platforms.macos-arm64" = { checksum = "sha256:004ca87b367b37f4d75c55ab6cf80f9b8c043adbfbd440f31c604d417939c442", url = "https://github.com/rhysd/actionlint/releases/download/v1.7.10/actionlint_1.7.10_darwin_arm64.tar.gz"}
 
-[tools.cargo-binstall]
-version = "1.15.4"
+[[tools.cargo-binstall]]
+version = "1.16.6"
 backend = "aqua:cargo-bins/cargo-binstall"
+"platforms.macos-arm64" = { checksum = "sha256:30543b378b96fbddabee1edfaccde7914dd2f851f02c560de859f81a21ab665b", url = "https://github.com/cargo-bins/cargo-binstall/releases/download/v1.16.6/cargo-binstall-aarch64-apple-darwin.zip"}
 
-[tools."cargo:cargo-audit"]
-version = "0.21.2"
+[[tools."cargo:cargo-audit"]]
+version = "0.22.0"
 backend = "cargo:cargo-audit"
 
-[tools."cargo:cargo-deny"]
-version = "0.18.4"
+[[tools."cargo:cargo-deny"]]
+version = "0.19.0"
 backend = "cargo:cargo-deny"
 
-[tools."cargo:cargo-hack"]
-version = "0.6.38"
+[[tools."cargo:cargo-hack"]]
+version = "0.6.41"
 backend = "cargo:cargo-hack"
 
-[tools."cargo:cargo-insta"]
-version = "1.43.2"
+[[tools."cargo:cargo-insta"]]
+version = "1.46.0"
 backend = "cargo:cargo-insta"
 
-[tools."cargo:cargo-llvm-cov"]
-version = "0.6.19"
+[[tools."cargo:cargo-llvm-cov"]]
+version = "0.6.23"
 backend = "cargo:cargo-llvm-cov"
 
-[tools."cargo:cargo-msrv"]
+[[tools."cargo:cargo-msrv"]]
 version = "0.18.4"
 backend = "cargo:cargo-msrv"
 
-[tools."cargo:cargo-nextest"]
-version = "0.9.103"
+[[tools."cargo:cargo-nextest"]]
+version = "0.9.120"
 backend = "cargo:cargo-nextest"
 
-[tools."cargo:cargo-outdated"]
+[[tools."cargo:cargo-outdated"]]
 version = "0.17.0"
 backend = "cargo:cargo-outdated"
 
-[tools."cargo:cargo-watch"]
+[[tools."cargo:cargo-watch"]]
 version = "8.5.3"
 backend = "cargo:cargo-watch"
 
-[tools."cargo:cbindgen"]
-version = "0.29.0"
+[[tools."cargo:cbindgen"]]
+version = "0.29.2"
 backend = "cargo:cbindgen"
 
-[tools."cargo:leptosfmt"]
+[[tools."cargo:leptosfmt"]]
 version = "0.1.33"
 backend = "cargo:leptosfmt"
 
-[tools."cargo:trunk"]
+[[tools."cargo:trunk"]]
 version = "0.21.14"
 backend = "cargo:trunk"
 
-[tools."cargo:wasm-bindgen-cli"]
-version = "0.2.101"
+[[tools."cargo:wasm-bindgen-cli"]]
+version = "0.2.106"
 backend = "cargo:wasm-bindgen-cli"
 
-[tools."cargo:wasm-pack"]
+[[tools."cargo:wasm-pack"]]
 version = "0.13.1"
 backend = "cargo:wasm-pack"
 
-[tools.fd]
+[[tools.fd]]
 version = "10.3.0"
 backend = "aqua:sharkdp/fd"
 
-[tools.go]
-version = "1.25.1"
+[[tools.go]]
+version = "1.25.5"
 backend = "core:go"
 
-[tools."go:github.com/google/addlicense"]
+[[tools."go:github.com/google/addlicense"]]
 version = "1.2.0"
 backend = "go:github.com/google/addlicense"
 
-[tools.golangci-lint]
-version = "2.4.0"
+[[tools.golangci-lint]]
+version = "2.8.0"
 backend = "aqua:golangci/golangci-lint"
+"platforms.macos-arm64" = { checksum = "sha256:6f8979a83117e0607d4b85ff486382ef0404440bbf54f0e6f003ceab6ccf641e", url = "https://github.com/golangci/golangci-lint/releases/download/v2.8.0/golangci-lint-2.8.0-darwin-arm64.tar.gz"}
 
-[tools.jq]
+[[tools.jq]]
 version = "1.8.1"
 backend = "aqua:jqlang/jq"
 
-[tools.just]
-version = "1.42.4"
+[[tools.just]]
+version = "1.46.0"
 backend = "ubi:casey/just"
+"platforms.macos-arm64-just" = { checksum = "blake3:17ee0c44f2ebf6c1d79d7c79eb053716c2a26562d49526d4d43a54390b506ee1"}
 
-[tools.node]
-version = "24.7.0"
+[[tools.node]]
+version = "25.2.1"
 backend = "core:node"
+"platforms.macos-arm64" = { checksum = "sha256:be87e21bd235a451fad02c89e5bf7cb17e206e4cd89dd5664f20d19e7dfde6f9", url = "https://nodejs.org/dist/v25.2.1/node-v25.2.1-darwin-arm64.tar.gz"}
 
-[tools."npm:markdownlint-cli2"]
-version = "0.18.1"
+[[tools."npm:markdownlint-cli2"]]
+version = "0.20.0"
 backend = "npm:markdownlint-cli2"
 
-[tools.pnpm]
-version = "10.15.1"
+[[tools.pnpm]]
+version = "10.28.0"
 backend = "aqua:pnpm/pnpm"
+"platforms.macos-arm64" = { checksum = "sha256:b6cfee40fcb09e68a874ffbf300eb1ef9dec11302fd03637a4bc605f3f9405cb", url = "https://github.com/pnpm/pnpm/releases/download/v10.28.0/pnpm-macos-arm64"}
 
-[tools.pre-commit]
-version = "4.3.0"
+[[tools.pre-commit]]
+version = "4.5.1"
 backend = "aqua:pre-commit/pre-commit"
+"platforms.macos-arm64" = { checksum = "sha256:19d00ba35cbf9c04dc3736cd8bb641e8633f3eddd4cedde71809574ae68a2cd1", url = "https://github.com/pre-commit/pre-commit/releases/download/v4.5.1/pre-commit-4.5.1.pyz"}
 
-[tools.python]
-version = "3.12.11"
+[[tools.python]]
+version = "3.12.12"
 backend = "core:python"
 
-[tools.rust]
+[[tools.rust]]
 version = "1.89.0"
 backend = "core:rust"
 
-[tools."ubi:https://github.com/WebAssembly/wabt/releases/tag/1.0.37"]
+[[tools."ubi:https://github.com/WebAssembly/wabt/releases/tag/1.0.37"]]
 version = "latest"
 backend = "ubi:https://github.com/WebAssembly/wabt/releases/tag/1.0.37"
 
-[tools.uv]
-version = "0.8.15"
+[[tools.uv]]
+version = "0.9.24"
 backend = "aqua:astral-sh/uv"
+"platforms.macos-arm64" = { checksum = "sha256:89661d9a16682197086df54bb43d0b03e58e23d4d9360fc8c6c0166f2828fd71", url = "https://github.com/astral-sh/uv/releases/download/0.9.24/uv-aarch64-apple-darwin.tar.gz"}
