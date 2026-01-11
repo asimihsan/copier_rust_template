@@ -1,0 +1,480 @@
+[tools]
+"cargo:cargo-audit" = "0.22.0"
+"cargo:cargo-deny" = "0.19.0"
+"cargo:cargo-hack" = "0.6.41"
+"cargo:cargo-insta" = "1.46.0"
+"cargo:cargo-llvm-cov" = "0.6.23"
+"cargo:cargo-msrv" = "0.18.4"
+"cargo:cargo-nextest" = "0.9.120"
+"cargo:cargo-outdated" = "0.17.0"
+"cargo:cargo-watch" = "8.5.3"
+"cargo:cbindgen" = "0.29.2"
+"cargo:leptosfmt" = "0.1.33"
+"cargo:trunk" = "0.21.14"
+"cargo:wasm-bindgen-cli" = "0.2.106"
+"cargo:wasm-pack" = "0.13.1"
+"go:github.com/google/addlicense" = "1.2.0"
+"npm:markdownlint-cli2" = "latest"
+"ubi:https://github.com/WebAssembly/wabt/releases/tag/1.0.37" = "latest"
+
+# Build tools
+actionlint = "latest"
+cargo-binstall = "1.16.6"
+fd = "10.3.0"
+go = "prefix:1.25"
+golangci-lint = "2.8.0"
+jq = "1.8.1"
+node = "25.2.1"
+pnpm = "10.28.0"
+pre-commit = "4.5.1"
+python = "prefix:3.12"
+"rust" = { version = "prefix:1.89", targets = "wasm32-unknown-unknown" }
+sccache = "latest"
+uv = "0.9.24"
+
+[env]
+COREPACK_ENABLE_DOWNLOAD_PROMPT = "1"
+LIBRARY_PATH = "$LIBRARY_PATH:/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/lib:/opt/homebrew/opt/libiconv/lib"
+MACOSX_DEPLOYMENT_TARGET = "11.0"
+RUST_BACKTRACE = "1"
+RUSTC_WRAPPER = "sccache"
+SCCACHE_DIR = "$HOME/.cache/sccache"
+
+[settings]
+experimental = true
+idiomatic_version_file_enable_tools = ["rust"]
+
+[tasks.setup]
+description = "Set up development environment"
+file = "scripts/tasks/setup.sh"
+
+[tasks.mac-setup]
+description = "Install macOS-only dependencies"
+file = "scripts/tasks/mac-setup.sh"
+
+[tasks.update-deps]
+description = "Update Cargo dependencies"
+run = "cargo update"
+
+[tasks."rust:dev"]
+description = "Rust dev workflow (format, clippy-fix, test)"
+depends = ["rust:format", "rust:clippy-fix", "rust:test"]
+
+[tasks."rust:watch"]
+description = "Watch Rust sources for changes"
+run = "cargo watch -x check -x test"
+
+[tasks."rust:check-format"]
+description = "Check Rust formatting"
+run = "cargo fmt -- --check"
+
+[tasks."rust:format"]
+description = "Format Rust code"
+run = [
+    "cargo fmt",
+    {%- if include_web_leptos %}
+    { task = "web-leptos:fmt" },
+    {%- endif %}
+]
+
+[tasks."rust:check-clippy"]
+description = "Run clippy"
+run = "cargo clippy --all-targets --all-features -- -D warnings"
+
+[tasks."rust:clippy-fix"]
+description = "Run clippy with fixes"
+run = "cargo clippy --all-targets --all-features --fix -- -D warnings"
+
+[tasks."rust:test"]
+description = "Run Rust tests"
+run = "cargo nextest run --all-features"
+
+[tasks."rust:test-doc"]
+description = "Run Rust doc tests"
+run = "cargo test --doc"
+
+[tasks."rust:test-miri"]
+description = "Run Miri tests"
+run = "RUSTFLAGS=\"-Zmiri-strict-provenance\" cargo +nightly miri test -- --ignored"
+
+[tasks."rust:coverage"]
+description = "Generate coverage report"
+run = [
+    "cargo llvm-cov --all-features --workspace --lcov --output-path lcov.info",
+    "cargo llvm-cov report --html",
+]
+
+[tasks."rust:coverage-ci"]
+description = "Run coverage in CI"
+run = "cargo llvm-cov --all-features --workspace"
+
+[tasks."rust:audit"]
+description = "Audit dependencies"
+run = [
+    "cargo audit",
+    "cargo deny check",
+]
+
+[tasks."rust:msrv"]
+description = "Verify MSRV"
+run = "cargo msrv verify"
+
+[tasks."rust:hack"]
+description = "Run feature matrix tests"
+run = "cargo hack test --each-feature --no-dev-deps"
+
+[tasks."rust:build"]
+description = "Build Rust"
+run = "cargo build"
+
+[tasks."rust:build-release"]
+description = "Build Rust (release)"
+run = "cargo build --release"
+
+[tasks."rust:clean"]
+description = "Clean Rust artifacts"
+run = "cargo clean"
+
+[tasks."rust:check-all"]
+description = "Run all Rust checks"
+depends = ["rust:check-format", "rust:check-clippy", "rust:test", "rust:coverage-ci", "rust:audit"]
+
+[tasks."gha-lint"]
+description = "Lint GitHub Actions workflows"
+run = "actionlint"
+
+[tasks."markdown-lint"]
+description = "Lint Markdown"
+run = "markdownlint-cli2"
+
+[tasks."lint-all"]
+description = "Run all linters"
+depends = [
+    "rust:check-clippy",
+    "copyright-check",
+    "gha-lint",
+    "markdown-lint",
+    {%- if include_wasm %}
+    "web:lint",
+    {%- endif %}
+    {%- if include_python %}
+    "python:lint",
+    {%- endif %}
+    {%- if include_go %}
+    "go:lint",
+    "go-wasm:lint",
+    {%- endif %}
+]
+
+[tasks."test-all"]
+description = "Run all tests"
+depends = [
+    "rust:test",
+    {%- if include_wasm %}
+    "web:test",
+    {%- endif %}
+    {%- if include_python %}
+    "python:test",
+    {%- endif %}
+    {%- if include_go %}
+    "go:test",
+    "go-wasm:test",
+    {%- endif %}
+]
+
+[tasks."build-all"]
+description = "Build all components"
+depends = [
+    "rust:build",
+    "rust:build-release",
+    {%- if include_wasm %}
+    "web:build",
+    {%- endif %}
+    {%- if include_python %}
+    "python:build",
+    {%- endif %}
+    {%- if include_go %}
+    "go:build",
+    "go-wasm:build",
+    {%- endif %}
+]
+
+[tasks."clean-all"]
+description = "Clean all artifacts"
+depends = [
+    "rust:clean",
+    {%- if include_wasm %}
+    "web:clean",
+    {%- endif %}
+    {%- if include_python %}
+    "python:clean",
+    {%- endif %}
+    {%- if include_go %}
+    "go:clean",
+    "go-wasm:clean",
+    {%- endif %}
+]
+
+[tasks."copyright"]
+description = "Add copyright headers"
+run = 'fd -e rs -e ts -e js -e jsx -e tsx -e go -e py | xargs addlicense -f copyright.tmpl -c "{{ author_name }}" -v -s'
+
+[tasks."copyright-check"]
+description = "Check copyright headers"
+run = 'fd -e rs -e ts -e js -e jsx -e tsx -e go -e py | xargs addlicense -f copyright.tmpl -c "{{ author_name }}" -v -s -check'
+
+{% if include_wasm %}
+[tasks."web:setup"]
+description = "Install web dependencies and build wasm"
+file = "scripts/tasks/web-setup.sh"
+dir = "web"
+
+[tasks."web:dev"]
+description = "Run web dev server"
+depends = ["web:setup"]
+run = "pnpm run dev"
+dir = "web"
+
+[tasks."web:build"]
+description = "Build web frontend"
+depends = ["web:setup"]
+run = "pnpm run build"
+dir = "web"
+
+[tasks."web:test"]
+description = "Test web frontend"
+depends = ["web:setup"]
+run = "pnpm run test"
+dir = "web"
+
+[tasks."web:lint"]
+description = "Lint web frontend"
+depends = ["web:setup"]
+run = ["pnpm run lint", "pnpm run format"]
+dir = "web"
+
+[tasks."web:clean"]
+description = "Clean web artifacts"
+run = "rm -rf pkg dist"
+dir = "web"
+{% endif %}
+
+{% if include_python %}
+[tasks."python:setup"]
+description = "Set up Python environment"
+run = ["uv venv", "uv sync"]
+dir = "python"
+
+[tasks."python:build"]
+description = "Build Python bindings"
+depends = ["python:setup"]
+run = "uv run maturin develop --uv"
+dir = "python"
+
+[tasks."python:dev"]
+description = "Python dev build"
+depends = ["python:build"]
+
+[tasks."python:test"]
+description = "Test Python bindings"
+depends = ["python:build"]
+run = "uv run pytest tests"
+dir = "python"
+
+[tasks."python:lint"]
+description = "Lint Python bindings"
+run = ["uv run ruff check .", "uv run ruff format --check .", "uv run basedpyright"]
+dir = "python"
+
+[tasks."python:lint-fix"]
+description = "Fix Python lint issues"
+run = ["uv run ruff check . --fix", "uv run ruff format ."]
+dir = "python"
+
+[tasks."python:clean"]
+description = "Clean Python artifacts"
+run = ["rm -rf .venv target dist *.egg-info", "find . -type d -name \"__pycache__\" -exec rm -rf {} +"]
+dir = "python"
+{% endif %}
+
+{% if include_go %}
+[tasks."go:generate-bindings"]
+description = "Generate Go bindings"
+file = "scripts/tasks/go-generate-bindings.sh"
+dir = "go"
+
+[tasks."go:build"]
+description = "Build Go bindings"
+depends = ["go:generate-bindings", "rust:build"]
+file = "scripts/tasks/go-build.sh"
+dir = "go"
+
+[tasks."go:test"]
+description = "Test Go bindings"
+depends = ["go:build"]
+file = "scripts/tasks/go-test.sh"
+dir = "go"
+
+[tasks."go:lint"]
+description = "Lint Go bindings"
+depends = ["go:generate-bindings"]
+file = "scripts/tasks/go-lint.sh"
+dir = "go"
+
+[tasks."go:clean"]
+description = "Clean Go bindings"
+run = ["go clean ./...", "rm -f binding.h"]
+dir = "go"
+
+[tasks."go:dev"]
+description = "Go dev workflow"
+depends = ["go:build"]
+
+[tasks."go-wasm:setup"]
+description = "Set up Go WASM bindings"
+file = "scripts/tasks/go-wasm-setup.sh"
+
+[tasks."go-wasm:build-wasm-debug"]
+description = "Build Go WASM (debug)"
+file = "scripts/tasks/go-wasm-build-debug.sh"
+
+[tasks."go-wasm:build-wasm-release"]
+description = "Build Go WASM (release)"
+file = "scripts/tasks/go-wasm-build-release.sh"
+
+[tasks."go-wasm:build"]
+description = "Build Go WASM"
+depends = ["go-wasm:build-wasm-release"]
+
+[tasks."go-wasm:test-go"]
+description = "Test Go WASM bindings"
+depends = ["go-wasm:build-wasm-release"]
+run = "cd go && go test -race -v ./..."
+dir = "go-wasm"
+
+[tasks."go-wasm:test"]
+description = "Run Go WASM tests"
+depends = ["go-wasm:test-go"]
+run = "echo \"All tests passed!\""
+
+[tasks."go-wasm:lint"]
+description = "Lint Go WASM bindings"
+depends = ["go-wasm:build-wasm-release"]
+run = "cd go && golangci-lint run ./..."
+dir = "go-wasm"
+
+[tasks."go-wasm:clean"]
+description = "Clean Go WASM artifacts"
+run = "cd go && go clean ./..."
+dir = "go-wasm"
+{% endif %}
+
+{% if include_web_leptos %}
+[tasks."web-leptos:dev"]
+description = "Run Leptos dev server"
+run = "trunk serve --open --verbose"
+dir = "web-leptos"
+
+[tasks."web-leptos:clean"]
+description = "Clean Leptos artifacts"
+run = "rm -rf dist"
+dir = "web-leptos"
+
+[tasks."web-leptos:fmt"]
+description = "Format Leptos Rust sources"
+run = "leptosfmt ./**/*.rs"
+dir = "web-leptos"
+{% endif %}
+
+[tasks."dev-all"]
+description = "Run dev workflows for all components"
+depends = ["rust:dev"]
+{% if include_wasm or include_python or include_go %}
+run = [
+    { tasks = [
+        {%- if include_wasm %}
+        "web:dev",
+        {%- endif %}
+        {%- if include_python %}
+        "python:dev",
+        {%- endif %}
+        {%- if include_go %}
+        "go:dev",
+        {%- endif %}
+    ] },
+]
+{% else %}
+run = "true"
+{% endif %}
+
+[tasks."ci"]
+description = "Run full CI pipeline"
+depends = ["build-all", "lint-all", "test-all"]
+
+[tasks."release-prep"]
+description = "Prepare for release"
+depends = ["rust:check-all"]
+run = ["git status", "echo \"Ready for release if git status is clean\""]
+
+[tasks."cov-local"]
+description = "Run local coverage with platform-specific handling"
+file = "scripts/tasks/cov-local.sh"
+
+# Legacy aliases
+[tasks.format]
+depends = ["rust:format"]
+hide = true
+
+[tasks.check-format]
+depends = ["rust:check-format"]
+hide = true
+
+[tasks.clippy]
+depends = ["rust:check-clippy"]
+hide = true
+
+[tasks.check-clippy]
+depends = ["rust:check-clippy"]
+hide = true
+
+[tasks.test]
+depends = ["rust:test"]
+hide = true
+
+[tasks.build]
+depends = ["rust:build"]
+hide = true
+
+[tasks.clean]
+depends = ["rust:clean"]
+hide = true
+
+[tasks.dev]
+depends = ["rust:dev"]
+hide = true
+
+[tasks.watch]
+depends = ["rust:watch"]
+hide = true
+
+[tasks.audit]
+depends = ["rust:audit"]
+hide = true
+
+[tasks.check]
+depends = ["lint-all"]
+hide = true
+
+[tasks.coverage]
+depends = ["rust:coverage"]
+hide = true
+
+[tasks.cov]
+depends = ["rust:coverage-ci"]
+hide = true
+
+{% if include_wasm %}
+[tasks.web-dev]
+depends = ["web:dev"]
+hide = true
+{% endif %}

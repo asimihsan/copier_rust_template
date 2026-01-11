@@ -118,4 +118,4 @@ jobs:
           git init
           ./scripts/dev-setup.sh
           mise install
-          just setup copyright ci
+          mise setup copyright ci

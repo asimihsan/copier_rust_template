@@ -29,6 +29,8 @@ touch mise.lock
 mise trust
 mise install
 
-just setup copyright ci
-cd go-wasm
-just setup test test-go
+mise setup
+mise copyright
+mise ci
+mise go-wasm:setup
+mise go-wasm:test

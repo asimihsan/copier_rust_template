@@ -1,0 +1,7 @@
+[[tools.copier]]
+version = "9.7.1"
+backend = "pipx:copier"
+
+[[tools.python]]
+version = "3.12.12"
+backend = "core:python"

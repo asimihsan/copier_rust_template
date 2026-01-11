@@ -15,3 +15,8 @@ else
         curl https://mise.run | sh
     fi
 fi
+
+mise settings add idiomatic_version_file_enable_tools rust
+
+# Need to install rust first
+mise use "rust@prefix:1.89"

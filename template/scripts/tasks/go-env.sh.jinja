@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+TARGET_DIR=$(cargo metadata --format-version=1 --no-deps | jq -r '.target_directory')
+DEBUG_DIR="$TARGET_DIR/debug"
+
+export CGO_LDFLAGS="-L${DEBUG_DIR} -l{{ project_slug_underscore }}_go"
+
+if [[ "$OSTYPE" == "darwin"* ]]; then
+    SDK_PATH=$(xcrun --show-sdk-path)
+    export CGO_CFLAGS="-I${SDK_PATH}/usr/include"
+    export CGO_LDFLAGS="$CGO_LDFLAGS -F${SDK_PATH}/System/Library/Frameworks -L${SDK_PATH}/usr/lib"
+    export CGO_CPPFLAGS="-Wno-error -Wno-nullability-completeness -Wno-expansion-to-defined"
+    export CC="$(xcrun -f clang)"
+elif [[ "$OSTYPE" == "linux"* ]]; then
+    export LD_LIBRARY_PATH="${DEBUG_DIR}:$LD_LIBRARY_PATH"
+fi

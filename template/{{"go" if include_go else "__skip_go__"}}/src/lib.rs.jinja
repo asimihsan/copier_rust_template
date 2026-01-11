@@ -32,7 +32,7 @@ pub enum ErrorCode {
 /// Returns a pointer to a null-terminated C string containing either:
 /// * The result of the calculation on success
 /// * An error message prefixed with "Error: " on failure
-#[no_mangle]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn parse_expression(input: *const c_char) -> *mut c_char {
     // Check for null pointer
     if input.is_null() {
@@ -42,7 +42,7 @@ pub unsafe extern "C" fn parse_expression(input: *const c_char) -> *mut c_char {
     }
 
     // Convert C string to Rust string, handle invalid UTF-8
-    let input_str = match CStr::from_ptr(input).to_str() {
+    let input_str = match unsafe { CStr::from_ptr(input) }.to_str() {
         Ok(s) => s,
         Err(_) => {
             return CString::new("Error: invalid UTF-8 in input")
@@ -66,10 +66,12 @@ pub unsafe extern "C" fn parse_expression(input: *const c_char) -> *mut c_char {
 /// * s is either null or a pointer returned by parse_expression()
 /// * The string is not used after being freed
 /// * The string is not freed more than once
-#[no_mangle]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn free_rust_string(s: *mut c_char) {
     if !s.is_null() {
-        drop(CString::from_raw(s));
+        unsafe {
+            drop(CString::from_raw(s));
+        }
     }
 }
 
