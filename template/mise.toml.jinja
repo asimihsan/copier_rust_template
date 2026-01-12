@@ -14,8 +14,7 @@
 "cargo:wasm-bindgen-cli" = "0.2.106"
 "cargo:wasm-pack" = "0.13.1"
 "go:github.com/google/addlicense" = "1.2.0"
-"npm:markdownlint-cli2" = "latest"
-"ubi:https://github.com/WebAssembly/wabt/releases/tag/1.0.37" = "latest"
+"github:WebAssembly/wabt" = "1.0.37"
 
 # Build tools
 actionlint = "latest"
@@ -24,8 +23,7 @@ fd = "10.3.0"
 go = "prefix:1.25"
 golangci-lint = "2.8.0"
 jq = "1.8.1"
-node = "25.2.1"
-pnpm = "10.28.0"
+bun = "latest"
 pre-commit = "4.5.1"
 python = "prefix:3.12"
 "rust" = { version = "prefix:1.89", targets = "wasm32-unknown-unknown" }
@@ -33,7 +31,6 @@ sccache = "latest"
 uv = "0.9.24"
 
 [env]
-COREPACK_ENABLE_DOWNLOAD_PROMPT = "1"
 LIBRARY_PATH = "$LIBRARY_PATH:/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/lib:/opt/homebrew/opt/libiconv/lib"
 MACOSX_DEPLOYMENT_TARGET = "11.0"
 RUST_BACKTRACE = "1"
@@ -145,7 +142,7 @@ run = "actionlint"
 
 [tasks."markdown-lint"]
 description = "Lint Markdown"
-run = "markdownlint-cli2"
+run = "bunx markdownlint-cli2"
 
 [tasks."lint-all"]
 description = "Run all linters"
@@ -232,25 +229,25 @@ dir = "web"
 [tasks."web:dev"]
 description = "Run web dev server"
 depends = ["web:setup"]
-run = "pnpm run dev"
+run = "bun run dev"
 dir = "web"
 
 [tasks."web:build"]
 description = "Build web frontend"
 depends = ["web:setup"]
-run = "pnpm run build"
+run = "bun run build"
 dir = "web"
 
 [tasks."web:test"]
 description = "Test web frontend"
 depends = ["web:setup"]
-run = "pnpm run test"
+run = "bun run test"
 dir = "web"
 
 [tasks."web:lint"]
 description = "Lint web frontend"
 depends = ["web:setup"]
-run = ["pnpm run lint", "pnpm run format"]
+run = ["bun run lint", "bun run format"]
 dir = "web"
 
 [tasks."web:clean"]
@@ -262,7 +259,7 @@ dir = "web"
 {% if include_python %}
 [tasks."python:setup"]
 description = "Set up Python environment"
-run = ["uv venv", "uv sync"]
+run = ["uv venv", "uv sync --group dev"]
 dir = "python"
 
 [tasks."python:build"]

@@ -19,8 +19,8 @@ module-name = "{{ project_slug_underscore }}.{{ project_slug_underscore }}"
 features = ["pyo3/extension-module"]
 include = ["src/{{ project_slug_underscore }}/*.pyi", "src/{{ project_slug_underscore }}/py.typed"]
 
-[tool.uv]
-dev-dependencies = [
+[dependency-groups]
+dev = [
     "basedpyright>=1.28.4",
     "coverage>=7.6.1",
     "maturin>=1.8.2",
