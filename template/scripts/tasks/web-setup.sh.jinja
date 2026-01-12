@@ -13,5 +13,5 @@ RUSTFLAGS='-C opt-level=s -C codegen-units=1' wasm-pack build --target web --out
 popd >/dev/null
 
 pushd "${MISE_PROJECT_ROOT}/web" >/dev/null
-pnpm install
+bun install
 popd >/dev/null

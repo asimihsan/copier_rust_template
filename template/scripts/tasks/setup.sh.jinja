@@ -11,7 +11,7 @@ fi
 
 {% if include_python %}
 (cd python && uv venv)
-(cd python && uv sync)
+(cd python && uv sync --group dev)
 {% endif %}
 
 rustup toolchain install nightly

@@ -89,7 +89,7 @@ ensure consistent quality on every commit.
 watch mode for Rust, and automated rebuilds of Python extensions. The
 development environment includes:
 
-🔧 Cargo, pnpm, and uv for dependency management  
+🔧 Cargo, bun, and uv for dependency management  
 🔍 Clippy and ESLint for static analysis  
 ✨ rustfmt and Prettier keep code clean  
 📊 Code coverage and performance profiling
