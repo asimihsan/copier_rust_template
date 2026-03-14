@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+#MISE description="Run dependency freshness reporting and security checks"
+set -euo pipefail
+
+mise run deps-report
+mise run rust:audit

@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+#MISE description="Check Leptos formatting"
+set -euo pipefail
+
+cd "${MISE_PROJECT_ROOT}/crates/web-leptos"
+leptosfmt --check src/**/*.rs

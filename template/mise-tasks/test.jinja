@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+#MISE description="Run the default test suite"
+set -euo pipefail
+
+mise run rust:test
+mise run rust:test-doc
+{% if include_wasm %}
+mise run web:test
+{% endif %}
+{% if include_python %}
+mise run python:test
+{% endif %}
+{% if include_go %}
+mise run go:test
+mise run go-wasm:test
+{% endif %}

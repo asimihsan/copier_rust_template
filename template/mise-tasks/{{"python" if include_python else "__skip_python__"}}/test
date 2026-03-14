@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+#MISE description="Run Python tests"
+set -euo pipefail
+
+mise run python:build
+cd "${MISE_PROJECT_ROOT}/python"
+uv run pytest tests

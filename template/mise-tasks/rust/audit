@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+#MISE description="Run dependency security checks"
+set -euo pipefail
+
+cargo audit
+cargo deny check

@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+#MISE description="Clean Rust build artifacts"
+set -euo pipefail
+
+cargo clean

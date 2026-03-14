@@ -60,19 +60,19 @@ mise install             # installs the toolchain versions specified in mise.tom
 Set up tools:
 
 ```bash
-mise setup
+mise run setup
 ```
 
 Add copyright header:
 
 ```bash
-mise copyright
+mise run copyright
 ```
 
 Build and test your project:
 
 ```bash
-mise ci
+mise run ci
 ```
 
 ## Development Tools & Workflow
@@ -86,8 +86,9 @@ coverage tracking and fuzz testing for core components. Automated CI pipelines
 ensure consistent quality on every commit.
 
 **Development Loop** Fast iteration with hot reloading for web development,
-watch mode for Rust, and automated rebuilds of Python extensions. The
-development environment includes:
+watch mode for Rust, and automated rebuilds of Python extensions. Commands are
+discovered from `mise-tasks/`, so `mise tasks` shows the generated workflow
+surface directly.
 
 🔧 Cargo, bun, and uv for dependency management  
 🔍 Clippy and ESLint for static analysis  
@@ -130,23 +131,26 @@ Your generated project will include:
 
 **Core Components**
 
-- `core/`: Your main Rust library codebase
-- `cli/`: Command-line interface implementation
+- `crates/core/`: Your main Rust library codebase
+- `crates/cli/`: Command-line interface implementation
 - `Cargo.toml` & `deny.toml`: Rust project configuration
 - `.rustfmt.toml`: Code formatting rules
+- `mise-tasks/`: Script-backed developer commands
 
 **Optional Components**
 
-- `wasm/`: WebAssembly module (when `include_wasm=true`)
+- `crates/wasm/`: WebAssembly module (when `include_wasm=true`)
 - `web/`: TypeScript frontend (when `include_wasm=true`)
-- `python/`: Python language bindings (when `include_python=true`)
-- `go/`: Go language bindings (when `include_go=true`)
+- `crates/python/`: Rust extension crate for Python bindings (when `include_python=true`)
+- `python/`: Python packaging and tests (when `include_python=true`)
+- `crates/go/`: Rust crate for Go bindings (when `include_go=true`)
+- `crates/go-wasm/`: Rust crate for Go/WASI bindings (when `include_go=true`)
 
 **Development Environment**
 
 - `mise.toml`: Toolchain configuration and common operations
 - `.envrc`: Automatic environment activation
-- `.pre-commit-config.yaml`: Git hooks for quality checks
+- `.watchmanconfig`: File-watcher ignore defaults carried over from `sheeptext`
 
 ## Testing
 
@@ -166,12 +170,12 @@ cd ~/workplace && \
     git init && \
     ./scripts/dev-setup.sh && \
     mise install && \
-    mise setup && \
-    mise copyright && \
-    mise ci ; \
-    cd go-wasm && \
-    mise go-wasm:setup && \
-    mise go-wasm:test && \
+    mise run setup && \
+    mise run copyright && \
+    mise run ci ; \
+    cd crates/go-wasm && \
+    mise run go-wasm:setup && \
+    mise run go-wasm:test && \
     cd ..
 ```
 

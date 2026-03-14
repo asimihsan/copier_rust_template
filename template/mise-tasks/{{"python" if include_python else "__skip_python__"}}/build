@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+#MISE description="Build Python bindings"
+set -euo pipefail
+
+mise run python:setup
+cd "${MISE_PROJECT_ROOT}/python"
+uv run maturin develop --uv --manifest-path ../crates/python/Cargo.toml

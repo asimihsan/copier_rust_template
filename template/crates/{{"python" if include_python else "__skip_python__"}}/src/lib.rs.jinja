@@ -1,0 +1,40 @@
+//! Python extension module for {{ project_name }}.
+
+use pyo3::exceptions::PyValueError;
+use pyo3::prelude::*;
+use {{ project_slug_underscore }}_core as core;
+
+/// Parse and evaluate a simple arithmetic expression.
+///
+/// Args:
+///     expression (str): The arithmetic expression to evaluate (e.g., "1+2+3")
+///
+/// Returns:
+///     str: The result of evaluating the expression
+///
+/// Raises:
+///     ValueError: If the expression cannot be parsed
+///
+/// Example:
+///     >>> import {{ project_slug_underscore }}
+///     >>> {{ project_slug_underscore }}.parse("1+2+3")
+///     '6'
+#[pyfunction]
+fn parse(expression: &str) -> PyResult<String> {
+    core::parse(expression).map_err(|e| PyValueError::new_err(e.to_string()))
+}
+
+/// Python module for {{ project_name }}.
+#[pymodule]
+fn {{ project_slug_underscore }}(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
+    m.setattr("__version__", env!("CARGO_PKG_VERSION"))?;
+    m.setattr("__all__", ["__version__", "parse"])?;
+    m.setattr(
+        "__doc__",
+        "Python bindings for {{ project_name }}, a simple arithmetic expression parser.",
+    )?;
+
+    m.add_function(wrap_pyfunction!(parse, m)?)?;
+
+    Ok(())
+}

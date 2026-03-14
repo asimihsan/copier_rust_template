@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+#MISE description="Format Leptos sources"
+set -euo pipefail
+
+cd "${MISE_PROJECT_ROOT}/crates/web-leptos"
+leptosfmt src/**/*.rs

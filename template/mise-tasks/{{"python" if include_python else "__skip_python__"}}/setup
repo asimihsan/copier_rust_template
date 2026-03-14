@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+#MISE description="Set up the Python virtual environment"
+set -euo pipefail
+
+cd "${MISE_PROJECT_ROOT}/python"
+uv venv --allow-existing --python "$(command -v python)"
+uv sync --group dev

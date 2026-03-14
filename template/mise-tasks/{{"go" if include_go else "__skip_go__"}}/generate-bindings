@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+#MISE description="Generate Go bindings"
+set -euo pipefail
+
+cd "${MISE_PROJECT_ROOT}/crates/go"
+cbindgen --config cbindgen.toml --output binding.h

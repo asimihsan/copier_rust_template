@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+#MISE description="Generate HTML and LCOV coverage reports"
+set -euo pipefail
+
+mise run rust:test-coverage
+cargo llvm-cov report --html
+cargo llvm-cov report --lcov --output-path lcov.info

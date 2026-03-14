@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+#MISE description="Fast local loop"
+set -euo pipefail
+
+mise run format
+mise run lint
+mise run test

@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+#MISE description="Run the full Rust validation suite"
+set -euo pipefail
+
+mise run rust:check-format
+{% if include_web_leptos %}
+mise run web-leptos:check-format
+{% endif %}
+mise run rust:check-clippy
+mise run rust:test
+mise run rust:test-doc
+mise run rust:audit

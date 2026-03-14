@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+#MISE description="Run web tests"
+set -euo pipefail
+
+mise run web:setup
+cd "${MISE_PROJECT_ROOT}/web"
+bun run test

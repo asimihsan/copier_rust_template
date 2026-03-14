@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+#MISE description="Alias for rust:coverage"
+set -euo pipefail
+
+mise run rust:coverage

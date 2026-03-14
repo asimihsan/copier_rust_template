@@ -1,13 +1,9 @@
 [profile.default]
-# Run tests in parallel
 test-threads = "num-cpus"
-# Retry flaky tests
 retries = 1
-# Fail fast on first error
 fail-fast = false
 
 [profile.ci]
-# More conservative settings for CI - 3 is the sweet-spot for flaky network/filesystem tests
 test-threads = 4
-retries = 3
-fail-fast = true 
+retries = 2
+fail-fast = true

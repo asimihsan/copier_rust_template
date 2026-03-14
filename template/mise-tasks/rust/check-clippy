@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+#MISE description="Run strict clippy"
+set -euo pipefail
+
+cargo clippy --workspace --all-targets --all-features --no-deps -- -D warnings

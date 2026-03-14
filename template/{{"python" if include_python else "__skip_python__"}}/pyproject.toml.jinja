@@ -6,7 +6,7 @@ build-backend = "maturin"
 name = "{{ project_slug }}"
 version = "0.1.0"
 description = "Python bindings for {{ project_name }}"
-requires-python = ">=3.12"
+requires-python = ">=3.14"
 classifiers = [
     "Programming Language :: Python :: 3",
     "Programming Language :: Rust",
@@ -14,6 +14,7 @@ classifiers = [
 ]
 
 [tool.maturin]
+manifest-path = "../crates/python/Cargo.toml"
 python-source = "src"
 module-name = "{{ project_slug_underscore }}.{{ project_slug_underscore }}"
 features = ["pyo3/extension-module"]
@@ -78,7 +79,7 @@ typeCheckingMode = "basic"
 strictParameterNoneValue = true
 reportMissingTypeStubs = true
 reportUnknownMemberType = true
-pythonVersion = "3.12"
+pythonVersion = "3.14"
 extraPaths = ["src"]
 venv = ".venv"
 

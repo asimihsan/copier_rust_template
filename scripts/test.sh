@@ -29,8 +29,8 @@ touch mise.lock
 mise trust
 mise install
 
-mise setup
-mise copyright
-mise ci
-mise go-wasm:setup
-mise go-wasm:test
+mise run setup
+mise run copyright
+mise run ci
+mise run go-wasm:setup
+mise run go-wasm:test

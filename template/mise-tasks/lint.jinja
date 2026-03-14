@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+#MISE description="Run the default lint suite"
+set -euo pipefail
+
+mise run check-format
+mise run rust:check-clippy
+mise run shell:lint
+{% if include_wasm %}
+mise run web:lint
+{% endif %}
+{% if include_python %}
+mise run python:lint
+{% endif %}
+{% if include_go %}
+mise run go:lint
+mise run go-wasm:lint
+{% endif %}

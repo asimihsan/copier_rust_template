@@ -1,0 +1,25 @@
+[package]
+name = "{{ project_slug }}-cli"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+authors.workspace = true
+
+description = "Command-line interface for {{ project_name }}"
+homepage = "https://github.com/{{ github_username }}/{{ project_slug }}"
+repository = "https://github.com/{{ github_username }}/{{ project_slug }}"
+documentation = "https://docs.rs/{{ project_slug }}-cli"
+readme = "../../README.md"
+keywords = ["{{ project_slug }}", "cli"]
+categories = ["command-line-utilities"]
+
+[dependencies]
+{{ project_slug }}-core = { path = "../core" }
+
+[[bin]]
+name = "{{ project_slug }}-cli"
+path = "src/main.rs"
+
+[lints]
+workspace = true

@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+#MISE description="Check repository formatting"
+set -euo pipefail
+
+mise run rust:check-format
+{% if include_web_leptos %}
+mise run web-leptos:check-format
+{% endif %}

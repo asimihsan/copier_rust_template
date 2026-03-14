@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+#MISE description="Report outdated dependencies"
+set -euo pipefail
+
+cargo outdated --workspace --root-deps-only

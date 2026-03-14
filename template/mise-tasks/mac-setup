@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+#MISE description="Install macOS-specific dependencies"
+set -euo pipefail
+
+if [[ "$OSTYPE" != "darwin"* ]]; then
+    echo "mac-setup is only for macOS" >&2
+    exit 1
+fi
+
+if ! command -v brew >/dev/null 2>&1; then
+    echo "Homebrew is required for mac-setup" >&2
+    exit 1
+fi
+
+brew install libiconv llvm
+
+if ! xcode-select -p >/dev/null 2>&1; then
+    xcode-select --install
+fi

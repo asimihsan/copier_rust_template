@@ -24,14 +24,14 @@ jobs:
   test-template:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Ensure cache directories
         run: |
           mkdir -p ~/.cargo ~/.cache/go-build ~/go/pkg/mod ~/.cache/uv ~/.bun/install/cache
 
       - name: Cache Rust
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: |
             ~/.cargo
@@ -41,7 +41,7 @@ jobs:
 
       - name: Cache Python (uv)
         if: ${{ inputs.python }}
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: |
             ~/.cache/uv
@@ -51,7 +51,7 @@ jobs:
 
       - name: Cache Bun
         if: ${{ inputs.wasm }}
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: |
             ~/.bun/install/cache
@@ -61,7 +61,7 @@ jobs:
 
       - name: Cache Go
         if: ${{ inputs.go }}
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: |
             ~/.cache/go-build
@@ -71,7 +71,7 @@ jobs:
             go-${{ inputs.cache_suffix }}-
 
       - name: Cache mise
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: |
             ~/.cache/mise
@@ -84,18 +84,18 @@ jobs:
       - name: Setup mise directories
         run: |
           mkdir -p ~/.local/state/mise
-          sudo chown -R $USER:$USER ~/.local/state/mise
+          sudo chown -R "$USER:$USER" ~/.local/state/mise
 
       - name: Set GITHUB_TOKEN for mise
         run: |
-          echo "GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}" >> $GITHUB_ENV
+          echo "GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}" >> "$GITHUB_ENV"
 
       - name: Run dev-setup.sh
         run: |
           ./scripts/dev-setup.sh
 
       - name: Setup mise
-        uses: jdx/mise-action@v2
+        uses: jdx/mise-action@v4
         with:
           install: true
           cache: true
@@ -119,4 +119,6 @@ jobs:
           git init
           ./scripts/dev-setup.sh
           mise install
-          mise setup copyright ci
+          mise run setup
+          mise run copyright
+          mise run ci

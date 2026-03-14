@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+#MISE description="Lint the Go/WASM bridge"
+set -euo pipefail
+
+mise run go-wasm:build-wasm-release
+cd "${MISE_PROJECT_ROOT}/crates/go-wasm/go"
+golangci-lint run ./...

@@ -1,0 +1,25 @@
+[package]
+name = "{{ project_slug }}-core"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+authors.workspace = true
+
+description = "Core library for {{ project_name }}"
+homepage = "https://github.com/{{ github_username }}/{{ project_slug }}"
+repository = "https://github.com/{{ github_username }}/{{ project_slug }}"
+documentation = "https://docs.rs/{{ project_slug }}-core"
+readme = "../../README.md"
+keywords = ["{{ project_slug }}", "core"]
+categories = ["development-tools"]
+
+[dependencies]
+thiserror = "2.0"
+
+[lib]
+path = "src/lib.rs"
+crate-type = ["rlib", "cdylib"]
+
+[lints]
+workspace = true

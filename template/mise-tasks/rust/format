@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+#MISE description="Format Rust sources"
+set -euo pipefail
+
+cargo fmt --all

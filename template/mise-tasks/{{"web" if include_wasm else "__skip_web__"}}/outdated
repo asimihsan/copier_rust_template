@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+#MISE description="Report outdated web dependencies"
+set -euo pipefail
+
+mise run web:setup
+cd "${MISE_PROJECT_ROOT}/web"
+bun outdated

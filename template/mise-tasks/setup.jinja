@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+#MISE description="Set up local developer tooling"
+set -euo pipefail
+
+if [[ "$OSTYPE" == "darwin"* ]]; then
+    mise run mac-setup
+fi
+
+{% if include_python %}
+mise run python:setup
+{% endif %}
+
+{% if include_wasm or include_web_leptos %}
+mise run rust:ensure-wasm-target
+{% endif %}
+
+{% if include_go %}
+mise run go-wasm:setup
+{% endif %}

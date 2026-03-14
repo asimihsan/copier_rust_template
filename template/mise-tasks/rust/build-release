@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+#MISE description="Build the Rust workspace in release mode"
+set -euo pipefail
+
+cargo build --workspace --all-features --release

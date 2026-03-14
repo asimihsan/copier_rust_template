@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+#MISE description="Generate LCOV coverage after an instrumented test run"
+set -euo pipefail
+
+mise run rust:test-coverage
+cargo llvm-cov report --lcov --output-path lcov.info

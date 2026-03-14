@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+#MISE description="Clean web artifacts"
+set -euo pipefail
+
+cd "${MISE_PROJECT_ROOT}/web"
+rm -rf dist pkg

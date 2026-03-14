@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+#MISE description="Run Python lint and type checks"
+set -euo pipefail
+
+mise run python:setup
+cd "${MISE_PROJECT_ROOT}/python"
+uv run ruff check .
+uv run ruff format --check .
+uv run basedpyright

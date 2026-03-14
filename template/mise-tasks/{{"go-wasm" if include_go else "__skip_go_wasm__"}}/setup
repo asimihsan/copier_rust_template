@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+#MISE description="Set up the Go/WASM bridge"
+set -euo pipefail
+
+rustup target add wasm32-wasip1
+cd "${MISE_PROJECT_ROOT}/crates/go-wasm/go"
+go mod tidy

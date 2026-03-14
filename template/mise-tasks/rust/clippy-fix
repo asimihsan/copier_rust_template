@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+#MISE description="Apply clippy fixes"
+set -euo pipefail
+
+cargo clippy --workspace --all-targets --all-features --no-deps --fix --allow-dirty --allow-staged -- -D warnings

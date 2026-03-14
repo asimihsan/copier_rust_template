@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+#MISE description="Build all enabled components"
+set -euo pipefail
+
+mise run rust:build
+{% if include_wasm %}
+mise run web:build
+{% endif %}
+{% if include_python %}
+mise run python:build
+{% endif %}
+{% if include_go %}
+mise run go:build
+mise run go-wasm:build
+{% endif %}

@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+#MISE description="Run all configured linters"
+set -euo pipefail
+
+mise run lint
+mise run copyright-check
+mise run gha-lint
+mise run markdown-lint

@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+#MISE description="Run Rust tests with nextest"
+set -euo pipefail
+
+cargo nextest run --workspace --all-features --no-fail-fast

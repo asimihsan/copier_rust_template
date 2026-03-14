@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+#MISE description="Review pending snapshot updates"
+set -euo pipefail
+
+cargo insta review

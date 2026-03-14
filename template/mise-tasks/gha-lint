@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+#MISE description="Lint GitHub Actions workflows"
+set -euo pipefail
+
+actionlint

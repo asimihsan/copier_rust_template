@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+#MISE description="Run tests with coverage instrumentation"
+set -euo pipefail
+
+cargo llvm-cov nextest --workspace --all-features --no-report

@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+#MISE description="Format repository sources"
+set -euo pipefail
+
+mise run rust:format
+{% if include_web_leptos %}
+mise run web-leptos:format
+{% endif %}
+{% if include_wasm %}
+mise run web:format
+{% endif %}
+{% if include_python %}
+mise run python:format
+{% endif %}

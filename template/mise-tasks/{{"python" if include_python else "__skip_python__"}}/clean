@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+#MISE description="Clean Python artifacts"
+set -euo pipefail
+
+cd "${MISE_PROJECT_ROOT}/python"
+rm -rf .venv target dist ./*.egg-info
+find . -type d -name __pycache__ -prune -exec rm -rf {} +

@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+#MISE description="Lint shell scripts discovered by shebang"
+set -euo pipefail
+
+shell_files=()
+while IFS= read -r file; do
+    if head -n 1 "$file" 2>/dev/null | grep -Eq '^#!.*(bash|sh)([[:space:]]|$)'; then
+        shell_files+=("$file")
+    fi
+done < <(fd -t f . "${MISE_PROJECT_ROOT}")
+
+if ((${#shell_files[@]} == 0)); then
+    echo "No shell scripts found"
+    exit 0
+fi
+
+shellcheck "${shell_files[@]}"

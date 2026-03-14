@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+#MISE description="Verify MSRV policy"
+set -euo pipefail
+
+cargo msrv verify --workspace

@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+#MISE description="Format Python sources"
+set -euo pipefail
+
+mise run python:setup
+cd "${MISE_PROJECT_ROOT}/python"
+uv run ruff check . --fix
+uv run ruff format .

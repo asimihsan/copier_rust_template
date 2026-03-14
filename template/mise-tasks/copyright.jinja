@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+#MISE description="Add copyright headers"
+set -euo pipefail
+
+fd -0 -e rs -e ts -e js -e jsx -e tsx -e go -e py . \
+    | xargs -0 addlicense -f copyright.tmpl -c "{{ author_name }}" -v -s

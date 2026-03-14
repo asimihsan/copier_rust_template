@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+#MISE description="Clean Go/WASM artifacts"
+set -euo pipefail
+
+cd "${MISE_PROJECT_ROOT}/crates/go-wasm/go"
+go clean ./...
+rm -f "{{ project_slug_underscore }}_go_wasm.wasm"

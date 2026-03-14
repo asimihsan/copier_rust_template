@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+#MISE description="Run all configured tests"
+set -euo pipefail
+
+mise run test

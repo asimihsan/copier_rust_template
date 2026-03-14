@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+#MISE description="Alias for rust:audit"
+set -euo pipefail
+
+mise run rust:audit

@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+#MISE description="Run Rust doctests"
+set -euo pipefail
+
+cargo test --workspace --doc --all-features

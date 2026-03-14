@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+#MISE description="Alias for rust:check-clippy"
+set -euo pipefail
+
+mise run rust:check-clippy

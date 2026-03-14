@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+#MISE description="Build the Go/WASM bridge"
+set -euo pipefail
+
+mise run go-wasm:build-wasm-release

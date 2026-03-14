@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+#MISE description="Run feature matrix tests"
+set -euo pipefail
+
+cargo hack test --workspace --each-feature --no-dev-deps

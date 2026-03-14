@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+#MISE description="Build Rust API documentation"
+set -euo pipefail
+
+cargo doc --workspace --all-features --no-deps

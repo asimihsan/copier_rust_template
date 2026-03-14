@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+#MISE description="Run snapshot tests"
+set -euo pipefail
+
+cargo insta test --workspace --all-features

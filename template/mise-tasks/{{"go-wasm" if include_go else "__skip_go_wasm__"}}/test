@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+#MISE description="Run Go/WASM bridge tests"
+set -euo pipefail
+
+mise run go-wasm:build-wasm-release
+cd "${MISE_PROJECT_ROOT}/crates/go-wasm/go"
+go test -race -v ./...

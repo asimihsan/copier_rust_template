@@ -11,90 +11,98 @@ env:
   RUST_BACKTRACE: 1
 
 jobs:
-  check:
-    name: Check
+  deps:
+    name: Dependency Checks
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: jdx/mise-action@v2
+      - uses: actions/checkout@v6
+      - uses: jdx/mise-action@v4
         with:
-          experimental: true
+          install: true
+          cache: true
       - name: Cache cargo
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: |
             ~/.cargo/registry
             ~/.cargo/git
-          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}-check
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}-deps
       - name: Setup environment
-        run: just setup
-      - name: Check formatting
-        run: just check-format
-      - name: Check clippy
-        run: just check-clippy
-      - name: Check dependencies
-        run: just audit
+        run: mise run setup
+      - name: Run dependency checks
+        run: mise run deps-check
+
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: jdx/mise-action@v4
+        with:
+          install: true
+          cache: true
+      - name: Cache cargo
+        uses: actions/cache@v5
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}-lint
+      - name: Setup environment
+        run: mise run setup
+      - name: Run lint suite
+        run: mise run lint-all
 
   test:
     name: Test Suite
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        include:
-          - {os: ubuntu-latest , rust: stable}
-          - {os: ubuntu-latest , rust: nightly}
-          - {os: ubuntu-latest , rust: "1.87.0"}   # MSRV  
-          - {os: windows-latest, rust: stable}
-          - {os: macos-latest  , rust: stable}
+        os: [ubuntu-latest, windows-latest, macos-latest]
     steps:
-      - uses: actions/checkout@v4
-      - uses: jdx/mise-action@v2
+      - uses: actions/checkout@v6
+      - uses: jdx/mise-action@v4
         with:
-          experimental: true
+          install: true
+          cache: true
       - name: Cache cargo
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: |
             ~/.cargo/registry
             ~/.cargo/git
-          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}-${{ matrix.rust }}
-      - name: Install Rust
-        run: rustup toolchain install ${{ matrix.rust }} --component rustfmt clippy miri
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}-test
       - name: Setup environment
-        run: just setup
+        run: mise run setup
       - name: Run tests
-        run: just test
-      - name: Run doc tests  
-        run: just test-doc
-      - name: Run miri (nightly only)
-        if: matrix.rust == 'nightly'
-        run: just test-miri
+        run: mise run test
 
   coverage:
     name: Coverage
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: jdx/mise-action@v2
+      - uses: actions/checkout@v6
+      - uses: jdx/mise-action@v4
         with:
-          experimental: true
+          install: true
+          cache: true
       - name: Cache cargo
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: |
             ~/.cargo/registry
             ~/.cargo/git
           key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}-coverage
       - name: Setup environment
-        run: just setup
+        run: mise run setup
       - name: Generate coverage
-        run: just coverage
+        run: mise run rust:coverage
       - name: Upload to codecov
         uses: codecov/codecov-action@v5
         with:
           files: lcov.info
       - name: Upload HTML report artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: coverage-report
           path: target/llvm-cov/html/
@@ -106,12 +114,13 @@ jobs:
       matrix:
         target: [x86_64-unknown-linux-musl, aarch64-unknown-linux-gnu]
     steps:
-      - uses: actions/checkout@v4
-      - uses: jdx/mise-action@v2
+      - uses: actions/checkout@v6
+      - uses: jdx/mise-action@v4
         with:
-          experimental: true
+          install: true
+          cache: true
       - name: Cache cargo
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: |
             ~/.cargo/registry
@@ -120,6 +129,6 @@ jobs:
       - name: Install cross
         run: cargo install cross --locked
       - name: Setup environment
-        run: just setup
+        run: mise run setup
       - name: Cross compile and test
         run: cross test --release --all-features --target ${{ matrix.target }}

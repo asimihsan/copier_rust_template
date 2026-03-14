@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+#MISE description="Install web dependencies and build wasm bindings"
+set -euo pipefail
+
+mise run rust:ensure-wasm-target
+
+pushd "${MISE_PROJECT_ROOT}/crates/wasm" >/dev/null
+RUSTFLAGS='-C opt-level=s -C codegen-units=1' wasm-pack build --target web --out-dir ../../web/pkg --dev
+popd >/dev/null
+
+pushd "${MISE_PROJECT_ROOT}/web" >/dev/null
+bun install
+popd >/dev/null

@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+#MISE description="Canonical local/CI pipeline"
+set -euo pipefail
+
+mise run build-all
+mise run lint-all
+mise run test-all
+mise run rust:coverage-ci
+mise run deps-check

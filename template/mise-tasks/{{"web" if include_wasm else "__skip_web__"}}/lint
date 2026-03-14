@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+#MISE description="Lint the web frontend"
+set -euo pipefail
+
+mise run web:setup
+cd "${MISE_PROJECT_ROOT}/web"
+bun run lint
+bun run format:check
+bun run type-check

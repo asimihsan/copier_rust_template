@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+#MISE description="Build the Go/WASM bridge in release mode"
+set -euo pipefail
+
+cd "${MISE_PROJECT_ROOT}"
+cargo build --package {{ project_slug }}-go-wasm --target wasm32-wasip1 --release
+cp target/wasm32-wasip1/release/{{ project_slug_underscore }}_go_wasm.wasm crates/go-wasm/go/{{ project_slug_underscore }}_go_wasm.wasm \
+    || cp target/wasm32-wasip1/release/{{ project_slug_underscore }}_go.wasm crates/go-wasm/go/{{ project_slug_underscore }}_go_wasm.wasm
+
+cd "${MISE_PROJECT_ROOT}/crates/go-wasm/go"
+go mod tidy

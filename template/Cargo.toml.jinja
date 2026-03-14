@@ -1,24 +1,21 @@
 [workspace]
 members = [
-    "cli",
-    "core",
+    "crates/cli",
+    "crates/core",
     {%- if include_wasm %}
-    "wasm",
+    "crates/wasm",
     {%- endif %}
     {%- if include_go %}
-    "go",
-    "go-wasm",
+    "crates/go",
+    "crates/go-wasm",
+    {%- endif %}
+    {%- if include_python %}
+    "crates/python",
     {%- endif %}
     {%- if include_web_leptos %}
-    "web-leptos",
+    "crates/web-leptos",
     {%- endif %}
 ]
-
-{%- if include_python %}
-exclude = [
-    "python",
-]
-{%- endif %}
 
 resolver = "2"
 
@@ -26,7 +23,7 @@ resolver = "2"
 version = "0.1.0"
 edition = "2024"
 license = "MPL-2.0"
-rust-version = "1.85"
+rust-version = "1.94.0"
 authors = ["{{ author_name }}"]
 
 [profile.release]
@@ -44,3 +41,5 @@ nursery = { level = "warn", priority = -1 }
 # Individual lints with higher priority
 unwrap_used = "deny"
 expect_used = "deny"
+dbg_macro = "deny"
+todo = "deny"

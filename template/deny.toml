@@ -13,26 +13,21 @@ unmaintained = "workspace"
 yanked       = "deny"
 
 [licenses]
-# only these SPDX licenses are permitted (everything else is denied by default)
+# Permit common permissive licenses used by typical Rust ecosystem dependencies.
 allow = [
   "MIT",
   "Apache-2.0",
+  "Apache-2.0 WITH LLVM-exception",
   "MPL-2.0",
-  "Unicode-DFS-2016",
+  "CC0-1.0",
+  "BSL-1.0",
+  "BSD-2-Clause",
+  "BSD-3-Clause",
+  "Zlib",
+  "Unicode-3.0",
 ]
 
-# (optional) lint if an allowed license isn't actually used:
-# unused-allowed-license = "warn"
-
-# (optional) override AskAlono's confidence threshold:
-# confidence-threshold = 0.8
-
 [bans]
-# duplicate-version policy: warn | deny | allow
 multiple-versions = "warn"
-
-# wildcard dependencies: allow | deny
 wildcards         = "allow"
-
-# graph coloring when dumping dotgraphs: none | all
 highlight         = "all"
