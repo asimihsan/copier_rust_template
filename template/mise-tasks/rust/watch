@@ -2,4 +2,4 @@
 #MISE description="Watch Rust sources for changes"
 set -euo pipefail
 
-cargo watch -x 'check --workspace --all-targets --all-features' -x 'nextest run --workspace --all-features --no-fail-fast'
+cargo watch -x 'check --workspace --all-targets --all-features' -s "${MISE_PROJECT_ROOT}/mise-tasks/rust/test"

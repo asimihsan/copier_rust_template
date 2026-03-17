@@ -20,3 +20,5 @@ target/
 .DS_Store
 .direnv/
 .mise/
+lcov.info
+**/lcov.info

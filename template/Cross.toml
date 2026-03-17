@@ -1,0 +1,2 @@
+[build.env]
+passthrough = ["PYO3_BUILD_EXTENSION_MODULE"]

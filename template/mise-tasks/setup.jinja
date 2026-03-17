@@ -2,6 +2,8 @@
 #MISE description="Set up local developer tooling"
 set -euo pipefail
 
+mise run rust:ensure-components
+
 if [[ "$OSTYPE" == "darwin"* ]]; then
     mise run mac-setup
 fi

@@ -2,4 +2,8 @@
 #MISE description="Run Rust tests with nextest"
 set -euo pipefail
 
+if [[ -f "${MISE_PROJECT_ROOT}/mise-tasks/rust/python-runtime-env" ]]; then
+    source "${MISE_PROJECT_ROOT}/mise-tasks/rust/python-runtime-env"
+fi
+
 cargo nextest run --workspace --all-features --no-fail-fast

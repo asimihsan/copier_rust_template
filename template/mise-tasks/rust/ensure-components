@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+#MISE description="Install required Rust components for the active toolchain"
+set -euo pipefail
+
+toolchain="${RUSTUP_TOOLCHAIN:-$(rustc -V | awk '{print $2}')}"
+cargo_bin_dir="$(dirname "$(command -v cargo)")"
+
+if [[ -x "$cargo_bin_dir/rustup" ]]; then
+    rustup_bin="$cargo_bin_dir/rustup"
+elif command -v rustup >/dev/null 2>&1; then
+    rustup_bin="$(command -v rustup)"
+else
+    echo "rustup not found; install the pinned Rust toolchain via mise first" >&2
+    exit 1
+fi
+
+"$rustup_bin" component add rustfmt clippy llvm-tools rust-src --toolchain "$toolchain"

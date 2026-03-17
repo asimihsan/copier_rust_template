@@ -26,7 +26,7 @@ jobs:
           path: |
             ~/.cargo/registry
             ~/.cargo/git
-          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}-deps
+          key: {% raw %}${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}-deps{% endraw %}
       - name: Setup environment
         run: mise run setup
       - name: Run dependency checks
@@ -47,7 +47,7 @@ jobs:
           path: |
             ~/.cargo/registry
             ~/.cargo/git
-          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}-lint
+          key: {% raw %}${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}-lint{% endraw %}
       - name: Setup environment
         run: mise run setup
       - name: Run lint suite
@@ -55,7 +55,7 @@ jobs:
 
   test:
     name: Test Suite
-    runs-on: ${{ matrix.os }}
+    runs-on: {% raw %}${{ matrix.os }}{% endraw %}
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
@@ -71,11 +71,16 @@ jobs:
           path: |
             ~/.cargo/registry
             ~/.cargo/git
-          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}-test
+          key: {% raw %}${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}-test{% endraw %}
       - name: Setup environment
         run: mise run setup
       - name: Run tests
+        if: runner.os != 'Windows'
         run: mise run test
+      - name: Run Rust workspace tests
+        if: runner.os == 'Windows'
+        shell: bash
+        run: mise x -- cargo test --workspace
 
   coverage:
     name: Coverage
@@ -92,7 +97,7 @@ jobs:
           path: |
             ~/.cargo/registry
             ~/.cargo/git
-          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}-coverage
+          key: {% raw %}${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}-coverage{% endraw %}
       - name: Setup environment
         run: mise run setup
       - name: Generate coverage
@@ -112,7 +117,11 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        target: [x86_64-unknown-linux-musl, aarch64-unknown-linux-gnu]
+        include:
+          - target: x86_64-unknown-linux-musl
+            build_python_bindings: false
+          - target: aarch64-unknown-linux-gnu
+            build_python_bindings: true
     steps:
       - uses: actions/checkout@v6
       - uses: jdx/mise-action@v4
@@ -125,10 +134,17 @@ jobs:
           path: |
             ~/.cargo/registry
             ~/.cargo/git
-          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}-cross-${{ matrix.target }}
+          key: {% raw %}${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}-cross-${{ matrix.target }}{% endraw %}
       - name: Install cross
         run: cargo install cross --locked
       - name: Setup environment
         run: mise run setup
-      - name: Cross compile and test
-        run: cross test --release --all-features --target ${{ matrix.target }}
+      - name: Cross compile portable workspace crates
+        run: cross build --release --all-features --workspace{% if include_python %} --exclude {{ project_slug }}-py{% endif %} --target {% raw %}${{ matrix.target }}{% endraw %}
+      {% if include_python %}
+      - name: Cross compile Python bindings
+        if: matrix.build_python_bindings
+        env:
+          PYO3_BUILD_EXTENSION_MODULE: 1
+        run: cross build --release --all-features -p {{ project_slug }}-py --target {% raw %}${{ matrix.target }}{% endraw %}
+      {% endif %}

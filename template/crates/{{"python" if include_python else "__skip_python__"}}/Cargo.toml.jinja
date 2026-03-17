@@ -15,7 +15,11 @@ crate-type = ["cdylib"]
 # `abi3-py314` means the generated extension uses Python's stable ABI with
 # Python 3.14 as the minimum supported version:
 # https://pyo3.rs/main/building-and-distribution.html
-pyo3 = { version = "0.28", features = ["extension-module", "abi3-py314"] }
+#
+# PyO3 recommends enabling extension-module behavior via
+# `PYO3_BUILD_EXTENSION_MODULE` for extension builds instead of forcing the
+# deprecated cargo feature on every build target.
+pyo3 = { version = "0.28", features = ["abi3-py314"] }
 
 [lints]
 workspace = true

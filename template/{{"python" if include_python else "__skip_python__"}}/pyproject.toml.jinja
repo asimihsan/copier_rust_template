@@ -1,5 +1,5 @@
 [build-system]
-requires = ["maturin>=1.4,<2.0"]
+requires = ["maturin>=1.9.4,<2.0"]
 build-backend = "maturin"
 
 [project]
@@ -17,14 +17,13 @@ classifiers = [
 manifest-path = "../crates/python/Cargo.toml"
 python-source = "src"
 module-name = "{{ project_slug_underscore }}.{{ project_slug_underscore }}"
-features = ["pyo3/extension-module"]
 include = ["src/{{ project_slug_underscore }}/*.pyi", "src/{{ project_slug_underscore }}/py.typed"]
 
 [dependency-groups]
 dev = [
     "basedpyright>=1.28.4",
     "coverage>=7.6.1",
-    "maturin>=1.8.2",
+    "maturin>=1.9.4",
     "pytest-cov>=5.0.0",
     "pytest>=8.3.4",
     "ruff-lsp>=0.0.60",

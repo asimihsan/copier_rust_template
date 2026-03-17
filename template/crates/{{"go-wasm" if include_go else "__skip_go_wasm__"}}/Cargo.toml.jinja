@@ -16,3 +16,16 @@ allocator-api2 = "0.4"
 anyhow = "1.0"
 chrono = { version = "0.4", default-features = false, features = ["std", "clock"] }
 talc = { version = "4.4.2", default-features = false, features = ["lock_api", "allocator-api2"] }
+
+[lints.rust]
+unsafe_code = "allow"
+missing_docs = "warn"
+
+[lints.clippy]
+all = { level = "warn", priority = -1 }
+pedantic = { level = "warn", priority = -1 }
+nursery = { level = "warn", priority = -1 }
+unwrap_used = "deny"
+expect_used = "deny"
+dbg_macro = "deny"
+todo = "deny"

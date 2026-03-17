@@ -2,6 +2,14 @@
 #MISE description="Set up the Python virtual environment"
 set -euo pipefail
 
+python_bin="$(
+    python - <<'PY'
+import sys
+
+print(sys.executable)
+PY
+)"
+
 cd "${MISE_PROJECT_ROOT}/python"
-uv venv --allow-existing --python "$(command -v python)"
+uv venv --allow-existing --python "$python_bin"
 uv sync --group dev

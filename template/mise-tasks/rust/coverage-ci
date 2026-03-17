@@ -2,5 +2,7 @@
 #MISE description="Generate LCOV coverage after an instrumented test run"
 set -euo pipefail
 
+export CARGO_TARGET_DIR="${MISE_PROJECT_ROOT}/target/llvm-cov-target"
+
 mise run rust:test-coverage
 cargo llvm-cov report --lcov --output-path lcov.info

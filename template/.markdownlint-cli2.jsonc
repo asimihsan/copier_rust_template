@@ -15,7 +15,9 @@
     "gitignore": true,
     // Extra ignore patterns (fastest at repo root)
     "ignores": [
-        "**/vendor/**"
+        "**/vendor/**",
+        "AGENTS.md",
+        "backlog/**"
         // , "**/CHANGELOG.md" // uncomment if you prefer to skip it
     ],
     // Keep CI output minimal
