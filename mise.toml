@@ -1,3 +1,7 @@
 [tools]
 copier = "latest"
-python = "prefix:3.12"
+python = "3.14.3"
+
+[tasks."template:ci"]
+description = "Render a full-config project and run the generated CI pipeline"
+run = "./scripts/test.sh"

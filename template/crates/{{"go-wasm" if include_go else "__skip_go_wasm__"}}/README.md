@@ -12,13 +12,13 @@ with WASI support instead of a native Rust library.
 
 ## Requirements
 
-- Rust with the wasm32-wasi target installed
-- Go 1.21 or newer
+- Rust with the `wasm32-wasip1` target installed
+- Go 1.26.1 or newer
 
 ## Building
 
 ```bash
-# Install wasm32-wasi target if needed
+# Install wasm32-wasip1 target if needed
 mise run go-wasm:setup
 
 # Build the WASM module

@@ -1,7 +1,7 @@
 //! Components module – re-export individual Leptos view components.
 
-mod parse_result;
 mod input_section;
+mod parse_result;
 
-pub use parse_result::ParseResult;
 pub use input_section::InputSection;
+pub use parse_result::ParseResult;

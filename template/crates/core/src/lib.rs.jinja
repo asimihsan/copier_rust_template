@@ -51,12 +51,14 @@ pub fn parse(input: &str) -> Result<String, ParseError> {
     for part in trimmed.split('+') {
         let number = part.trim();
         if number.is_empty() {
-            return Err(ParseError::Generic("expected a number between '+' operators".to_owned()));
+            return Err(ParseError::Generic(
+                "expected a number between '+' operators".to_owned(),
+            ));
         }
 
-        let value = number.parse::<i64>().map_err(|error| {
-            ParseError::Generic(format!("invalid integer `{number}`: {error}"))
-        })?;
+        let value = number
+            .parse::<i64>()
+            .map_err(|error| ParseError::Generic(format!("invalid integer `{number}`: {error}")))?;
         total += value;
     }
 
@@ -73,12 +75,12 @@ mod tests {
             Ok(result) => assert_eq!(result, "6"),
             Err(e) => panic!("Expected successful parse of '1+2+3', got error: {e}"),
         }
-        
+
         match parse("10+20+30") {
             Ok(result) => assert_eq!(result, "60"),
             Err(e) => panic!("Expected successful parse of '10+20+30', got error: {e}"),
         }
-        
+
         match parse("100+200+300") {
             Ok(result) => assert_eq!(result, "600"),
             Err(e) => panic!("Expected successful parse of '100+200+300', got error: {e}"),

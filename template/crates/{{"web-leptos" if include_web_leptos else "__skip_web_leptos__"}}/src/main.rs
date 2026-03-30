@@ -1,8 +1,10 @@
+//! Entry point for the `{{ project_name }}` Leptos client application.
+
 mod app;
 mod components;
 mod parser;
 
-use app::*;
+use app::App;
 use leptos::{logging, mount};
 
 fn main() {

@@ -1,8 +1,8 @@
-use leptos::prelude::*;
-use leptos_meta::*;
 use leptos::logging;
+use leptos::prelude::*;
+use leptos_meta::{Title, provide_meta_context};
 
-use crate::components::{ParseResult, InputSection};
+use crate::components::{InputSection, ParseResult};
 use crate::parser::create_parse_action;
 
 #[component]
@@ -42,7 +42,7 @@ pub fn App() -> impl IntoView {
                     />
 
                     <div class="single-column-layout">
-                        <ParseResult 
+                        <ParseResult
                             result=result
                         />
                     </div>

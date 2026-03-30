@@ -154,29 +154,16 @@ Your generated project will include:
 
 ## Testing
 
-```plain
-cd ~/workplace && \
-    rm -rf ~/workplace/foobaz && \
-    copier copy ~/workplace/copier_rust_template ~/workplace/foobaz \
-        --data include_wasm=true \
-        --data include_python=true \
-        --data include_go=true \
-        --data project_name="Foobaz" \
-        --data project_slug=foobaz \
-        --data project_slug_underscore=foobaz \
-        --data author_name="Local Test" \
-        --force && \
-    cd ~/workplace/foobaz && \
-    git init && \
-    ./scripts/dev-setup.sh && \
-    mise install && \
-    mise run setup && \
-    mise run copyright && \
-    mise run ci ; \
-    cd crates/go-wasm && \
-    mise run go-wasm:setup && \
-    mise run go-wasm:test && \
-    cd ..
+Run the full rendered-project validation locally:
+
+```bash
+mise run template:ci
+```
+
+If you want to inspect the rendered project after the run, set `OUTPUT_DIR`:
+
+```bash
+OUTPUT_DIR=/tmp/copier-rust-template-check mise run template:ci
 ```
 
 ## Contributing

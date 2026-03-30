@@ -19,4 +19,12 @@ fi
 mise settings add idiomatic_version_file_enable_tools rust
 
 # Need to install rust first
-mise use "rust@1.94.0"
+if [[ -f rust-toolchain.toml ]]; then
+    rust_version=$(awk -F'"' '/channel/ { print $2; exit }' rust-toolchain.toml)
+elif [[ -f template/rust-toolchain.toml ]]; then
+    rust_version=$(awk -F'"' '/channel/ { print $2; exit }' template/rust-toolchain.toml)
+else
+    rust_version="1.94.1"
+fi
+
+mise use "rust@${rust_version}"

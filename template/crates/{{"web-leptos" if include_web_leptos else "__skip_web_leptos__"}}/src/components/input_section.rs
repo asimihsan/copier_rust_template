@@ -15,7 +15,9 @@ pub fn InputSection(
                 on:input=move |ev| set_input.set(event_target_value(&ev))
                 prop:value=input
             ></textarea>
-            <button class="btn-primary" on:click=move |_| on_parse()>"Parse"</button>
+            <button class="btn-primary" on:click=move |_| on_parse()>
+                "Parse"
+            </button>
         </div>
     }
 }

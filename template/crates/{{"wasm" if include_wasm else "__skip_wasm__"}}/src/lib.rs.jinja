@@ -1,9 +1,16 @@
+//! WebAssembly bindings for {{ project_name }}.
+
 use wasm_bindgen::prelude::*; // our core library
 
 /// Expose the parser function to JavaScript.
-/// This function takes an input string and returns a Result wrapped in a JsValue.
+///
+/// This function takes an input string and returns a `Result` wrapped in a `JsValue`.
 /// On success, it returns the parsed result as a string. On error, it throws an exception
 /// with the error message.
+///
+/// # Errors
+///
+/// Returns `Err(JsValue)` when the input cannot be parsed.
 #[wasm_bindgen]
 pub fn parse(input: &str) -> Result<JsValue, JsValue> {
     // Call our core parser.

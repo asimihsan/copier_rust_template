@@ -1,8 +1,8 @@
 //! Python extension module for {{ project_name }}.
 
+use {{ project_slug_underscore }}_core as core;
 use pyo3::exceptions::PyValueError;
 use pyo3::prelude::*;
-use {{ project_slug_underscore }}_core as core;
 
 /// Parse and evaluate a simple arithmetic expression.
 ///
@@ -13,7 +13,7 @@ use {{ project_slug_underscore }}_core as core;
 ///     str: The result of evaluating the expression
 ///
 /// Raises:
-///     ValueError: If the expression cannot be parsed
+///     `ValueError`: If the expression cannot be parsed
 ///
 /// Example:
 ///     >>> import {{ project_slug_underscore }}
