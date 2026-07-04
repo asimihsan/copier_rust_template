@@ -26,6 +26,7 @@ jobs:
           path: |
             ~/.cargo/registry
             ~/.cargo/git
+            target/kache
           key: {% raw %}${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}-deps{% endraw %}
       - name: Setup environment
         run: mise run setup
@@ -47,6 +48,7 @@ jobs:
           path: |
             ~/.cargo/registry
             ~/.cargo/git
+            target/kache
           key: {% raw %}${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}-lint{% endraw %}
       - name: Setup environment
         run: mise run setup
@@ -71,6 +73,7 @@ jobs:
           path: |
             ~/.cargo/registry
             ~/.cargo/git
+            target/kache
           key: {% raw %}${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}-test{% endraw %}
       - name: Setup environment
         run: mise run setup
@@ -97,6 +100,7 @@ jobs:
           path: |
             ~/.cargo/registry
             ~/.cargo/git
+            target/kache
           key: {% raw %}${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}-coverage{% endraw %}
       - name: Setup environment
         run: mise run setup

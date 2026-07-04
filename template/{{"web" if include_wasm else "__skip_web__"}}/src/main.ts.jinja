@@ -1,13 +1,13 @@
 import './style.css';
-import init, { parse } from '../pkg/{{ project_slug_underscore }}_wasm.js';
+import init, { greet } from '../pkg/{{ project_slug_underscore }}_wasm.js';
 
 document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
   <div>
-    <h1>Logscope Parser Test</h1>
+    <h1>{{ project_name }} WASM</h1>
     <div class="card">
-      <textarea id="input" rows="4" cols="50">Enter text here...</textarea>
+      <input id="recipient" value="Ihsan" />
       <br>
-      <button id="parse">Parse</button>
+      <button id="greet">Greet</button>
       <pre id="output"></pre>
     </div>
   </div>
@@ -15,13 +15,13 @@ document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
 
 // Initialize WASM
 init().then(() => {
-    const parseButton = document.querySelector<HTMLButtonElement>('#parse')!;
-    const input = document.querySelector<HTMLTextAreaElement>('#input')!;
+    const greetButton = document.querySelector<HTMLButtonElement>('#greet')!;
+    const recipient = document.querySelector<HTMLInputElement>('#recipient')!;
     const output = document.querySelector<HTMLPreElement>('#output')!;
 
-    parseButton.addEventListener('click', () => {
+    greetButton.addEventListener('click', () => {
         try {
-            const result = parse(input.value);
+            const result = greet(recipient.value);
             output.textContent = result;
         } catch (e) {
             output.textContent = `Error: ${e}`;

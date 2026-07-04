@@ -8,24 +8,40 @@
 "cargo:cargo-nextest" = { version = "0.9.132", install_env = { RUSTC_WRAPPER = "" } }
 "cargo:cargo-outdated" = { version = "0.17.0", install_env = { RUSTC_WRAPPER = "" } }
 "cargo:cargo-watch" = { version = "8.5.3", install_env = { RUSTC_WRAPPER = "" } }
+{%- if include_go %}
 "cargo:cbindgen" = { version = "0.29.2", install_env = { RUSTC_WRAPPER = "" } }
+{%- endif %}
+{%- if include_web_leptos %}
 "cargo:leptosfmt" = { version = "0.1.33", install_env = { RUSTC_WRAPPER = "" } }
-"cargo:trunk" = { version = "0.21.14", install_env = { RUSTC_WRAPPER = "" } }
-"cargo:wasm-bindgen-cli" = { version = "0.2.115", install_env = { RUSTC_WRAPPER = "" } }
+{%- endif %}
+{%- if include_wasm %}
 "cargo:wasm-pack" = { version = "0.14.0", install_env = { RUSTC_WRAPPER = "" } }
+{%- endif %}
+{%- if include_go_wasm %}
 "github:WebAssembly/wabt" = "1.0.40"
+{%- endif %}
+{%- if include_web_leptos %}
+"github:tailwindlabs/tailwindcss" = "4.1.18"
+"github:wasm-bindgen/wasm-bindgen" = "0.2.126"
+{%- endif %}
+{%- if include_go %}
 "go:github.com/google/addlicense" = "1.2.0"
+{%- endif %}
 
 actionlint = "1.7.11"
+{%- if include_wasm %}
 bun = "1.3.11"
+{%- endif %}
 cargo-binstall = "1.17.9"
 fd = "10.4.2"
+{%- if include_go or include_go_wasm %}
 go = "1.26.1"
 golangci-lint = "2.11.4"
+{%- endif %}
 jq = "1.8.1"
 python = "3.14.3"
-"rust" = { version = "1.94.1", components = "rustfmt,clippy,llvm-tools,rust-src", targets = "wasm32-unknown-unknown" }
-"github:kunobi-ninja/kache" = "0.7.0"
+"rust" = { version = "1.96.1", components = "rustfmt,clippy,llvm-tools,rust-src"{% if include_wasm or include_web_leptos or include_go_wasm %}, targets = "{% if include_wasm or include_web_leptos %}wasm32-unknown-unknown{% if include_go_wasm %},wasm32-wasip1{% endif %}{% elif include_go_wasm %}wasm32-wasip1{% endif %}"{% endif %} }
+"github:kunobi-ninja/kache" = "0.8.0"
 shellcheck = "0.11.0"
 uv = "0.11.2"
 

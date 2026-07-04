@@ -7,6 +7,72 @@
 
 //! Command-line interface for {{ project_name }}.
 
-fn main() {
-    println!("Welcome to {{ project_name }} CLI!");
+use std::{env, ffi::OsString, process::ExitCode};
+
+use thiserror::Error;
+
+use {{ project_slug_underscore }}_core::{GreetingError, greeting_message};
+
+#[derive(Debug, Error)]
+enum CliError {
+    #[error("usage: {{ project_slug }}-cli <recipient>")]
+    MissingRecipient,
+    #[error("expected exactly one recipient argument")]
+    TooManyArguments,
+    #[error(transparent)]
+    Greeting(#[from] GreetingError),
+    #[error("recipient must be valid UTF-8")]
+    InvalidUtf8,
+}
+
+fn main() -> ExitCode {
+    match run(env::args_os().skip(1)) {
+        Ok(message) => {
+            println!("{message}");
+            ExitCode::SUCCESS
+        }
+        Err(error) => {
+            eprintln!("error: {error}");
+            ExitCode::FAILURE
+        }
+    }
+}
+
+fn run(args: impl IntoIterator<Item = OsString>) -> Result<String, CliError> {
+    let mut args = args.into_iter();
+    let Some(recipient) = args.next() else {
+        return Err(CliError::MissingRecipient);
+    };
+    if args.next().is_some() {
+        return Err(CliError::TooManyArguments);
+    }
+
+    let recipient = recipient.into_string().map_err(|_| CliError::InvalidUtf8)?;
+    Ok(greeting_message(&recipient)?)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn renders_greeting_for_one_recipient() {
+        let message = run([OsString::from("Ihsan")]).unwrap();
+
+        assert_eq!(message, "Hello, Ihsan! Welcome to {{ project_name }}.");
+    }
+
+    #[test]
+    fn requires_a_recipient() {
+        let error = run([]).unwrap_err();
+
+        assert!(matches!(error, CliError::MissingRecipient));
+    }
+
+    #[test]
+    fn rejects_extra_arguments() {
+        let error = run([OsString::from("Ihsan"), OsString::from("extra")]).unwrap_err();
+
+        assert!(matches!(error, CliError::TooManyArguments));
+    }
 }

@@ -1,13 +1,13 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { parse, ensureInitialized } from '../test-setup';
+import { greet, ensureInitialized } from '../test-setup';
 
-describe('parser', () => {
+describe('greeting', () => {
     beforeEach(async () => {
         await ensureInitialized();
     });
 
-    it('should parse simple text', () => {
-        const result = parse('1+2');
-        expect(result).toBe('3');
+    it('should greet a recipient', () => {
+        const result = greet('Ihsan');
+        expect(result).toBe('Hello, Ihsan! Welcome to {{ project_name }}.');
     });
 });

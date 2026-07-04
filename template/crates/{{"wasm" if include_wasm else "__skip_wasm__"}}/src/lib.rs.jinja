@@ -1,20 +1,17 @@
 //! WebAssembly bindings for {{ project_name }}.
 
-use wasm_bindgen::prelude::*; // our core library
+use wasm_bindgen::prelude::*;
 
-/// Expose the parser function to JavaScript.
+/// Creates a greeting from JavaScript.
 ///
-/// This function takes an input string and returns a `Result` wrapped in a `JsValue`.
-/// On success, it returns the parsed result as a string. On error, it throws an exception
-/// with the error message.
+/// This function takes a recipient and returns the rendered greeting message.
 ///
 /// # Errors
 ///
-/// Returns `Err(JsValue)` when the input cannot be parsed.
+/// Returns `Err(JsValue)` when the recipient is empty.
 #[wasm_bindgen]
-pub fn parse(input: &str) -> Result<JsValue, JsValue> {
-    // Call our core parser.
-    match {{ project_slug_underscore }}_core::parse(input) {
+pub fn greet(recipient: &str) -> Result<JsValue, JsValue> {
+    match {{ project_slug_underscore }}_core::greeting_message(recipient) {
         Ok(result) => Ok(JsValue::from_str(&result)),
         Err(err) => Err(JsValue::from_str(&err.to_string())),
     }

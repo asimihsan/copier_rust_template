@@ -13,5 +13,7 @@ mise run python:lint
 {% endif %}
 {% if include_go %}
 mise run go:lint
+{% endif %}
+{% if include_go_wasm %}
 mise run go-wasm:lint
 {% endif %}

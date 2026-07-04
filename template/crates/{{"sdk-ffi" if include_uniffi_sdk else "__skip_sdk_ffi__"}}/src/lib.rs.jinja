@@ -1,0 +1,57 @@
+// Copyright 2025 {{ author_name }}
+//
+// This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
+// If a copy of the MPL was not distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/.
+//
+// SPDX-License-Identifier: MPL-2.0
+
+//! UniFFI facade for {{ project_name }}.
+
+use {{ project_slug_underscore }}_core as core;
+
+uniffi::include_scaffolding!("{{ project_slug_underscore }}_sdk_ffi");
+
+/// Error returned by the foreign-language SDK facade.
+#[derive(Debug, thiserror::Error)]
+pub enum SdkError {
+    /// The supplied recipient was empty.
+    #[error("recipient cannot be empty")]
+    EmptyRecipient,
+}
+
+impl From<core::GreetingError> for SdkError {
+    fn from(error: core::GreetingError) -> Self {
+        match error {
+            core::GreetingError::EmptyRecipient => Self::EmptyRecipient,
+        }
+    }
+}
+
+/// Creates a greeting message through the SDK facade.
+///
+/// # Errors
+///
+/// Returns [`SdkError::EmptyRecipient`] when `recipient` is empty after trimming
+/// whitespace.
+pub fn greet(recipient: String) -> Result<String, SdkError> {
+    Ok(core::greeting_message(&recipient)?)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn greets_recipient() {
+        let message = greet("Ihsan".to_owned()).unwrap();
+
+        assert_eq!(message, "Hello, Ihsan! Welcome to {{ project_name }}.");
+    }
+
+    #[test]
+    fn rejects_empty_recipient() {
+        let error = greet("   ".to_owned()).unwrap_err();
+
+        assert!(matches!(error, SdkError::EmptyRecipient));
+    }
+}

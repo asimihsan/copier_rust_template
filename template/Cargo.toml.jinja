@@ -7,6 +7,8 @@ members = [
     {%- endif %}
     {%- if include_go %}
     "crates/go",
+    {%- endif %}
+    {%- if include_go_wasm %}
     "crates/go-wasm",
     {%- endif %}
     {%- if include_python %}
@@ -15,30 +17,70 @@ members = [
     {%- if include_web_leptos %}
     "crates/web-leptos",
     {%- endif %}
+    {%- if include_uniffi_sdk %}
+    "crates/sdk-ffi",
+    "crates/uniffi-bindgen",
+    {%- endif %}
 ]
 
-resolver = "2"
+resolver = "3"
 
 [workspace.package]
 version = "0.1.0"
 edition = "2024"
 license = "MPL-2.0"
-rust-version = "1.94.1"
+rust-version = "1.96.1"
 authors = ["{{ author_name }}"]
+
+[workspace.dependencies]
+thiserror = "2.0.18"
+{%- if include_uniffi_sdk %}
+uniffi = "=0.31.2"
+{%- endif %}
+
+[profile.dev]
+debug = "line-tables-only"
+split-debuginfo = "unpacked"
+
+[profile.dev.package."*"]
+debug = false
+
+[profile.debugging]
+inherits = "dev"
+debug = true
 
 [profile.release]
 lto = true
+codegen-units = 1
+strip = "symbols"
 
 [workspace.lints.rust]
 unsafe_code = "forbid"
 missing_docs = "warn"
+rust_2018_idioms = { level = "warn", priority = -1 }
+unreachable_pub = "warn"
+unused_lifetimes = "warn"
 
 [workspace.lints.clippy]
 # Lint groups have lower priority than individual lints
 all = { level = "warn", priority = -1 }
+cargo = { level = "warn", priority = -1 }
 pedantic = { level = "warn", priority = -1 }
 nursery = { level = "warn", priority = -1 }
 # Individual lints with higher priority
+blanket_clippy_restriction_lints = "allow"
+cargo_common_metadata = "allow"
+missing_errors_doc = "allow"
+missing_panics_doc = "allow"
+module_name_repetitions = "allow"
+multiple_crate_versions = "allow"
+must_use_candidate = "allow"
+print_stderr = "allow"
+print_stdout = "allow"
+similar_names = "allow"
+struct_field_names = "allow"
+undocumented_unsafe_blocks = "deny"
+unimplemented = "deny"
 unwrap_used = "deny"
 expect_used = "deny"
 dbg_macro = "deny"

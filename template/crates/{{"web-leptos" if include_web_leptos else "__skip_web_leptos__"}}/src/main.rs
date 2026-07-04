@@ -2,7 +2,7 @@
 
 mod app;
 mod components;
-mod parser;
+mod greeting;
 
 use app::App;
 use leptos::{logging, mount};

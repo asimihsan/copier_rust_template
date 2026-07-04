@@ -14,6 +14,8 @@ jobs:
       wasm: true
       python: true
       go: true
+      leptos: true
+      uniffi: true
       cache_suffix: "full"
 
   matrix:
@@ -22,13 +24,17 @@ jobs:
     strategy:
       matrix:
         config:
-          - { wasm: true,  python: false, go: false, cache_suffix: "no-py" }
-          - { wasm: false, python: true,  go: false, cache_suffix: "no-wasm" }
-          - { wasm: false, python: false, go: false, cache_suffix: "minimal" }
-          - { wasm: false, python: false, go: true,  cache_suffix: "go-only" }
+          - { wasm: true,  python: false, go: false, leptos: false, uniffi: false, cache_suffix: "wasm-only" }
+          - { wasm: false, python: true,  go: false, leptos: false, uniffi: false, cache_suffix: "python-only" }
+          - { wasm: false, python: false, go: false, leptos: false, uniffi: false, cache_suffix: "default" }
+          - { wasm: false, python: false, go: true,  leptos: false, uniffi: false, cache_suffix: "go-only" }
+          - { wasm: false, python: false, go: false, leptos: true,  uniffi: false, cache_suffix: "leptos-only" }
+          - { wasm: false, python: false, go: false, leptos: false, uniffi: true,  cache_suffix: "uniffi-only" }
     uses: ./.github/workflows/ci-steps.yml
     with:
       wasm: ${{ matrix.config.wasm }}
       python: ${{ matrix.config.python }}
       go: ${{ matrix.config.go }}
+      leptos: ${{ matrix.config.leptos }}
+      uniffi: ${{ matrix.config.uniffi }}
       cache_suffix: ${{ matrix.config.cache_suffix }}

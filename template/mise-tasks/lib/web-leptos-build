@@ -1,0 +1,77 @@
+#!/usr/bin/env bash
+
+project_web_leptos_root() {
+  printf '%s/crates/web-leptos\n' "$(project_repo_root)"
+}
+
+project_web_leptos_dist_dir() {
+  printf '%s/dist\n' "$(project_web_leptos_root)"
+}
+
+project_wasm_bindgen_bin() {
+  local github_install_dir
+
+  github_install_dir="$(mise where 'github:wasm-bindgen/wasm-bindgen' 2>/dev/null || true)"
+  if [[ -n "$github_install_dir" && -x "$github_install_dir/wasm-bindgen" ]]; then
+    printf '%s/wasm-bindgen\n' "$github_install_dir"
+    return
+  fi
+
+  command -v wasm-bindgen
+}
+
+project_build_web_leptos() {
+  local repo_root
+  local web_root
+  local dist_dir
+  local stage_dir
+  local wasm_input
+  local wasm_bindgen_bin
+
+  repo_root="$(project_repo_root)"
+  web_root="$(project_web_leptos_root)"
+  dist_dir="$(project_web_leptos_dist_dir)"
+  mkdir -p "$repo_root/target"
+  stage_dir="$(mktemp -d "$repo_root/target/web-leptos-dist.XXXXXX")"
+  trap 'rm -rf "$stage_dir"' RETURN
+
+  mise run rust:ensure-wasm-target
+  project_use_isolated_rust_cache web-leptos-wasm
+  project_use_rustup_rustc
+
+  rm -rf "$dist_dir"
+  mkdir -p "$stage_dir/pkg"
+
+  cargo build \
+    --locked \
+    --release \
+    --target wasm32-unknown-unknown \
+    --package leptos-web \
+    --bin leptos-web
+
+  wasm_input="$CARGO_TARGET_DIR/wasm32-unknown-unknown/release/leptos-web.wasm"
+  wasm_bindgen_bin="$(project_wasm_bindgen_bin)"
+  "$wasm_bindgen_bin" \
+    --target web \
+    --out-dir "$stage_dir/pkg" \
+    --out-name leptos_web \
+    "$wasm_input"
+
+  tailwindcss \
+    --cwd "$web_root" \
+    --input "$web_root/input.css" \
+    --output "$stage_dir/app.css" \
+    --minify
+
+  cp "$web_root/index.html" "$stage_dir/index.html"
+  cp -R "$web_root/public/." "$stage_dir/"
+
+  rm -rf "$dist_dir"
+  mv "$stage_dir" "$dist_dir"
+  trap - RETURN
+
+  printf 'Built Leptos web app at %s\n' "$dist_dir"
+  printf '  wasm-bindgen: %s\n' "$wasm_bindgen_bin"
+  printf '  cargo target: %s\n' "$CARGO_TARGET_DIR"
+  printf '  kache cache: %s\n' "${KACHE_CACHE_DIR:-}"
+}

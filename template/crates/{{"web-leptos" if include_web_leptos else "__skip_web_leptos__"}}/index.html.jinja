@@ -3,10 +3,12 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link data-trunk rel="rust" data-wasm-opt="z" data-typescript="true" />
-    <link data-trunk rel="icon" type="image/ico" href="/public/favicon.ico" />
-    <link data-trunk rel="tailwind-css" href="input.css" />
-
+    <link rel="icon" type="image/ico" href="/favicon.ico" />
+    <link rel="stylesheet" href="/app.css" />
+    <script type="module">
+      import init from "/pkg/leptos_web.js";
+      init();
+    </script>
     <title>{{ project_name }}</title>
   </head>
 

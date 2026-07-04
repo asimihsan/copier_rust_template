@@ -1,0 +1,45 @@
+[package]
+name = "{{ project_slug }}-sdk-ffi"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+authors.workspace = true
+
+description = "UniFFI facade for {{ project_name }} SDK bindings"
+homepage = "https://github.com/{{ github_username }}/{{ project_slug }}"
+repository = "https://github.com/{{ github_username }}/{{ project_slug }}"
+documentation = "https://docs.rs/{{ project_slug }}-sdk-ffi"
+readme = "../../README.md"
+keywords = ["{{ project_slug }}", "sdk", "uniffi"]
+categories = ["api-bindings"]
+
+[lib]
+name = "{{ project_slug_underscore }}_sdk_ffi"
+path = "src/lib.rs"
+crate-type = ["cdylib", "rlib", "staticlib"]
+
+[dependencies]
+{{ project_slug }}-core = { path = "../core" }
+thiserror.workspace = true
+uniffi.workspace = true
+
+[build-dependencies]
+uniffi = { workspace = true, features = ["build"] }
+
+[lints.rust]
+unsafe_code = "allow"
+missing_docs = "warn"
+
+[lints.clippy]
+all = { level = "warn", priority = -1 }
+pedantic = { level = "warn", priority = -1 }
+nursery = { level = "warn", priority = -1 }
+missing_errors_doc = "allow"
+module_name_repetitions = "allow"
+undocumented_unsafe_blocks = "deny"
+unimplemented = "deny"
+unwrap_used = "deny"
+expect_used = "deny"
+dbg_macro = "deny"
+todo = "deny"

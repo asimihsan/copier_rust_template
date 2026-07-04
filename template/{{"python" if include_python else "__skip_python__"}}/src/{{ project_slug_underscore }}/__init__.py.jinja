@@ -1,13 +1,13 @@
 """{{ project_name }} Python bindings.
 
-A simple arithmetic expression parser that can evaluate expressions like "1+2+3".
+Python package facade for the native {{ project_name }} extension.
 
 Example:
-    >>> from {{ project_slug_underscore }} import parse
-    >>> parse("1+2+3")
-    '6'
+    >>> from {{ project_slug_underscore }} import greet
+    >>> greet("Ihsan")
+    'Hello, Ihsan! Welcome to {{ project_name }}.'
 """
 
-from .{{ project_slug_underscore }} import __version__, parse
+from .{{ project_slug_underscore }} import __version__, greet
 
-__all__ = ["__version__", "parse"]
+__all__ = ["__version__", "greet"]

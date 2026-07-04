@@ -12,5 +12,10 @@ mise run python:test
 {% endif %}
 {% if include_go %}
 mise run go:test
+{% endif %}
+{% if include_go_wasm %}
 mise run go-wasm:test
+{% endif %}
+{% if include_uniffi_sdk %}
+mise run sdk:smoke
 {% endif %}

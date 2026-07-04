@@ -1,6 +1,6 @@
 # Go WASM Bindings
 
-This directory contains a Go binding for the parser that uses WebAssembly (WASM)
+This directory contains a Go binding for the greeting API that uses WebAssembly (WASM)
 with WASI support instead of a native Rust library.
 
 ## Features
@@ -44,22 +44,22 @@ import (
 func main() {
     ctx := context.Background()
     
-    // Parse a single expression
-    expr, err := binding.Parse(ctx, "1+2+3")
+    // Greet a single recipient
+    greeting, err := binding.Greet(ctx, "Ihsan")
     if err != nil {
-        log.Fatalf("Parse error: %v", err)
+        log.Fatalf("Greet error: %v", err)
     }
-    fmt.Println(expr.String()) // Outputs: 1+2+3 = 6
+    fmt.Println(greeting.String())
     
-    // Use MustParse for expressions you know are valid
-    expr2 := binding.MustParse("10+20")
-    fmt.Println(expr2.Result) // Outputs: 30
+    // Use MustGreet for recipients you know are valid
+    greeting2 := binding.MustGreet("Rust")
+    fmt.Println(greeting2.Message)
     
-    // Parse multiple expressions concurrently
-    inputs := []string{"1+2", "3+4", "5+6"}
-    results, err := binding.ParseConcurrent(ctx, inputs)
+    // Greet multiple recipients concurrently
+    recipients := []string{"Ihsan", "Rust", "WASI"}
+    results, err := binding.GreetConcurrent(ctx, recipients)
     if err != nil {
-        log.Fatalf("ParseConcurrent error: %v", err)
+        log.Fatalf("GreetConcurrent error: %v", err)
     }
     
     for _, result := range results {

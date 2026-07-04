@@ -16,8 +16,31 @@ leptos = { version = "0.8.17", features = ["csr"] }
 leptos_meta = { version = "0.8.6" }
 leptos_router = { version = "0.8.13" }
 log = "0.4"
-wasm-bindgen = "0.2"
+wasm-bindgen = "=0.2.126"
 web-sys = { version = "0.3.92", features = ["MediaQueryList"] }
 
-[lints]
-workspace = true
+[lints.rust]
+unsafe_code = "forbid"
+missing_docs = "warn"
+rust_2018_idioms = { level = "warn", priority = -1 }
+unreachable_pub = "allow"
+unused_lifetimes = "warn"
+
+[lints.clippy]
+all = { level = "warn", priority = -1 }
+cargo = { level = "warn", priority = -1 }
+pedantic = { level = "warn", priority = -1 }
+nursery = { level = "warn", priority = -1 }
+cargo_common_metadata = "allow"
+missing_errors_doc = "allow"
+missing_panics_doc = "allow"
+module_name_repetitions = "allow"
+multiple_crate_versions = "allow"
+must_use_candidate = "allow"
+redundant_pub_crate = "allow"
+undocumented_unsafe_blocks = "deny"
+unimplemented = "deny"
+unwrap_used = "deny"
+expect_used = "deny"
+dbg_macro = "deny"
+todo = "deny"

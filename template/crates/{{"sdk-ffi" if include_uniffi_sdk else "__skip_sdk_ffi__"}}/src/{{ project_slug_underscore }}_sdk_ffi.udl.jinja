@@ -1,0 +1,9 @@
+namespace {{ project_slug_underscore }}_sdk_ffi {
+  [Throws=SdkError]
+  string greet(string recipient);
+};
+
+[Error]
+enum SdkError {
+  "EmptyRecipient",
+};

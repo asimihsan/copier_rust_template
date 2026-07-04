@@ -15,6 +15,14 @@ on:
         description: "Enable Go"
         required: true
         type: boolean
+      leptos:
+        description: "Enable Leptos"
+        required: true
+        type: boolean
+      uniffi:
+        description: "Enable UniFFI SDK"
+        required: true
+        type: boolean
       cache_suffix:
         description: "Cache suffix for keys"
         required: true
@@ -35,6 +43,7 @@ jobs:
         with:
           path: |
             ~/.cargo
+            ../test-project/target/kache
           key: rust-${{ inputs.cache_suffix }}-${{ hashFiles('template/mise.lock') }}
           restore-keys: |
             rust-${{ inputs.cache_suffix }}-
@@ -50,7 +59,7 @@ jobs:
             python-${{ inputs.cache_suffix }}-
 
       - name: Cache Bun
-        if: ${{ inputs.wasm }}
+        if: ${{ inputs.wasm || inputs.leptos }}
         uses: actions/cache@v5
         with:
           path: |
@@ -111,6 +120,9 @@ jobs:
             --data include_wasm=${{ inputs.wasm }} \
             --data include_python=${{ inputs.python }} \
             --data include_go=${{ inputs.go }} \
+            --data include_go_wasm=false \
+            --data include_web_leptos=${{ inputs.leptos }} \
+            --data include_uniffi_sdk=${{ inputs.uniffi }} \
             --defaults --overwrite
 
       - name: Test Generated Project

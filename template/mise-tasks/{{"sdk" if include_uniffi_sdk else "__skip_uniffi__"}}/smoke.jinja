@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+#MISE description="Run a minimal UniFFI SDK smoke gate"
+set -euo pipefail
+
+cd "${MISE_PROJECT_ROOT:?}"
+mise run sdk:check-bindings
+cargo test -p {{ project_slug }}-sdk-ffi
+
+out_dir="${PROJECT_UNIFFI_OUT_DIR:-target/generated-bindings/uniffi}"
+python3 - "${out_dir}/python" <<'PY'
+import pathlib
+import sys
+
+binding_dir = pathlib.Path(sys.argv[1]).resolve()
+sys.path.insert(0, str(binding_dir))
+
+import {{ project_slug_underscore }}_sdk_ffi  # noqa: E402
+
+message = {{ project_slug_underscore }}_sdk_ffi.greet("Ihsan")
+expected = "Hello, Ihsan! Welcome to {{ project_name }}."
+if message != expected:
+    raise SystemExit(f"unexpected UniFFI Python greeting: {message!r}")
+PY

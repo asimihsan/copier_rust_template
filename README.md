@@ -1,6 +1,6 @@
-<h1 align="center">🦀 Rust Multi-Platform Starter</h1>
+<h1 align="center">Rust Core + CLI Starter</h1>
 <p align="center">
-  <em>Build Once, Run Everywhere: CLI • WASM • Python • Go</em>
+  <em>Rust-first projects with opt-in WASM, Leptos, Python, Go, and UniFFI surfaces</em>
 </p>
 
 <p align="center">
@@ -12,18 +12,19 @@
   </a>
 </p>
 
-A unified Rust template for building native CLIs, WebAssembly modules,
-Python extensions, and Go bindings from a single codebase.
+A Rust-first Copier template for starting projects with a typed core crate and
+CLI by default. Browser, language-binding, and SDK surfaces are opt-in instead
+of part of the default render.
 
-### 🎯 Key Features
+### Key Features
 
-- 🦀 Cross-platform Rust core
-- 🌐 WASM bindings with web integration _(Optional)_
-- 🐍 Python bindings _(Optional)_
-- 🦫 Go bindings _(Optional)_
-- 🚀 GitHub Actions CI pipeline
-- 🛠️ Zero-config setup
-- 📊 Comprehensive testing
+- Cross-platform Rust core and CLI by default
+- Strict but usable workspace lints, Rust 1.96.1, resolver 3, and kache 0.8.0
+- WASM and TypeScript web integration _(Optional)_
+- Leptos CSR web app built without Trunk _(Optional)_
+- Python and Go bindings _(Optional)_
+- UniFFI SDK facade and generated binding checks _(Optional)_
+- GitHub Actions CI pipeline and script-backed `mise` tasks
 
 ## Requirements
 
@@ -85,8 +86,8 @@ WebAssembly toolchains is automatically configured.
 coverage tracking and fuzz testing for core components. Automated CI pipelines
 ensure consistent quality on every commit.
 
-**Development Loop** Fast iteration with hot reloading for web development,
-watch mode for Rust, and automated rebuilds of Python extensions. Commands are
+**Development Loop** Fast iteration with watch mode for Rust, explicit no-Trunk
+Leptos builds when enabled, and automated rebuilds of Python extensions. Commands are
 discovered from `mise-tasks/`, so `mise tasks` shows the generated workflow
 surface directly.
 
@@ -100,29 +101,28 @@ surface directly.
 Choose your project components when generating from the template:
 
 ```bash
-# Full-featured project (default)
+# Rust core + CLI default
 copier copy gh:asimihsan/copier_rust_template my-project
 
-# Core + WebAssembly only
+# Core + WebAssembly and TypeScript web
 copier copy gh:asimihsan/copier_rust_template my-project \
-  --data include_python=false \
-  --data include_go=false
+  --data include_wasm=true
 
-# Core + Python bindings only
+# Core + Leptos web app without Trunk
 copier copy gh:asimihsan/copier_rust_template my-project \
-  --data include_wasm=false \
-  --data include_go=false
+  --data include_web_leptos=true
 
-# Core + Go bindings only
+# Core + Python bindings
 copier copy gh:asimihsan/copier_rust_template my-project \
-  --data include_wasm=false \
-  --data include_python=false
+  --data include_python=true
 
-# Core functionality only
+# Core + Go bindings
 copier copy gh:asimihsan/copier_rust_template my-project \
-  --data include_wasm=false \
-  --data include_python=false \
-  --data include_go=false
+  --data include_go=true
+
+# Core + UniFFI SDK facade and generated binding checks
+copier copy gh:asimihsan/copier_rust_template my-project \
+  --data include_uniffi_sdk=true
 ```
 
 ## Project Structure
@@ -144,7 +144,13 @@ Your generated project will include:
 - `crates/python/`: Rust extension crate for Python bindings (when `include_python=true`)
 - `python/`: Python packaging and tests (when `include_python=true`)
 - `crates/go/`: Rust crate for Go bindings (when `include_go=true`)
-- `crates/go-wasm/`: Rust crate for Go/WASI bindings (when `include_go=true`)
+- `crates/go-wasm/`: Rust crate for Go/WASI bindings (when `include_go_wasm=true`)
+- `crates/web-leptos/`: Leptos CSR app built without Trunk (when `include_web_leptos=true`)
+- `crates/sdk-ffi/` and `crates/uniffi-bindgen/`: UniFFI SDK facade and generator (when `include_uniffi_sdk=true`)
+
+Flutter Rust Bridge is intentionally left to the sibling `flutter_template`
+project, which owns the Flutter app, checked-in generated code policy, Dart
+facades, and platform packaging.
 
 **Development Environment**
 

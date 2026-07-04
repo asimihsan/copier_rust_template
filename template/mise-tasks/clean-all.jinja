@@ -11,6 +11,8 @@ mise run python:clean
 {% endif %}
 {% if include_go %}
 mise run go:clean
+{% endif %}
+{% if include_go_wasm %}
 mise run go-wasm:clean
 {% endif %}
 {% if include_web_leptos %}

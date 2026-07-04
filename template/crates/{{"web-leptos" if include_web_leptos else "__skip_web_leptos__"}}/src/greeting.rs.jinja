@@ -1,0 +1,10 @@
+use {{ project_slug_underscore }}_core::GreetingError;
+use leptos::prelude::*;
+
+pub(crate) fn create_greeting_action() -> Action<String, Result<String, GreetingError>> {
+    Action::new(|input: &String| {
+        let input = input.clone();
+
+        async move { {{ project_slug_underscore }}_core::greeting_message(&input) }
+    })
+}

@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+#MISE description="Check generated UniFFI binding outputs and tracking policy"
+set -euo pipefail
+
+cd "${MISE_PROJECT_ROOT:?}"
+mise run sdk:generate-bindings
+
+out_dir="${PROJECT_UNIFFI_OUT_DIR:-target/generated-bindings/uniffi}"
+required=(
+  "${out_dir}/swift/{{ project_slug_underscore }}_sdk_ffi.swift"
+  "${out_dir}/swift/{{ project_slug_underscore }}_sdk_ffiFFI.h"
+  "${out_dir}/swift/{{ project_slug_underscore }}_sdk_ffiFFI.modulemap"
+  "${out_dir}/kotlin/uniffi/{{ project_slug_underscore }}_sdk_ffi/{{ project_slug_underscore }}_sdk_ffi.kt"
+  "${out_dir}/python/{{ project_slug_underscore }}_sdk_ffi.py"
+)
+
+for file in "${required[@]}"; do
+  test -s "${file}" || {
+    echo "missing generated binding: ${file}" >&2
+    exit 1
+  }
+done
+
+if git ls-files --error-unmatch target/generated-bindings >/dev/null 2>&1; then
+  echo "generated target/generated-bindings files must not be tracked" >&2
+  exit 1
+fi
+
+echo "UniFFI bindings generated under ${out_dir}"

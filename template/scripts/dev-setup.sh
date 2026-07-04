@@ -24,7 +24,7 @@ if [[ -f rust-toolchain.toml ]]; then
 elif [[ -f template/rust-toolchain.toml ]]; then
     rust_version=$(awk -F'"' '/channel/ { print $2; exit }' template/rust-toolchain.toml)
 else
-    rust_version="1.94.1"
+    rust_version="1.96.1"
 fi
 
 mise use "rust@${rust_version}"

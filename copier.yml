@@ -8,28 +8,33 @@ project_name:
 
 include_wasm:
   type: bool
-  default: true
-  help: "Include WebAssembly and web frontend components?"
+  default: false
+  help: "Include optional WebAssembly and TypeScript web components?"
 
 include_go:
   type: bool
-  default: true
+  default: false
   help: "Include Go language bindings?"
+
+include_go_wasm:
+  type: bool
+  default: false
+  help: "Include experimental Go/WASM bindings?"
 
 include_python:
   type: bool
-  default: true
+  default: false
   help: "Include Python language bindings?"
-
-include_web:
-  type: bool
-  default: true
-  help: "Include web frontend components?"
 
 include_web_leptos:
   type: bool
-  default: true
-  help: "Include web frontend components using Leptos?"
+  default: false
+  help: "Include optional Leptos web frontend components?"
+
+include_uniffi_sdk:
+  type: bool
+  default: false
+  help: "Include optional UniFFI SDK bindings scaffolding?"
 
 project_slug:
   type: str
@@ -59,3 +64,6 @@ _exclude:
   - "__skip_python__"
   - "__skip_go__"
   - "__skip_go_wasm__"
+  - "__skip_sdk_ffi__"
+  - "__skip_uniffi_bindgen__"
+  - "__skip_uniffi__"

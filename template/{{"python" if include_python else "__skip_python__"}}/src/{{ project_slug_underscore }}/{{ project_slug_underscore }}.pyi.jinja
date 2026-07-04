@@ -2,20 +2,20 @@
 
 __version__: str
 
-def parse(expression: str) -> str:
-    """Parse and evaluate a simple arithmetic expression.
+def greet(recipient: str) -> str:
+    """Create a greeting message.
 
     Args:
-        expression: The arithmetic expression to evaluate (e.g., "1+2+3")
+        recipient: The recipient to greet.
 
     Returns:
-        The result of evaluating the expression
+        The rendered greeting message.
 
     Raises:
-        ValueError: If the expression cannot be parsed
+        ValueError: If the recipient is empty.
 
     Example:
-        >>> parse("1+2+3")
-        '6'
+        >>> greet("Ihsan")
+        'Hello, Ihsan! Welcome to {{ project_name }}.'
     """
     ...

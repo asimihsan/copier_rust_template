@@ -1,0 +1,255 @@
+package binding
+
+import (
+	"context"
+	"crypto/rand"
+	_ "embed"
+	"errors"
+	"fmt"
+	"log"
+	"strings"
+	"sync"
+	"sync/atomic"
+	"time"
+
+	"github.com/tetratelabs/wazero"
+	"github.com/tetratelabs/wazero/imports/wasi_snapshot_preview1"
+)
+
+const Version = "1.0.0"
+
+var (
+	runtimeOnce sync.Once
+	runtime     wazero.Runtime
+	runtimeLock sync.RWMutex
+
+	compiledModuleOnce sync.Once
+	compiledModule     wazero.CompiledModule
+	compiledModuleErr  error
+	moduleNameCounter  uint64
+
+	//go:embed {{ project_slug_underscore }}_go_wasm.wasm
+	wasmBytes []byte
+)
+
+type Greeting struct {
+	Message   string
+	Recipient string
+}
+
+func (g *Greeting) String() string {
+	return g.Message
+}
+
+type GreetingError struct {
+	msg string
+}
+
+func (e *GreetingError) Error() string {
+	return e.msg
+}
+
+func unpackPtrLen(packed uint64) (uint32, uint32) {
+	ptr := uint32(packed >> 32)
+	len := uint32(packed & 0xFFFF_FFFF)
+	return ptr, len
+}
+
+func getUniqueModuleName() string {
+	return fmt.Sprintf("{{ project_slug_underscore }}_go_wasm_%d", atomic.AddUint64(&moduleNameCounter, 1))
+}
+
+func initRuntime(ctx context.Context) (wazero.Runtime, wazero.CompiledModule, error) {
+	var rt wazero.Runtime
+	runtimeOnce.Do(func() {
+		runtime = wazero.NewRuntime(ctx)
+		wasi_snapshot_preview1.MustInstantiate(ctx, runtime)
+	})
+
+	runtimeLock.RLock()
+	rt = runtime
+	runtimeLock.RUnlock()
+
+	if rt == nil {
+		return nil, nil, errors.New("failed to initialize runtime")
+	}
+
+	compiledModuleOnce.Do(func() {
+		compiledModule, compiledModuleErr = rt.CompileModule(ctx, wasmBytes)
+	})
+
+	return rt, compiledModule, compiledModuleErr
+}
+
+func instantiate(ctx context.Context) (wazero.Runtime, wazero.Module, error) {
+	rt, compiled, err := initRuntime(ctx)
+	if err != nil {
+		return nil, nil, fmt.Errorf("failed to initialize runtime: %w", err)
+	}
+
+	moduleConfig := wazero.NewModuleConfig().
+		WithName(getUniqueModuleName()).
+		WithArgs("{{ project_slug_underscore }}_go_wasm").
+		WithSysWalltime().
+		WithSysNanotime().
+		WithRandSource(rand.Reader)
+
+	module, err := rt.InstantiateModule(ctx, compiled, moduleConfig)
+	if err != nil {
+		return nil, nil, fmt.Errorf("failed to instantiate WASM module: %w", err)
+	}
+
+	return rt, module, nil
+}
+
+func Greet(ctx context.Context, recipient string) (*Greeting, error) {
+	select {
+	case <-ctx.Done():
+		return nil, ctx.Err()
+	default:
+	}
+
+	_, module, err := instantiate(ctx)
+	if err != nil {
+		return nil, err
+	}
+	defer func() {
+		if closeErr := module.Close(ctx); closeErr != nil {
+			log.Printf("warning: failed to close WASM module: %v\n", closeErr)
+		}
+	}()
+
+	allocate := module.ExportedFunction("allocate")
+	deallocate := module.ExportedFunction("deallocate")
+	greetRecipient := module.ExportedFunction("greet_recipient")
+	isGreetingError := module.ExportedFunction("is_greeting_error")
+
+	if allocate == nil || deallocate == nil || greetRecipient == nil || isGreetingError == nil {
+		return nil, errors.New("required functions not exported from WASM module")
+	}
+
+	inputBytes := []byte(recipient)
+	inputLen := uint64(len(inputBytes))
+	allocResults, err := allocate.Call(ctx, inputLen)
+	if err != nil {
+		return nil, fmt.Errorf("failed to allocate memory: %w", err)
+	}
+	inputPtr := allocResults[0]
+	defer deallocate.Call(ctx, inputPtr, inputLen) //nolint:errcheck
+
+	if !module.Memory().Write(uint32(inputPtr), inputBytes) {
+		return nil, errors.New("failed to write to WASM memory")
+	}
+
+	results, err := greetRecipient.Call(ctx, inputPtr, inputLen)
+	if err != nil {
+		return nil, fmt.Errorf("failed to call greet_recipient: %w", err)
+	}
+
+	packed := results[0]
+	if packed == 0 {
+		return nil, errors.New("allocation error in WASM module")
+	}
+
+	resultPtr, resultLen := unpackPtrLen(packed)
+	defer deallocate.Call(ctx, uint64(resultPtr), uint64(resultLen)) //nolint:errcheck
+
+	errorCheckResults, err := isGreetingError.Call(ctx, uint64(resultPtr), uint64(resultLen))
+	if err != nil {
+		return nil, fmt.Errorf("failed to check greeting result: %w", err)
+	}
+
+	resultBytes, ok := module.Memory().Read(resultPtr, resultLen)
+	if !ok {
+		return nil, errors.New("failed to read result from WASM memory")
+	}
+
+	message := string(resultBytes)
+	if errorCheckResults[0] != 0 || strings.HasPrefix(message, "Error:") {
+		return nil, &GreetingError{msg: message}
+	}
+
+	return &Greeting{Message: message, Recipient: recipient}, nil
+}
+
+func MustGreet(recipient string) *Greeting {
+	greeting, err := Greet(context.Background(), recipient)
+	if err != nil {
+		panic(err)
+	}
+	return greeting
+}
+
+func GreetConcurrent(ctx context.Context, recipients []string) ([]*Greeting, error) {
+	var (
+		wg       sync.WaitGroup
+		mu       sync.Mutex
+		results  = make([]*Greeting, len(recipients))
+		failures = make([]error, len(recipients))
+	)
+
+	for i, recipient := range recipients {
+		wg.Add(1)
+		go func(idx int, value string) {
+			defer wg.Done()
+
+			result, err := Greet(ctx, value)
+			mu.Lock()
+			results[idx] = result
+			failures[idx] = err
+			mu.Unlock()
+		}(i, recipient)
+	}
+
+	wg.Wait()
+
+	var errMsgs []string
+	for i, err := range failures {
+		if err != nil {
+			errMsgs = append(errMsgs, fmt.Sprintf("input %d: %v", i, err))
+		}
+	}
+
+	if len(errMsgs) > 0 {
+		return results, &GreetingError{msg: fmt.Sprintf("multiple greeting errors: %v", errMsgs)}
+	}
+
+	return results, nil
+}
+
+func GetWasmTimestamp(ctx context.Context) (time.Time, error) {
+	_, module, err := instantiate(ctx)
+	if err != nil {
+		return time.Time{}, err
+	}
+	defer func() {
+		if closeErr := module.Close(ctx); closeErr != nil {
+			log.Printf("warning: failed to close WASM module: %v\n", closeErr)
+		}
+	}()
+
+	getTimestamp := module.ExportedFunction("get_timestamp_ms")
+	if getTimestamp == nil {
+		return time.Time{}, errors.New("get_timestamp_ms function not exported from WASM module")
+	}
+
+	results, err := getTimestamp.Call(ctx)
+	if err != nil {
+		return time.Time{}, fmt.Errorf("failed to call get_timestamp_ms: %w", err)
+	}
+
+	return time.Unix(0, int64(results[0])*int64(time.Millisecond)), nil
+}
+
+func Close(ctx context.Context) error {
+	runtimeLock.Lock()
+	defer runtimeLock.Unlock()
+
+	if runtime != nil {
+		err := runtime.Close(ctx)
+		runtime = nil
+		return err
+	}
+
+	return nil
+}

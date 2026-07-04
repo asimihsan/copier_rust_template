@@ -11,5 +11,10 @@ mise run python:build
 {% endif %}
 {% if include_go %}
 mise run go:build
+{% endif %}
+{% if include_go_wasm %}
 mise run go-wasm:build
+{% endif %}
+{% if include_web_leptos %}
+mise run web-leptos:build
 {% endif %}

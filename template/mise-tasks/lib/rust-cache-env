@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+
+project_repo_root() {
+  git rev-parse --show-toplevel
+}
+
+project_use_isolated_rust_cache() {
+  local cache_name="$1"
+  local repo_root
+
+  repo_root="$(project_repo_root)"
+  export CARGO_TARGET_DIR="$repo_root/target/$cache_name"
+  export KACHE_CACHE_DIR="$repo_root/target/kache/$cache_name"
+}
+
+project_use_rustup_rustc() {
+  local rustc_bin
+  local rustup_toolchain_bin
+
+  rustc_bin="$(rustup which rustc 2>/dev/null || command -v rustc)"
+  rustup_toolchain_bin="$(dirname "$rustc_bin")"
+  export RUSTC="$rustc_bin"
+  export PATH="$rustup_toolchain_bin:$PATH"
+}

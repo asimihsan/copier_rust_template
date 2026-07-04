@@ -1,4 +1,4 @@
-// Package binding provides Go bindings for the test-project arithmetic expression parser.
+// Package binding provides Go bindings for {{ project_name }}.
 package binding
 
 /*
@@ -12,113 +12,92 @@ import "C"
 import (
 	"context"
 	"fmt"
-	"runtime"
 	"sync"
 	"unsafe"
 )
 
-// Version of the binding package
+// Version of the binding package.
 const Version = "1.0.0"
 
-// Expression represents a parsed arithmetic expression
-type Expression struct {
-	// Result contains the computed value
-	Result string
-	// Raw contains the original expression
-	Raw string
+// Greeting represents a rendered greeting.
+type Greeting struct {
+	// Message contains the rendered greeting.
+	Message string
+	// Recipient contains the original requested recipient.
+	Recipient string
 }
 
-// String returns a string representation of the expression
-func (e *Expression) String() string {
-	return fmt.Sprintf("%s = %s", e.Raw, e.Result)
+// String returns the rendered greeting.
+func (g *Greeting) String() string {
+	return g.Message
 }
 
-// ParseError represents an error that occurred during parsing
-type ParseError struct {
+// GreetingError represents an error from the Rust greeting facade.
+type GreetingError struct {
 	msg string
 }
 
-func (e *ParseError) Error() string {
+func (e *GreetingError) Error() string {
 	return e.msg
 }
 
-// Parse parses an arithmetic expression with context support.
-// It returns an Expression containing both the original input and the computed result.
-// The context can be used to cancel long-running operations.
-func Parse(ctx context.Context, input string) (*Expression, error) {
-	// Check context before proceeding
+// Greet creates a greeting with context support.
+func Greet(ctx context.Context, recipient string) (*Greeting, error) {
 	select {
 	case <-ctx.Done():
 		return nil, ctx.Err()
 	default:
 	}
 
-	// Convert input to C string
-	cInput := C.CString(input)
+	cInput := C.CString(recipient)
 	defer C.free(unsafe.Pointer(cInput))
 
-	// Call Rust function
-	cResult := C.parse_expression(cInput)
+	cResult := C.greet_recipient(cInput)
 	if cResult == nil {
-		return nil, &ParseError{msg: "null pointer returned from parser"}
+		return nil, &GreetingError{msg: "null pointer returned from Rust"}
 	}
-	
-	// Ensure the result is freed
 	defer C.free_rust_string(cResult)
 
-	// Convert result back to Go string
 	result := C.GoString(cResult)
-
-	// Check for error prefix
 	if len(result) > 6 && result[:6] == "Error:" {
-		return nil, &ParseError{msg: result[7:]}
+		return nil, &GreetingError{msg: result[7:]}
 	}
 
-	// Return successful result
-	return &Expression{
-		Result: result,
-		Raw:    input,
-	}, nil
+	return &Greeting{Message: result, Recipient: recipient}, nil
 }
 
-// MustParse is like Parse but panics on error.
-// It's useful for expressions that are known to be valid.
-func MustParse(input string) *Expression {
-	expr, err := Parse(context.Background(), input)
+// MustGreet is like Greet but panics on error.
+func MustGreet(recipient string) *Greeting {
+	greeting, err := Greet(context.Background(), recipient)
 	if err != nil {
 		panic(err)
 	}
-	return expr
+	return greeting
 }
 
-// ParseConcurrent parses multiple expressions concurrently.
-// It returns a slice of results in the same order as the inputs.
-// If any parse fails, it returns an error and any successfully parsed expressions.
-func ParseConcurrent(ctx context.Context, inputs []string) ([]*Expression, error) {
+// GreetConcurrent greets multiple recipients concurrently.
+func GreetConcurrent(ctx context.Context, recipients []string) ([]*Greeting, error) {
 	var (
-		wg      sync.WaitGroup
-		mu      sync.Mutex
-		results = make([]*Expression, len(inputs))
-		errs    = make([]error, len(inputs))
+		wg       sync.WaitGroup
+		mu       sync.Mutex
+		results  = make([]*Greeting, len(recipients))
+		errs     = make([]error, len(recipients))
 	)
 
-	// Process each input concurrently
-	for i, input := range inputs {
+	for i, recipient := range recipients {
 		wg.Add(1)
-		go func(idx int, expr string) {
+		go func(idx int, value string) {
 			defer wg.Done()
-			result, err := Parse(ctx, expr)
+			result, err := Greet(ctx, value)
 			mu.Lock()
 			results[idx] = result
 			errs[idx] = err
 			mu.Unlock()
-		}(i, input)
+		}(i, recipient)
 	}
 
-	// Wait for all goroutines to complete
 	wg.Wait()
 
-	// Check for errors
 	var errMsgs []string
 	for i, err := range errs {
 		if err != nil {
@@ -127,15 +106,8 @@ func ParseConcurrent(ctx context.Context, inputs []string) ([]*Expression, error
 	}
 
 	if len(errMsgs) > 0 {
-		return results, &ParseError{msg: fmt.Sprintf("multiple parse errors: %v", errMsgs)}
+		return results, &GreetingError{msg: fmt.Sprintf("multiple greeting errors: %v", errMsgs)}
 	}
 
 	return results, nil
-}
-
-// init registers a finalizer for the package to ensure cleanup
-func init() {
-	runtime.SetFinalizer(&struct{}{}, func(interface{}) {
-		// Any cleanup needed when the package is unloaded
-	})
 }

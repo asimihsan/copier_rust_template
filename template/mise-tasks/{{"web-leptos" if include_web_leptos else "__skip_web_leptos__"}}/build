@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+#MISE description="Build the Leptos web app without Trunk"
+set -euo pipefail
+
+source "$(git rev-parse --show-toplevel)/mise-tasks/lib/rust-cache-env"
+source "$(git rev-parse --show-toplevel)/mise-tasks/lib/web-leptos-build"
+
+project_build_web_leptos "$@"

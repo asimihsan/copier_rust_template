@@ -1,0 +1,61 @@
+#!/usr/bin/env bash
+#MISE description="Generate UniFFI Swift, Kotlin, and Python bindings"
+set -euo pipefail
+
+cd "${MISE_PROJECT_ROOT:?}"
+
+case "$(uname -s)" in
+  Darwin)
+    lib_name="lib{{ project_slug_underscore }}_sdk_ffi.dylib"
+    ;;
+  Linux)
+    lib_name="lib{{ project_slug_underscore }}_sdk_ffi.so"
+    ;;
+  CYGWIN* | MINGW* | MSYS*)
+    lib_name="{{ project_slug_underscore }}_sdk_ffi.dll"
+    ;;
+  *)
+    echo "unsupported platform: $(uname -s)" >&2
+    exit 1
+    ;;
+esac
+
+out_dir="${PROJECT_UNIFFI_OUT_DIR:-target/generated-bindings/uniffi}"
+project_root="$(pwd -P)"
+abs_out_dir="$(
+  python3 - "${project_root}" "${out_dir}" <<'PY'
+from pathlib import Path
+import sys
+
+root = Path(sys.argv[1]).resolve()
+out = Path(sys.argv[2]).expanduser()
+if not out.is_absolute():
+    out = root / out
+print(out.resolve(strict=False))
+PY
+)"
+case "${abs_out_dir}" in
+  "${project_root}/target/"*)
+    ;;
+  *)
+    echo "refusing to remove non-target UniFFI output directory: ${abs_out_dir}" >&2
+    exit 1
+    ;;
+esac
+
+ffi_lib="target/debug/${lib_name}"
+
+cargo build -p {{ project_slug }}-sdk-ffi --lib
+rm -rf "${abs_out_dir}"
+out_dir="${abs_out_dir}"
+mkdir -p "${out_dir}/swift" "${out_dir}/kotlin" "${out_dir}/python"
+
+for language in swift kotlin python; do
+  cargo run -p {{ project_slug }}-uniffi-bindgen --bin {{ project_slug }}-uniffi-bindgen -- generate "${ffi_lib}" \
+    --crate {{ project_slug_underscore }}_sdk_ffi \
+    --language "${language}" \
+    --out-dir "${out_dir}/${language}" \
+    --no-format
+done
+
+cp "${ffi_lib}" "${out_dir}/python/${lib_name}"

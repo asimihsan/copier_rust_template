@@ -7,62 +7,82 @@
 
 //! Core library for {{ project_name }}.
 //!
-//! This library provides the core functionality for parsing and evaluating
-//! arithmetic expressions of the form `1+2+3`.
+//! This crate is the default place for domain behavior that should be shared by
+//! binaries, bindings, and services.
 
 use thiserror::Error;
 
-/// Our custom error type for parsing failures.
-#[derive(Error, Debug, Clone)]
-pub enum ParseError {
-    /// A generic parsing error with a descriptive message.
-    #[error("Parse error: {0}")]
-    Generic(String),
+/// A greeting created by the core domain.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct Greeting {
+    recipient: String,
+    message: String,
 }
 
-/// A simple arithmetic expression parser that accepts expressions like "1+2+3"
-/// and computes their sum.
+impl Greeting {
+    /// Returns the recipient that was used to create this greeting.
+    pub fn recipient(&self) -> &str {
+        &self.recipient
+    }
+
+    /// Returns the rendered greeting message.
+    pub fn message(&self) -> &str {
+        &self.message
+    }
+
+    /// Consumes the greeting and returns the rendered message.
+    pub fn into_message(self) -> String {
+        self.message
+    }
+}
+
+/// Errors returned by greeting construction.
+#[derive(Debug, Error, Clone, PartialEq, Eq)]
+pub enum GreetingError {
+    /// The supplied recipient was empty after trimming whitespace.
+    #[error("recipient cannot be empty")]
+    EmptyRecipient,
+}
+
+/// Creates a typed greeting for a recipient.
 ///
 /// # Errors
 ///
-/// Returns a `ParseError` if:
-/// - The input contains non-numeric characters (except '+')
-/// - The input has invalid syntax (e.g., "1+" or "+2")
-/// - The input is empty or contains only whitespace
+/// Returns [`GreetingError::EmptyRecipient`] when `recipient` is empty after
+/// trimming whitespace.
 ///
 /// # Examples
 ///
 /// ```
-/// use {{ project_slug_underscore }}_core::parse;
+/// use {{ project_slug_underscore }}_core::create_greeting;
 ///
 /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
-/// assert_eq!(parse("1+2+3")?, "6");
-/// assert_eq!(parse("10+20+30")?, "60");
+/// let greeting = create_greeting("Ihsan")?;
+/// assert_eq!(greeting.message(), "Hello, Ihsan! Welcome to {{ project_name }}.");
 /// # Ok(())
 /// # }
 /// ```
-pub fn parse(input: &str) -> Result<String, ParseError> {
-    let trimmed = input.trim();
-    if trimmed.is_empty() {
-        return Err(ParseError::Generic("input is empty".to_owned()));
+pub fn create_greeting(recipient: &str) -> Result<Greeting, GreetingError> {
+    let recipient = recipient.trim();
+    if recipient.is_empty() {
+        return Err(GreetingError::EmptyRecipient);
     }
 
-    let mut total = 0_i64;
-    for part in trimmed.split('+') {
-        let number = part.trim();
-        if number.is_empty() {
-            return Err(ParseError::Generic(
-                "expected a number between '+' operators".to_owned(),
-            ));
-        }
+    let message = format!("Hello, {recipient}! Welcome to {{ project_name }}.");
+    Ok(Greeting {
+        recipient: recipient.to_owned(),
+        message,
+    })
+}
 
-        let value = number
-            .parse::<i64>()
-            .map_err(|error| ParseError::Generic(format!("invalid integer `{number}`: {error}")))?;
-        total += value;
-    }
-
-    Ok(total.to_string())
+/// Creates and renders a greeting message.
+///
+/// # Errors
+///
+/// Returns [`GreetingError::EmptyRecipient`] when `recipient` is empty after
+/// trimming whitespace.
+pub fn greeting_message(recipient: &str) -> Result<String, GreetingError> {
+    create_greeting(recipient).map(Greeting::into_message)
 }
 
 #[cfg(test)]
@@ -70,32 +90,19 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_parse() {
-        match parse("1+2+3") {
-            Ok(result) => assert_eq!(result, "6"),
-            Err(e) => panic!("Expected successful parse of '1+2+3', got error: {e}"),
-        }
+    fn greeting_preserves_trimmed_recipient() -> Result<(), GreetingError> {
+        let greeting = create_greeting("  Ihsan  ")?;
 
-        match parse("10+20+30") {
-            Ok(result) => assert_eq!(result, "60"),
-            Err(e) => panic!("Expected successful parse of '10+20+30', got error: {e}"),
-        }
+        assert_eq!(greeting.recipient(), "Ihsan");
+        assert_eq!(greeting.message(), "Hello, Ihsan! Welcome to {{ project_name }}.");
 
-        match parse("100+200+300") {
-            Ok(result) => assert_eq!(result, "600"),
-            Err(e) => panic!("Expected successful parse of '100+200+300', got error: {e}"),
-        }
+        Ok::<(), GreetingError>(())
     }
 
     #[test]
-    fn test_parse_invalid() {
-        let res = parse("1+");
-        if let Err(e) = res {
-            assert!(e.to_string().contains("expected a number"));
-        } else {
-            println!("Expected an error, but got a result");
-            println!("Result: {res:?}");
-            panic!("Expected an error, but got a result");
-        }
+    fn empty_recipient_is_rejected() {
+        let error = create_greeting("   ").unwrap_err();
+
+        assert_eq!(error, GreetingError::EmptyRecipient);
     }
 }

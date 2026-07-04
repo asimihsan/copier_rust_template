@@ -16,6 +16,6 @@ mise run python:setup
 mise run rust:ensure-wasm-target
 {% endif %}
 
-{% if include_go %}
+{% if include_go_wasm %}
 mise run go-wasm:setup
 {% endif %}

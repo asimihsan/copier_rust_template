@@ -1,6 +1,53 @@
 #!/usr/bin/env bash
-#MISE description="Run the Leptos development server"
+#MISE description="Build and serve the Leptos web app without Trunk"
 set -euo pipefail
 
-cd "${MISE_PROJECT_ROOT}/crates/web-leptos"
-trunk serve --open --verbose
+source "$(git rev-parse --show-toplevel)/mise-tasks/lib/rust-cache-env"
+source "$(git rev-parse --show-toplevel)/mise-tasks/lib/web-leptos-build"
+
+host="${PROJECT_WEB_HOST:-127.0.0.1}"
+port="${PROJECT_WEB_PORT:-8080}"
+dist_dir="$(project_web_leptos_dist_dir)"
+
+project_build_web_leptos "$@"
+
+printf 'Serving Leptos web app at http://%s:%s/\n' "$host" "$port"
+if [[ "${PROJECT_WEB_OPEN:-true}" != "false" && "$host" == "127.0.0.1" ]]; then
+  open "http://$host:$port/" >/dev/null 2>&1 || true
+fi
+
+python3 - "$dist_dir" "$host" "$port" <<'PY'
+import functools
+import http.server
+import pathlib
+import socketserver
+import sys
+import urllib.parse
+
+root = pathlib.Path(sys.argv[1]).resolve()
+host = sys.argv[2]
+port = int(sys.argv[3])
+
+
+class SpaHandler(http.server.SimpleHTTPRequestHandler):
+    def send_head(self):
+        url_path = urllib.parse.urlparse(self.path).path
+        requested = (root / urllib.parse.unquote(url_path.lstrip("/"))).resolve()
+        accepts_html = "text/html" in self.headers.get("Accept", "")
+        is_route = requested.suffix == ""
+        if accepts_html and is_route and not requested.exists():
+            self.path = "/index.html"
+        return super().send_head()
+
+
+class ReusableTcpServer(socketserver.TCPServer):
+    allow_reuse_address = True
+
+
+handler = functools.partial(SpaHandler, directory=str(root))
+with ReusableTcpServer((host, port), handler) as httpd:
+    try:
+        httpd.serve_forever()
+    except KeyboardInterrupt:
+        pass
+PY
