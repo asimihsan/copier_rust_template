@@ -5,7 +5,7 @@
 //
 // SPDX-License-Identifier: MPL-2.0
 
-//! Build script for UniFFI UDL scaffolding.
+//! Build script for `UniFFI` UDL scaffolding.
 
 fn main() {
     if let Err(error) = uniffi::generate_scaffolding("src/{{ project_slug_underscore }}_sdk_ffi.udl") {

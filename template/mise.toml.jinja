@@ -38,6 +38,12 @@ fd = "10.4.2"
 go = "1.26.1"
 golangci-lint = "2.11.4"
 {%- endif %}
+{%- if include_uniffi_sdk %}
+gradle = "9.6.1"
+java = "corretto-21.0.11.10.1"
+kotlin = "2.2.21"
+swift = "6.3.3"
+{%- endif %}
 jq = "1.8.1"
 python = "3.14.3"
 "rust" = { version = "1.96.1", components = "rustfmt,clippy,llvm-tools,rust-src"{% if include_wasm or include_web_leptos or include_go_wasm %}, targets = "{% if include_wasm or include_web_leptos %}wasm32-unknown-unknown{% if include_go_wasm %},wasm32-wasip1{% endif %}{% elif include_go_wasm %}wasm32-wasip1{% endif %}"{% endif %} }

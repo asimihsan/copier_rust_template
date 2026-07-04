@@ -29,10 +29,7 @@ fn greet(recipient: &str) -> PyResult<String> {
 fn {{ project_slug_underscore }}(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.setattr("__version__", env!("CARGO_PKG_VERSION"))?;
     m.setattr("__all__", ["__version__", "greet"])?;
-    m.setattr(
-        "__doc__",
-        "Python bindings for {{ project_name }}.",
-    )?;
+    m.setattr("__doc__", "Python bindings for {{ project_name }}.")?;
 
     m.add_function(wrap_pyfunction!(greet, m)?)?;
 

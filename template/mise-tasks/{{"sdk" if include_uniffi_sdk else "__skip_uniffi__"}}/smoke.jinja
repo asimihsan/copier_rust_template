@@ -7,7 +7,7 @@ mise run sdk:check-bindings
 cargo test -p {{ project_slug }}-sdk-ffi
 
 out_dir="${PROJECT_UNIFFI_OUT_DIR:-target/generated-bindings/uniffi}"
-python3 - "${out_dir}/python" <<'PY'
+python - "${out_dir}/python" <<'PY'
 import pathlib
 import sys
 
@@ -21,3 +21,69 @@ expected = "Hello, Ihsan! Welcome to {{ project_name }}."
 if message != expected:
     raise SystemExit(f"unexpected UniFFI Python greeting: {message!r}")
 PY
+
+smoke_dir=$(mktemp -d target/uniffi-smoke.XXXXXX)
+trap 'rm -rf "${smoke_dir}"' EXIT
+
+cat > "${smoke_dir}/main.swift" <<'SWIFT'
+import Foundation
+
+let message = try greet(recipient: "Ihsan")
+let expected = "Hello, Ihsan! Welcome to {{ project_name }}."
+if message != expected {
+    fatalError("unexpected UniFFI Swift greeting: \(message)")
+}
+SWIFT
+
+if command -v xcrun >/dev/null 2>&1; then
+  export SDKROOT
+  SDKROOT=$(xcrun --sdk macosx --show-sdk-path)
+fi
+
+swiftc \
+  -I "${out_dir}/swift" \
+  -Xcc "-fmodule-map-file=${out_dir}/swift/{{ project_slug_underscore }}_sdk_ffiFFI.modulemap" \
+  -L target/debug \
+  -l{{ project_slug_underscore }}_sdk_ffi \
+  "${out_dir}/swift/{{ project_slug_underscore }}_sdk_ffi.swift" \
+  "${smoke_dir}/main.swift" \
+  -o "${smoke_dir}/smoke-swift"
+
+DYLD_LIBRARY_PATH="$(pwd)/target/debug:${DYLD_LIBRARY_PATH:-}" \
+LD_LIBRARY_PATH="$(pwd)/target/debug:${LD_LIBRARY_PATH:-}" \
+  "${smoke_dir}/smoke-swift"
+
+cat > "${smoke_dir}/Smoke.kt" <<'KOTLIN'
+import uniffi.{{ project_slug_underscore }}_sdk_ffi.greet
+
+fun main() {
+    val message = greet("Ihsan")
+    val expected = "Hello, Ihsan! Welcome to {{ project_name }}."
+    check(message == expected) { "unexpected UniFFI Kotlin greeting: $message" }
+}
+KOTLIN
+
+gradle_home=$(mise where gradle)
+jna_jar=$(
+  find "${gradle_home}" -path "*/lib/plugins/jna-*.jar" ! -name "*platform*" \
+    | sort \
+    | head -1
+)
+
+test -n "${jna_jar}" || {
+  echo "could not find JNA jar under mise-managed Gradle at ${gradle_home}" >&2
+  exit 1
+}
+
+kotlinc \
+  "${out_dir}/kotlin/uniffi/{{ project_slug_underscore }}_sdk_ffi/{{ project_slug_underscore }}_sdk_ffi.kt" \
+  "${smoke_dir}/Smoke.kt" \
+  -cp "${jna_jar}" \
+  -include-runtime \
+  -d "${smoke_dir}/smoke-kotlin.jar"
+
+java \
+  -Djna.library.path="$(pwd)/target/debug" \
+  -Djava.library.path="$(pwd)/target/debug" \
+  -cp "${smoke_dir}/smoke-kotlin.jar:${jna_jar}" \
+  SmokeKt

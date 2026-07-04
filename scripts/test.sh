@@ -46,6 +46,7 @@ copier copy "$ROOT_DIR" "$DEFAULT_RENDER_DIR" \
 
 cd "$DEFAULT_RENDER_DIR"
 git init
+mise trust -y "$DEFAULT_RENDER_DIR/mise.toml"
 ./scripts/dev-setup.sh
 mise install
 mise run rust:test
@@ -75,3 +76,25 @@ mise install
 mise run setup
 mise run copyright
 mise run ci
+
+GO_WASM_RENDER_DIR="${RENDER_DIR}/go-wasm"
+
+copier copy "$ROOT_DIR" "$GO_WASM_RENDER_DIR" \
+    --data include_go_wasm=true \
+    --data project_name="Foobaz Go Wasm" \
+    --data project_slug=foobaz-go-wasm \
+    --data project_slug_underscore=foobaz_go_wasm \
+    --data author_name="Local Test" \
+    --data github_username="local-test" \
+    --force
+
+cd "$GO_WASM_RENDER_DIR"
+git init
+
+mise trust -y "$GO_WASM_RENDER_DIR/mise.toml"
+./scripts/dev-setup.sh
+touch mise.lock
+mise install
+
+mise run go-wasm:setup
+mise run go-wasm:test

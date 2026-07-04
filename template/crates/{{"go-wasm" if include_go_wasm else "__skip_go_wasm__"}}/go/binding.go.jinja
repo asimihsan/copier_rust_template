@@ -13,6 +13,7 @@ import (
 	"time"
 
 	"github.com/tetratelabs/wazero"
+	"github.com/tetratelabs/wazero/api"
 	"github.com/tetratelabs/wazero/imports/wasi_snapshot_preview1"
 )
 
@@ -81,7 +82,7 @@ func initRuntime(ctx context.Context) (wazero.Runtime, wazero.CompiledModule, er
 	return rt, compiledModule, compiledModuleErr
 }
 
-func instantiate(ctx context.Context) (wazero.Runtime, wazero.Module, error) {
+func instantiate(ctx context.Context) (wazero.Runtime, api.Module, error) {
 	rt, compiled, err := initRuntime(ctx)
 	if err != nil {
 		return nil, nil, fmt.Errorf("failed to initialize runtime: %w", err)
