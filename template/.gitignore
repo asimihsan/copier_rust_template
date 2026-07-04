@@ -22,3 +22,8 @@ target/
 .mise/
 lcov.info
 **/lcov.info
+
+# Compound Engineering artifacts are project state, even if a workstation
+# globally ignores backlog directories.
+!/backlog/
+!/backlog/**

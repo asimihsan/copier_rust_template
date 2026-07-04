@@ -3,6 +3,8 @@
 set -euo pipefail
 
 export CARGO_TARGET_DIR="${MISE_PROJECT_ROOT}/target/llvm-cov-target"
+RUSTUP_TOOLCHAIN="$(rustc -V | awk '{print $2}')"
+export RUSTUP_TOOLCHAIN
 
 mise run rust:test-coverage
-cargo llvm-cov report --lcov --output-path lcov.info
+mise exec -- cargo llvm-cov report --lcov --output-path lcov.info

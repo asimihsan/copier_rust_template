@@ -94,7 +94,10 @@ mod tests {
         let greeting = create_greeting("  Ihsan  ")?;
 
         assert_eq!(greeting.recipient(), "Ihsan");
-        assert_eq!(greeting.message(), "Hello, Ihsan! Welcome to {{ project_name }}.");
+        assert_eq!(
+            greeting.message(),
+            "Hello, Ihsan! Welcome to {{ project_name }}."
+        );
 
         Ok::<(), GreetingError>(())
     }

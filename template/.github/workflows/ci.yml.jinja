@@ -106,10 +106,12 @@ jobs:
         run: mise run setup
       - name: Generate coverage
         run: mise run rust:coverage
+      {% if include_codecov %}
       - name: Upload to codecov
         uses: codecov/codecov-action@v5
         with:
           files: lcov.info
+      {% endif %}
       - name: Upload HTML report artifact
         uses: actions/upload-artifact@v7
         with:
