@@ -1,5 +1,12 @@
+# Every tool spec is an exact version, never `latest` or a partial version.
+# Under a locked install mise re-resolves a floating spec against upstream and
+# then demands a lockfile URL for whatever it resolved, so a floating spec
+# breaks the moment upstream publishes a release newer than mise.lock. Each
+# version below is the one mise.lock already records, so pinning removes the
+# float without changing what gets installed. Bump a version by editing this
+# file and re-running `mise lock <tool>`, never by letting a spec float.
 [tools]
-copier = "latest"
+copier = "9.7.1"
 python = "3.14.3"
 
 [tasks."template:ci"]
