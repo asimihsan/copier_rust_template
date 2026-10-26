@@ -4,9 +4,6 @@ set -euo pipefail
 
 SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &> /dev/null && pwd)
 ROOT_DIR=$(dirname "$SCRIPT_DIR")
-"$ROOT_DIR/scripts/test-managed-tool-discovery.sh"
-uv run --project "$ROOT_DIR" --locked python "$ROOT_DIR/scripts/test-lock-platform-policy.py"
-uv run --project "$ROOT_DIR" --locked python "$ROOT_DIR/scripts/test-generated-rust-format.py"
 RENDER_DIR=${OUTPUT_DIR:-}
 AUTO_RENDER_DIR=false
 
@@ -22,6 +19,8 @@ else
     mkdir -p "$RENDER_DIR"
 fi
 
+RENDER_DIR=$(cd -- "$RENDER_DIR" && pwd)
+
 cleanup() {
     local exit_code=$?
 
@@ -35,6 +34,16 @@ cleanup() {
 }
 
 trap cleanup EXIT
+
+# Fixture installs must not rewrite workstation-wide configuration or lockfiles.
+export MISE_CONFIG_DIR="$RENDER_DIR/mise-config"
+export MISE_SYSTEM_CONFIG_DIR="$RENDER_DIR/mise-system"
+export MISE_GLOBAL_CONFIG_FILE="$MISE_CONFIG_DIR/config.toml"
+mkdir -p "$MISE_CONFIG_DIR" "$MISE_SYSTEM_CONFIG_DIR"
+
+"$ROOT_DIR/scripts/test-managed-tool-discovery.sh"
+uv run --project "$ROOT_DIR" --locked python "$ROOT_DIR/scripts/test-lock-platform-policy.py"
+uv run --project "$ROOT_DIR" --locked python "$ROOT_DIR/scripts/test-generated-rust-format.py"
 
 DEFAULT_RENDER_DIR="${RENDER_DIR}/default"
 FULL_RENDER_DIR="${RENDER_DIR}/full"
@@ -62,9 +71,9 @@ uv run --project "$ROOT_DIR" --locked copier copy "$ROOT_DIR" "$FULL_RENDER_DIR"
     --data include_go_wasm=false \
     --data include_web_leptos=true \
     --data include_uniffi_sdk=true \
-    --data project_name="Foobaz" \
-    --data project_slug=foobaz \
-    --data project_slug_underscore=foobaz \
+    --data project_name="Test Project" \
+    --data project_slug=test-project \
+    --data project_slug_underscore=test_project \
     --data author_name="Local Test" \
     --data github_username="local-test" \
     --defaults --force

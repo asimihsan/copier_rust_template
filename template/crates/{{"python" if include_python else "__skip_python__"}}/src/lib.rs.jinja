@@ -17,9 +17,12 @@ use {{ project_slug_underscore }}_core as core;
 ///     `ValueError`: If the recipient is empty.
 ///
 /// Example:
-///     >>> import {{ project_slug_underscore }}
-///     >>> {{ project_slug_underscore }}.greet("Ihsan")
-///     'Hello, Ihsan! Welcome to {{ project_name }}.'
+///
+/// ```python
+/// >>> import {{ project_slug_underscore }}
+/// >>> {{ project_slug_underscore }}.greet("Ihsan")
+/// 'Hello, Ihsan! Welcome to {{ project_name }}.'
+/// ```
 #[pyfunction]
 fn greet(recipient: &str) -> PyResult<String> {
     core::greeting_message(recipient).map_err(|e| PyValueError::new_err(e.to_string()))

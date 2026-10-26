@@ -46,6 +46,10 @@ def main() -> None:
                     skip_tasks=True,
                 )
                 subprocess.run(
+                    ["mise", "trust", str(destination / "mise.toml")],
+                    check=True,
+                )
+                subprocess.run(
                     ["cargo", "fmt", "--all", "--", "--check"],
                     cwd=destination,
                     check=True,

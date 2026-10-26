@@ -134,7 +134,7 @@ jobs:
       - name: Check generated Rust formatting
         working-directory: ../test-project
         run: |
-          ./mise-tasks/rust/ensure-components
+          mise install --locked rust
           cargo fmt --all -- --check
 
       - name: Check project name formatting regression
