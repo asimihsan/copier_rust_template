@@ -2,5 +2,9 @@
 #MISE description="Run dependency security checks"
 set -euo pipefail
 
-cargo audit
-cargo deny check
+audit_bin=$(mise which cargo-audit)
+deny_bin=$(mise which cargo-deny)
+"$audit_bin" --version
+"$audit_bin" audit
+"$deny_bin" --version
+"$deny_bin" deny check

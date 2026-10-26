@@ -2,4 +2,6 @@
 #MISE description="Lint Markdown files"
 set -euo pipefail
 
-bunx markdownlint-cli2
+# Pin the Bun-owned CLI so an inactive workstation shim cannot take precedence.
+# 0.24 rejects the current JS front-matter regex; retain the compatible CLI.
+bunx --bun markdownlint-cli2@0.23.2

@@ -27,10 +27,13 @@ project_build_web_leptos() {
   local stage_dir
   local wasm_input
   local wasm_bindgen_bin
+  local tailwindcss_bin
 
   repo_root="$(project_repo_root)"
   web_root="$(project_web_leptos_root)"
   dist_dir="$(project_web_leptos_dist_dir)"
+  tailwindcss_bin="$(mise which tailwindcss)"
+  "$tailwindcss_bin" --help >/dev/null
   mkdir -p "$repo_root/target"
   stage_dir="$(mktemp -d "$repo_root/target/web-leptos-dist.XXXXXX")"
   trap 'rm -rf "$stage_dir"' RETURN
@@ -57,7 +60,7 @@ project_build_web_leptos() {
     --out-name leptos_web \
     "$wasm_input"
 
-  tailwindcss \
+  "$tailwindcss_bin" \
     --cwd "$web_root" \
     --input "$web_root/input.css" \
     --output "$stage_dir/app.css" \

@@ -109,9 +109,12 @@ jobs:
           install: true
           cache: true
 
+      - name: Check managed tool discovery
+        run: ./scripts/test-managed-tool-discovery.sh
+
       - name: Generate Test Project
         run: |
-          copier copy . ../test-project --vcs-ref HEAD \
+          uv run --locked copier copy . ../test-project --vcs-ref HEAD \
             --data project_name="Test Project" \
             --data project_slug=test-project \
             --data project_slug_underscore=test_project \

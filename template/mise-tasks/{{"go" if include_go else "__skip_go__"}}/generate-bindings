@@ -3,4 +3,6 @@
 set -euo pipefail
 
 cd "${MISE_PROJECT_ROOT}/crates/go"
-cbindgen --config cbindgen.toml --output binding.h
+cbindgen_bin=$(mise which cbindgen)
+"$cbindgen_bin" --version
+"$cbindgen_bin" --config cbindgen.toml --output binding.h

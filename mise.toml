@@ -6,9 +6,13 @@
 # float without changing what gets installed. Bump a version by editing this
 # file and re-running `mise lock <tool>`, never by letting a spec float.
 [tools]
-copier = "9.7.1"
-python = "3.14.3"
+python = "3.14.7"
+uv = "0.12.20"
 
 [tasks."template:ci"]
 description = "Render a full-config project and run the generated CI pipeline"
 run = "./scripts/test.sh"
+
+[tasks."template:tool-discovery"]
+description = "Reject stale host tools before generating native bindings"
+run = "./scripts/test-managed-tool-discovery.sh"

@@ -35,12 +35,16 @@ if message != expected {
 }
 SWIFT
 
-if command -v xcrun >/dev/null 2>&1; then
+if [[ "$(uname -s)" == "Darwin" ]]; then
   export SDKROOT
   SDKROOT=$(xcrun --sdk macosx --show-sdk-path)
+  swiftc_bin=$(xcrun --sdk macosx --find swiftc)
+else
+  swiftc_bin=$(mise which swiftc)
 fi
 
-swiftc \
+"$swiftc_bin" --version
+"$swiftc_bin" \
   -I "${out_dir}/swift" \
   -Xcc "-fmodule-map-file=${out_dir}/swift/{{ project_slug_underscore }}_sdk_ffiFFI.modulemap" \
   -L target/debug \

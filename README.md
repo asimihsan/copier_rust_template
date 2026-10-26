@@ -78,9 +78,7 @@ mise run ci
 
 ## Development Tools & Workflow
 
-The template provides a comprehensive development environment powered by Mise.
-No manual tool installation required—everything from Rust nightly to
-WebAssembly toolchains is automatically configured.
+Mise manages the generated project's declared toolchain and development tools. On macOS, install Xcode or the Command Line Tools for the system compiler and SDK. The optional UniFFI smoke test uses Apple's matching Swift compiler and SDK; Linux uses the pinned Mise Swift toolchain.
 
 **Testing & Quality** Comprehensive test suites run across all platforms, with
 coverage tracking and fuzz testing for core components. Automated CI pipelines
@@ -165,6 +163,10 @@ Run the full rendered-project validation locally:
 ```bash
 mise run template:ci
 ```
+
+The template's own Copier 9.19.1 runs in a locked uv project environment on
+Python 3.14.7. It is independent of globally installed Copier or Python versions.
+For direct local rendering, use `uv run --locked copier copy . /path/to/project`.
 
 If you want to inspect the rendered project after the run, set `OUTPUT_DIR`:
 
