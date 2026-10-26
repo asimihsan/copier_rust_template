@@ -133,7 +133,9 @@ jobs:
 
       - name: Check generated Rust formatting
         working-directory: ../test-project
-        run: cargo fmt --all -- --check
+        run: |
+          ./mise-tasks/rust/ensure-components
+          cargo fmt --all -- --check
 
       - name: Check project name formatting regression
         run: uv run --locked python scripts/test-generated-rust-format.py
