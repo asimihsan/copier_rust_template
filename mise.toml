@@ -16,3 +16,7 @@ run = "./scripts/test.sh"
 [tasks."template:tool-discovery"]
 description = "Reject stale host tools before generating native bindings"
 run = "./scripts/test-managed-tool-discovery.sh"
+
+[tasks."template:lock-platforms"]
+description = "Check generated SDK lock platforms without narrowing other profiles"
+run = "uv run --locked python scripts/test-lock-platform-policy.py"

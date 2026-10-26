@@ -112,6 +112,9 @@ jobs:
       - name: Check managed tool discovery
         run: ./scripts/test-managed-tool-discovery.sh
 
+      - name: Check generated lock platforms
+        run: uv run --locked python scripts/test-lock-platform-policy.py
+
       - name: Generate Test Project
         run: |
           uv run --locked copier copy . ../test-project --vcs-ref HEAD \

@@ -24,3 +24,11 @@ The audit retains two existing allowed unmaintained-dependency warnings for `bas
 Independent Codex review accepted the original migration and tool-discovery correction (session `01a177ce-7486-7dd3-bd7d-6fd9eafef493`) and the bounded late compatibility increment (session `01a1780e-51bd-7750-8730-f10d7f6af6de`) without actionable findings. The late frozen source revision was `04778789c9eec57f5c82c5c4b9ce55ea8613ef4f`.
 
 The initial repository was clean at parent `18319fd9`; the existing remote default branch is `master`. Private recovery snapshots, terminal logs, and the original Tailwind asset are retained under `~/.local/state/dotfiles-recovery/20261026T102727Z/copier_rust_template`. Publication follows the accepted reviews and green local gate; remote CI must be reported separately.
+
+## GNU Linux CI follow-up
+
+The first published revision, `0f0fee2003fa3c127b748b670dc3db3eefc776cb`, passed the local macOS gate but its Linux CI full profile failed before building. Mise 2026.10.19 generated Swift lock metadata for the baseline lockfile's musl platforms, which Swift does not publish. The six dependent matrix jobs were skipped.
+
+The optional SDK profile now declares four native lock targets: GNU Linux arm64/x64 and macOS arm64/x64. Other profiles retain their existing broader platform behavior. A three-profile rendering regression runs in the local gate and GitHub CI before generation; it also preserves Swift's Linux-only Mise host gate.
+
+An isolated real Mise probe confirmed that this project policy overrides broader global settings and existing baseline coverage, resolved the four supported Swift targets, and reproduced the genuine backend rejection for an explicit musl target. Swift stores host-specific distro options in separate lock entries, so coverage must be checked across all entries. No toolchain was installed. Full lock resolution nevertheless cached large Swift archives; it must not be treated as a cheap HEAD-only operation. Subsequent inspection was capped at 16 MiB, and the committed regression only renders configurations. New exact-head Linux CI remains the application-level verification.

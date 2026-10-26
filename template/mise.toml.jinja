@@ -62,3 +62,8 @@ RUSTUP_TOOLCHAIN = "1.96.1"
 env_shell_expand = true
 experimental = true
 idiomatic_version_file_enable_tools = ["rust"]
+{%- if include_uniffi_sdk %}
+# The SDK supports GNU Linux and native macOS. Swift publishes no musl builds.
+# Keep cross-platform locking independent of workstation or runner defaults.
+lockfile_platforms = ["linux-arm64", "linux-x64", "macos-arm64", "macos-x64"]
+{%- endif %}
