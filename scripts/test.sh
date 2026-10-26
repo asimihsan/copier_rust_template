@@ -6,6 +6,7 @@ SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &> /dev/null && pwd)
 ROOT_DIR=$(dirname "$SCRIPT_DIR")
 "$ROOT_DIR/scripts/test-managed-tool-discovery.sh"
 uv run --project "$ROOT_DIR" --locked python "$ROOT_DIR/scripts/test-lock-platform-policy.py"
+uv run --project "$ROOT_DIR" --locked python "$ROOT_DIR/scripts/test-generated-rust-format.py"
 RENDER_DIR=${OUTPUT_DIR:-}
 AUTO_RENDER_DIR=false
 

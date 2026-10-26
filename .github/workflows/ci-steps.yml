@@ -131,6 +131,13 @@ jobs:
             --data include_uniffi_sdk=${{ inputs.uniffi }} \
             --defaults --overwrite
 
+      - name: Check generated Rust formatting
+        working-directory: ../test-project
+        run: cargo fmt --all -- --check
+
+      - name: Check project name formatting regression
+        run: uv run --locked python scripts/test-generated-rust-format.py
+
       - name: Test Generated Project
         working-directory: ../test-project
         run: |

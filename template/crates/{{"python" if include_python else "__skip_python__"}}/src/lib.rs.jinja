@@ -1,8 +1,9 @@
 //! Python extension module for {{ project_name }}.
 
-use {{ project_slug_underscore }}_core as core;
 use pyo3::exceptions::PyValueError;
 use pyo3::prelude::*;
+
+use {{ project_slug_underscore }}_core as core;
 
 /// Create a greeting message.
 ///
