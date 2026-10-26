@@ -66,3 +66,9 @@ Linux CI51a246bd rejected the native locked prerequisite because the shared lock
 The rendering regression now covers eight name/profile combinations, including combined Wasm/WASI. Each explicitly trusts its generated fixture, requires `mise install --locked --dry-run rust` to accept the exact options, and then runs actual Rustfmt. The prior complete isolated three-profile gate remains build/runtime evidence; the new option-binding checks exercise the final lock change directly.
 
 The standalone rendering probe now also owns its Mise global/system configuration and trust-state paths, so direct invocation receives the same isolation as the full local gate. Installed payloads and download caches remain reusable; generated project installs cannot inherit workstation post-install hooks or rewrite its managed lock.
+
+## Wasm-only managed CLI coverage
+
+At850c5883 the full Linux profile and default matrix passed. Wasm-only exposed an undeclared tool: a restored orphan wasm-bindgen shim was visible to wasm-pack, while only Leptos declared the CLI. The Wasm crate also floated to0.2.129 while the shared managed CLI was0.2.126. Wasm now declares the same exact CLI and crate version as Leptos. Setup resolves absolute managed wasm-pack/wasm-bindgen binaries, prepends the latter's directory for child discovery, and uses wasm-pack's no-install mode. Rendering checks require exact CLI/crate alignment. Matrix fail-fast is disabled so independent profiles finish and report evidence even when another fails.
+
+A real isolated Wasm-only render built bindings and passed its web test with a deliberately failing wasm-bindgen first on PATH; that stale executable was never invoked. Managed-tool regressions also reject a missing managed CLI. All eight locked Rust/format renders require CLI/crate alignment and pass, with Ruff/ShellCheck clean. Evidence: `wasm-only-real-poisoned-path.log` and `wasm-cli-eight-profile.log` in private recovery storage.

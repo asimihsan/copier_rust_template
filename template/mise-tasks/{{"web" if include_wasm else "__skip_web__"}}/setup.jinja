@@ -4,8 +4,12 @@ set -euo pipefail
 
 mise run rust:ensure-wasm-target
 
+wasm_bindgen_bin=$(mise which wasm-bindgen)
+wasm_pack_bin=$(mise which wasm-pack)
+"$wasm_bindgen_bin" --version
+
 pushd "${MISE_PROJECT_ROOT}/crates/wasm" >/dev/null
-RUSTFLAGS='-C opt-level=s -C codegen-units=1' wasm-pack build --target web --out-dir ../../web/pkg --dev
+PATH="$(dirname "$wasm_bindgen_bin"):$PATH" RUSTFLAGS='-C opt-level=s -C codegen-units=1' "$wasm_pack_bin" build --mode no-install --target web --out-dir ../../web/pkg --dev
 popd >/dev/null
 
 pushd "${MISE_PROJECT_ROOT}/web" >/dev/null

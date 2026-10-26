@@ -5,11 +5,25 @@ from __future__ import annotations
 import os
 import subprocess
 import tempfile
+import tomllib
 from pathlib import Path
 
 from copier import run_copy
 
 ROOT = Path(__file__).resolve().parents[1]
+
+
+def check_wasm_tool_alignment(destination: Path) -> None:
+    config = tomllib.loads((destination / "mise.toml").read_text())
+    tool_version = config["tools"].get("github:wasm-bindgen/wasm-bindgen")
+    for crate in ("wasm", "web-leptos"):
+        manifest = destination / "crates" / crate / "Cargo.toml"
+        if not manifest.is_file():
+            continue
+        dependency = tomllib.loads(manifest.read_text())["dependencies"]["wasm-bindgen"]
+        version = dependency if isinstance(dependency, str) else dependency["version"]
+        if version != f"={tool_version}":
+            raise AssertionError(f"{crate} wasm-bindgen crate and managed CLI differ")
 
 
 def main() -> None:
@@ -55,6 +69,7 @@ def main() -> None:
                     quiet=True,
                     skip_tasks=True,
                 )
+                check_wasm_tool_alignment(destination)
                 subprocess.run(
                     ["mise", "trust", str(destination / "mise.toml")],
                     check=True,

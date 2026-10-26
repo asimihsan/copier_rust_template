@@ -15,16 +15,22 @@ export LEPTOS_BUILD_HELPER="$ROOT_DIR/template/mise-tasks/lib/web-leptos-build"
 export MANAGED_AUDIT="$FIXTURE/managed/cargo-audit"
 export MANAGED_DENY="$FIXTURE/managed/cargo-deny"
 export SECURITY_MARKERS="$FIXTURE/managed"
+export MANAGED_WASM_BINDGEN="$FIXTURE/managed/wasm-bindgen"
+export MANAGED_WASM_PACK="$FIXTURE/managed/wasm-pack"
 
 cat > "$FIXTURE/bin/mise" <<'SH'
 #!/bin/sh
 set -eu
-[ "$#" = 2 ] && [ "$1" = which ]
+[ "$#" = 2 ]
+if [ "$1" = run ] && [ "$2" = rust:ensure-wasm-target ]; then exit 0; fi
+[ "$1" = which ]
 case "$2" in
     cbindgen) printf '%s\n' "$MANAGED_CBINDGEN" ;;
     tailwindcss) printf '%s\n' "$MANAGED_TAILWIND" ;;
     cargo-audit) printf '%s\n' "$MANAGED_AUDIT" ;;
     cargo-deny) printf '%s\n' "$MANAGED_DENY" ;;
+    wasm-bindgen) printf '%s\n' "$MANAGED_WASM_BINDGEN" ;;
+    wasm-pack) printf '%s\n' "$MANAGED_WASM_PACK" ;;
     *) exit 98 ;;
 esac
 SH
@@ -105,4 +111,39 @@ chmod +x "$FIXTURE/bin/cargo" "$MANAGED_AUDIT" "$MANAGED_DENY"
 test -f "$SECURITY_MARKERS/audit-completed"
 test -f "$SECURITY_MARKERS/deny-completed"
 test ! -e "$STALE_TOOL_MARKER"
-echo 'managed tool discovery: PASS (shadowed, incompatible, missing, Tailwind, security tools)'
+mkdir -p "$FIXTURE/project/crates/wasm" "$FIXTURE/project/web"
+cat > "$FIXTURE/bin/wasm-bindgen" <<'SH'
+#!/bin/sh
+touch "$STALE_TOOL_MARKER"
+exit 99
+SH
+cat > "$MANAGED_WASM_BINDGEN" <<'SH'
+#!/bin/sh
+[ "$1" = --version ]
+printf '%s\n' 'wasm-bindgen 0.2.126'
+SH
+cat > "$MANAGED_WASM_PACK" <<'SH'
+#!/bin/sh
+set -eu
+[ "$(command -v wasm-bindgen)" = "$MANAGED_WASM_BINDGEN" ]
+case " $* " in *" --mode no-install "*) ;; *) exit 98 ;; esac
+wasm-bindgen --version
+touch "$SECURITY_MARKERS/wasm-completed"
+SH
+cat > "$FIXTURE/bin/bun" <<'SH'
+#!/bin/sh
+[ "$1" = install ]
+SH
+chmod +x "$FIXTURE/bin/wasm-bindgen" "$FIXTURE/bin/bun" "$MANAGED_WASM_BINDGEN" "$MANAGED_WASM_PACK"
+WASM_SETUP="$ROOT_DIR/template/mise-tasks/"'{{"web" if include_wasm else "__skip_web__"}}/setup.jinja'
+/bin/bash "$WASM_SETUP"
+test -f "$SECURITY_MARKERS/wasm-completed"
+test ! -e "$STALE_TOOL_MARKER"
+rm "$SECURITY_MARKERS/wasm-completed"
+if MANAGED_WASM_BINDGEN="$FIXTURE/missing" /bin/bash "$WASM_SETUP" > "$FIXTURE/missing-wasm.log" 2>&1; then
+    echo 'missing managed wasm-bindgen unexpectedly succeeded' >&2
+    exit 1
+fi
+test ! -e "$SECURITY_MARKERS/wasm-completed"
+test ! -e "$STALE_TOOL_MARKER"
+echo 'managed tool discovery: PASS (shadowed, incompatible, missing, Tailwind, security and Wasm tools)'

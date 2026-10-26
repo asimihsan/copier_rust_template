@@ -22,6 +22,7 @@ jobs:
     name: Matrix Configurations
     needs: full
     strategy:
+      fail-fast: false
       matrix:
         config:
           - { wasm: true,  python: false, go: false, leptos: false, uniffi: false, cache_suffix: "wasm-only" }

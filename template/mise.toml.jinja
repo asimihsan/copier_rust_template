@@ -22,6 +22,8 @@
 {%- endif %}
 {%- if include_web_leptos %}
 "github:tailwindlabs/tailwindcss" = "4.3.3"
+{%- endif %}
+{%- if include_wasm or include_web_leptos %}
 "github:wasm-bindgen/wasm-bindgen" = "0.2.126"
 {%- endif %}
 actionlint = "1.7.11"
