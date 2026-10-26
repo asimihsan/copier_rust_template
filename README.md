@@ -16,6 +16,8 @@ A Rust-first Copier template for starting projects with a typed core crate and
 CLI by default. Browser, language-binding, and SDK surfaces are opt-in instead
 of part of the default render.
 
+The canonical repository is [Forgejo](https://hlru5i.tail9a713e.ts.net:3000/asim/copier_rust_template). Push changes there. [GitHub](https://github.com/asimihsan/copier_rust_template) is an operationally read-only mirror, synchronized by Forgejo when commits are pushed, with an eight-hour periodic fallback. Both use `master` as the default branch. Existing CI continues to run on GitHub; repository mirroring does not migrate those workflows to Forgejo.
+
 ### Key Features
 
 - Cross-platform Rust core and CLI by default
@@ -40,8 +42,10 @@ To use this template, you need to install the following tools:
 Generate your project:
 
 ```bash
-copier copy gh:asimihsan/copier_rust_template my-awesome-project
+copier copy https://hlru5i.tail9a713e.ts.net:3000/asim/copier_rust_template.git my-awesome-project
 ```
+
+For read access without the Forgejo tailnet connection, the synchronized GitHub copy remains available as `gh:asimihsan/copier_rust_template`.
 
 Change into your new project directory:
 
