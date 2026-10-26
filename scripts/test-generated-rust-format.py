@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import os
 import subprocess
 import tempfile
 from pathlib import Path
@@ -13,6 +14,14 @@ ROOT = Path(__file__).resolve().parents[1]
 
 def main() -> None:
     with tempfile.TemporaryDirectory(prefix="copier-rust-format-") as temporary:
+        env = os.environ.copy()
+        for key, directory in (
+            ("MISE_CONFIG_DIR", "mise-config"),
+            ("MISE_SYSTEM_CONFIG_DIR", "mise-system"),
+            ("MISE_STATE_DIR", "mise-state"),
+        ):
+            env[key] = str(Path(temporary) / directory)
+        env["MISE_GLOBAL_CONFIG_FILE"] = str(Path(env["MISE_CONFIG_DIR"]) / "config.toml")
         for slug in ("foobaz", "test-project"):
             for profile, choices in (
                 ("default", {}),
@@ -27,6 +36,7 @@ def main() -> None:
                     },
                 ),
                 ("go-wasm", {"include_go_wasm": True}),
+                ("wasm-and-wasi", {"include_wasm": True, "include_go_wasm": True}),
             ):
                 destination = Path(temporary) / slug / profile
                 run_copy(
@@ -48,11 +58,19 @@ def main() -> None:
                 subprocess.run(
                     ["mise", "trust", str(destination / "mise.toml")],
                     check=True,
+                    env=env,
+                )
+                subprocess.run(
+                    ["mise", "install", "--locked", "--dry-run", "rust"],
+                    cwd=destination,
+                    check=True,
+                    env=env,
                 )
                 subprocess.run(
                     ["cargo", "fmt", "--all", "--", "--check"],
                     cwd=destination,
                     check=True,
+                    env=env,
                 )
                 print(f"generated Rustfmt: PASS ({slug}, {profile})", flush=True)
 

@@ -455,6 +455,30 @@ backend = "core:rust"
 [tools.rust.options]
 components = "clippy,llvm-tools,rust-src,rustfmt"
 
+[[tools.rust]]
+version = "1.96.1"
+backend = "core:rust"
+
+[tools.rust.options]
+components = "clippy,llvm-tools,rust-src,rustfmt"
+targets = "wasm32-unknown-unknown"
+
+[[tools.rust]]
+version = "1.96.1"
+backend = "core:rust"
+
+[tools.rust.options]
+components = "clippy,llvm-tools,rust-src,rustfmt"
+targets = "wasm32-wasip1"
+
+[[tools.rust]]
+version = "1.96.1"
+backend = "core:rust"
+
+[tools.rust.options]
+components = "clippy,llvm-tools,rust-src,rustfmt"
+targets = "wasm32-unknown-unknown,wasm32-wasip1"
+
 [[tools.shellcheck]]
 version = "0.11.0"
 backend = "aqua:koalaman/shellcheck"
